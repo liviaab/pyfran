@@ -35,11 +35,19 @@ def parse_command_line_arguments(argv):
 
 	return (inputfile, outputfile)
 
-def urls_from_input(inputfile):
-    urls = []
-    with open(inputfile, 'r') as file:
-        for line in file:
-            values = line.split(',')
-            urls.extend(values)
+def not_blank(word):
+	if (word == ''):
+		return False
 
-    return urls
+	return True
+
+def urls_from_input(inputfile):
+	urls = []
+
+	with open(inputfile, 'r') as file:
+		for line in file:
+			values = line.rstrip().replace(' ', '').split(",")
+			values = filter(not_blank, values)
+			urls.extend(values)
+
+	return urls

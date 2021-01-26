@@ -14,7 +14,7 @@ In some cases, the existing tests may have been written using the doctest module
 _The (...) individual tests are defined with methods whose names start with the letters test. This naming convention informs the test runner about which methods represent tests._
 
 
-Como é possível rodar:
+Como é possível executar:
 ```sh
 python nome_do_arquivo_de_teste.py
 python -m unittest test_module1 test_module2
@@ -45,6 +45,12 @@ but make sure to prefix your class with Test otherwise the class will be skipped
 
 
 _You can also gradually move away from subclassing from unittest.TestCase to plain asserts and then start to benefit from the full pytest feature set step by step._
+
+Como é possível executar:
+```sh
+pytest _test_folder
+```
+
 
 -------
 ## Lista de ferramentas de teste em python

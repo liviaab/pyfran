@@ -6,3 +6,7 @@ UNITTEST_REGEX += "|(TestCase)" # e.g. class TestStringMethods(TestCase):
                                 # testcase = unittest.FunctionTestCase(testSomething, ...
                                 # asynctest.TestCase
 UNITTEST_REGEX += "|(.*from\s*unittest)" # e.g. from unittest.mock import MagicMock
+
+
+def check_unittest(code):
+    return code != None and re.search(UNITTEST_REGEX, code) != None

@@ -51,7 +51,58 @@ Como é possível executar:
 pytest _test_folder
 ```
 
+Como é possível identificar se um projeto está usando pytest ou não
+- Se estiver presente em arquivos que contém descrição de requisitos
+(requirements.txt, setup.py, README.md/README.txt, pytest.ini, pyproject.toml, tox.ini or setup.cfg)
+- Se algum arquivo de script tiver uma linha que roda o pytest (.gitlab-ci.* .travis-ci.* ...)
+- Arquivos com nomes no formato `test_*.py` ou `*_test.py` (https://docs.pytest.org/en/stable/getting-started.html)
+- Funções que começam com test_
+- Classes que começam com Test
+
+Convenções do `pytest` para descobrimento de teste em Python  (https://docs.pytest.org/en/stable/goodpractices.html#test-discovery)
+- Começa a procurar a partir do testpaths (se configurados) ou do diretorio atual
+- Analisa os diretorios recursivamente
+- Nesses diretórios, procure por arquivos test_*.py or *_test.py
+- From those files, collect test items:
+  - test prefixed test functions or methods outside of class
+  - test prefixed test functions or methods inside Test prefixed test classes (without an __init__ method)
+- Usando a técnica de subclasse do unittest.TestCase (apesar de não ter necessidade de criar subclasses)
+
+
+Layouts de teste:
+- Testes fora do código da aplicação
+```
+setup.py
+mypkg/
+    __init__.py
+    app.py
+    view.py
+tests/
+    test_app.py
+    test_view.py
+    ...
+```
+
+- Testes como parte do código da aplicação
+```
+setup.py
+mypkg/
+    __init__.py
+    app.py
+    view.py
+    test/
+        __init__.py
+        test_app.py
+        test_view.py
+        ...
+```
+ If you use one of the two recommended file system layouts above but leave away the `__init__.py` files from your directories it should just work on Python3.3 and above.
 
 -------
 ## Lista de ferramentas de teste em python
 https://wiki.python.org/moin/PythonTestingToolsTaxonomy
+
+
+
+--------
+As stated in https://google.github.io/styleguide/pyguide.html "There is no One Correct Way to name test methods."

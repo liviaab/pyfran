@@ -104,3 +104,20 @@ As stated in https://google.github.io/styleguide/pyguide.html "There is no One C
 
 Discussão sobre boas praticas para nomenclatura de testes (geral, não especificamente para python)
 https://stackoverflow.com/questions/155436/unit-test-naming-best-practices
+
+There is a python tool called unittest2pytest that can help automate parts of this conversion
+
+
+
+
+
+https://github.com/iterative/dvc/issues/1819
+https://github.com/gaphor/gaphor/issues/129   # still open
+https://github.com/sgeisler/termgraph/issues/15
+https://github.com/simpeg/simpeg/issues/702
+
+
+
+Casos a considerar:
+- Quando o arquivo de teste usa os dois
+- Quando o arquito de teste nao importa pytest explicitamente (foge da premissa de seguir as sugestões das documentações/boas práticas)

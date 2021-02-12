@@ -6,8 +6,10 @@ from pydriller import RepositoryMining
 
 class Repository:
     def __init__(self, repo_url):
-        # self.pydriller_repo = RepositoryMining(repo_url, only_in_branch="master", only_no_merge=True)
-        self.pydriller_repo = RepositoryMining(repo_url, single="b724832872ae4b4cd4b5f61c153eae39f1c3b213")
+        print('repo')
+        print(repo_url)
+        self.pydriller_repo = RepositoryMining(repo_url, only_in_branch="master", only_no_merge=True)
+        # self.pydriller_repo = RepositoryMining(repo_url, single="65fc888172fbff89a8354e8926a69b4515766389")
         self.pytest_first_occurrence = {}
         self.pytest_last_occurrence = {}
         self.unittest_first_occurrence = {}
@@ -20,19 +22,62 @@ class Repository:
     def traverse_commits(self):
         for commit in self.pydriller_repo.traverse_commits():
             for modification in commit.modifications:
-                print(modification.new_path)
-                print(modification.old_path)
                 if is_a_test_file(modification.new_path) \
                     or is_a_test_file(modification.old_path) \
                     or is_a_config_file(modification.new_path) \
                     or is_a_config_file(modification.old_path):
-                    print(modification.diff_parsed)
-                    unittest_in_added_diffs = check_unittest(modification.diff_parsed['added'])
+                    # print(modification.new_path)
+                    unittest_in_added_diffs = check_unittest_code(modification.source_code)
                     unittest_in_removed_diffs = check_unittest(modification.diff_parsed['deleted'])
-                    pytest_in_added_diffs = check_pytest(modification.diff_parsed['added'])
+
+                    # testar para fazer isso \/ se não tiver unittest_in_added_diffs ? 
+                    pytest_in_added_diffs = check_pytest_code(modification.source_code)
                     pytest_in_removed_diffs = check_pytest(modification.diff_parsed['deleted'])
 
-                    print(modification.source_code)
+                    if self.pytest_first_occurrence == {} and pytest_in_added_diffs:
+                        self.pytest_first_occurrence = {
+                            "file": modification.new_path,
+                            "author": commit.author.name,
+                            "date": commit.author_date,
+                            "commit_hash": commit.hash,
+                            "commit_message": commit.msg,
+                        }
+
+                    if pytest_in_removed_diffs and not pytest_in_added_diffs:
+                        pytest_last_occurrence = {
+                            "file": modification.new_path,
+                            "author": commit.author.name,
+                            "date": commit.author_date,
+                            "commit_hash": commit.hash,
+                            "commit_message": commit.msg,
+                        }
+
+                    if self.unittest_first_occurrence == {} and unittest_in_added_diffs:
+                        self.unittest_first_occurrence = {
+                            "file": modification.new_path,
+                            "author": commit.author.name,
+                            "date": commit.author_date,
+                            "commit_hash": commit.hash,
+                            "commit_message": commit.msg,
+                        }
+
+                    if unittest_in_removed_diffs and not unittest_in_added_diffs:
+                        self.unittest_last_occurrence = {
+                            "file": modification.new_path,
+                            "author": commit.author.name,
+                            "date": commit.author_date,
+                            "commit_hash": commit.hash,
+                            "commit_message": commit.msg,
+                        }
+                    # print(modification.source_code)
                 else:
                     pass
-                print()
+        print('pytest_first_occurrence')
+        print(self.pytest_first_occurrence)
+        print('pytest_last_occurrence')
+        print(self.pytest_last_occurrence)
+        print('unittest_first_occurrence')
+        print(self.unittest_first_occurrence)
+        print('unittest_last_occurrence')
+        print(self.unittest_last_occurrence)
+        print()

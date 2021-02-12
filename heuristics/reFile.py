@@ -6,7 +6,6 @@ TESTPATH_REGEX = "(test)"       # Tem `test` em algumm lugar do nome:
 
 
 def is_a_test_file(path):
-    print(re.search(TESTPATH_REGEX, path))
     return path != None and re.search(TESTPATH_REGEX, path) != None
 
 
@@ -26,5 +25,4 @@ def is_a_config_file(path):
         requirements.txt, setup.py, README.md/README.txt, pytest.ini, pyproject.toml, tox.ini, setup.cfg
         .gitlab-ci.[yml|yaml] .travis-ci.[yml|yaml] config.yml
     """
-    print(re.search(TESTPATH_REGEX, path))
     return path != None and re.search(TESTPATH_REGEX, path) != None

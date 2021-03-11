@@ -11,5 +11,5 @@ Repositório criado para estudar o PyDriller e seus comandos.
 
 ```sh
 $ pip install -r requirements.txt
-$ python3 main.py -i in.csv -o out.txt
+$ python3 main.py -i in.csv
 ```

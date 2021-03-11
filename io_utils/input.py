@@ -5,35 +5,31 @@ import getopt
 
 def parse_command_line_arguments(argv):
 	inputfile = ''
-	outputfile = ''
 
 	try:
-		opts, _args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
+		opts, _args = getopt.getopt(argv, "hi:o:", ["ifile="])
 	except getopt.GetoptError:
-		print('main.py -i <inputfile>.csv -o <outputfile>')
+		print('main.py -i <inputfile>.csv')
 		sys.exit(2)
 
 	for opt, arg in opts:
 		if opt == '-h':
-			print('main.py -i <inputfile>.csv -o <outputfile>')
+			print('main.py -i <inputfile>.csv')
 			sys.exit()
 		elif opt in ("-i", "--ifile"):
 			inputfile = arg
-		elif opt in ("-o", "--ofile"):
-			outputfile = arg
 
-	if not inputfile or not outputfile:
-		print('usage: main.py -i <inputfile>.csv -o <outputfile>')
+	if not inputfile :
+		print('usage: main.py -i <inputfile>.csv ')
 		sys.exit()
 	if not inputfile.endswith('.csv'):
-		print('usage: main.py -i <inputfile>.csv -o <outputfile>')
+		print('usage: main.py -i <inputfile>.csv')
 		print('\tThe input file must be .csv')
 		sys.exit()
 
 	print('Input file is ', inputfile)
-	print('Output file is ', outputfile)
 
-	return (inputfile, outputfile)
+	return (inputfile)
 
 def not_blank(word):
 	if (word == ''):

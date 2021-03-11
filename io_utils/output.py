@@ -1,5 +1,6 @@
 import os
-import json
+# import json
+from pprint import PrettyPrinter
 
 def make_repository_out_path(repo_name):
     if not os.path.exists("out"):
@@ -11,6 +12,6 @@ def make_repository_out_path(repo_name):
     return "out/" + repo_name + "/"
 
 def create_file_from_source_code(filename, info_dict):
-    print("create_file_from_source_code", filename)
+    pprinter = PrettyPrinter()
     with open(filename,"w") as f:
-        f.write(json.dumps(info_dict))
+        f.write(pprinter.pformat(info_dict))

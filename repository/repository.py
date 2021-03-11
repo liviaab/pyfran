@@ -21,63 +21,61 @@ class Repository:
 
     def traverse_commits(self):
         for commit in self.pydriller_repo.traverse_commits():
+            # print(commit.author_date, commit.hash)
             for modification in commit.modifications:
-                if is_a_test_file(modification.new_path) \
-                    or is_a_test_file(modification.old_path) \
-                    or is_a_config_file(modification.new_path) \
-                    or is_a_config_file(modification.old_path):
-                    # print(modification.new_path)
-                    unittest_in_added_diffs = check_unittest_code(modification.source_code)
-                    unittest_in_removed_diffs = check_unittest(modification.diff_parsed['deleted'])
+                unittest_in_added_diffs = check_unittest_code(modification.source_code)
+                unittest_in_removed_diffs = check_unittest(modification.diff_parsed['deleted'])
 
-                    # testar para fazer isso \/ se não tiver unittest_in_added_diffs ? 
-                    pytest_in_added_diffs = check_pytest_code(modification.source_code)
-                    pytest_in_removed_diffs = check_pytest(modification.diff_parsed['deleted'])
+                pytest_in_added_diffs = check_pytest_code(modification.source_code)
+                pytest_in_removed_diffs = check_pytest(modification.diff_parsed['deleted'])
 
-                    if self.pytest_first_occurrence == {} and pytest_in_added_diffs:
-                        self.pytest_first_occurrence = {
-                            "file": modification.new_path,
-                            "author": commit.author.name,
-                            "date": commit.author_date,
-                            "commit_hash": commit.hash,
-                            "commit_message": commit.msg,
-                        }
+                if self.unittest_first_occurrence == {} and unittest_in_added_diffs:
+                    self.unittest_first_occurrence = {
+                        "file": modification.new_path,
+                        "author": commit.author.name,
+                        "date": str(commit.author_date),
+                        "commit_hash": commit.hash,
+                        "commit_message": commit.msg,
+                        "project_name": commit.project_name,
+                        "source_code": modification.source_code
+                    }
 
-                    if pytest_in_removed_diffs and not pytest_in_added_diffs:
-                        pytest_last_occurrence = {
-                            "file": modification.new_path,
-                            "author": commit.author.name,
-                            "date": commit.author_date,
-                            "commit_hash": commit.hash,
-                            "commit_message": commit.msg,
-                        }
+                if unittest_in_removed_diffs and not unittest_in_added_diffs:
+                    self.unittest_last_occurrence = {
+                        "file": modification.new_path,
+                        "author": commit.author.name,
+                        "date": str(commit.author_date),
+                        "commit_hash": commit.hash,
+                        "commit_message": commit.msg,
+                        "project_name": commit.project_name,
+                        "source_code": modification.source_code
+                    }
 
-                    if self.unittest_first_occurrence == {} and unittest_in_added_diffs:
-                        self.unittest_first_occurrence = {
-                            "file": modification.new_path,
-                            "author": commit.author.name,
-                            "date": commit.author_date,
-                            "commit_hash": commit.hash,
-                            "commit_message": commit.msg,
-                        }
+                if (self.pytest_first_occurrence == {} and pytest_in_added_diffs) \
+                    or (self.pytest_first_occurrence == {} \
+                        and (not unittest_in_added_diffs) \
+                        and (not pytest_in_added_diffs) \
+                        and check_src_for_test_function(modification.source_code)):
+                    self.pytest_first_occurrence = {
+                        "file": modification.new_path,
+                        "author": commit.author.name,
+                        "date": str(commit.author_date),
+                        "commit_hash": commit.hash,
+                        "commit_message": commit.msg,
+                        "project_name": commit.project_name,
+                        "source_code": modification.source_code
+                    }
 
-                    if unittest_in_removed_diffs and not unittest_in_added_diffs:
-                        self.unittest_last_occurrence = {
-                            "file": modification.new_path,
-                            "author": commit.author.name,
-                            "date": commit.author_date,
-                            "commit_hash": commit.hash,
-                            "commit_message": commit.msg,
-                        }
-                    # print(modification.source_code)
-                else:
-                    pass
-        print('pytest_first_occurrence')
-        print(self.pytest_first_occurrence)
-        print('pytest_last_occurrence')
-        print(self.pytest_last_occurrence)
-        print('unittest_first_occurrence')
-        print(self.unittest_first_occurrence)
-        print('unittest_last_occurrence')
-        print(self.unittest_last_occurrence)
-        print()
+                if pytest_in_removed_diffs and not pytest_in_added_diffs \
+                    or (not unittest_in_removed_diffs \
+                    and not pytest_in_removed_diffs \
+                    and check_diff_for_test_function(modification.diff_parsed['deleted'])):
+                    self.pytest_last_occurrence = {
+                        "file": modification.new_path,
+                        "author": commit.author.name,
+                        "date": str(commit.author_date),
+                        "commit_hash": commit.hash,
+                        "commit_message": commit.msg,
+                        "project_name": commit.project_name,
+                        "source_code": modification.source_code
+                    }

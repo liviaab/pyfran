@@ -49,7 +49,7 @@ Como é possível identificar se um projeto está usando pytest ou não
 - Se estiver presente em arquivos que contém descrição de requisitos
 (requirements.txt, setup.py, README.md/README.txt, pytest.ini, pyproject.toml, tox.ini or setup.cfg)
 - Se algum arquivo de script tiver uma linha que roda o pytest (.gitlab-ci.* .travis-ci.* ...)
-- Arquivos com nomes no formato `test_*.py` ou `*_test.py` n[fonte](https://docs.pytest.org/en/stable/getting-started.html)
+- Arquivos com nomes no formato `test_*.py` ou `*_test.py` [fonte](https://docs.pytest.org/en/stable/getting-started.html)
 - Funções que começam com test_
 - Se os testes forem definidos como métodos em uma classes, esta deve ter o nome iniciado com Test
 
@@ -108,16 +108,7 @@ https://stackoverflow.com/questions/155436/unit-test-naming-best-practices
 There is a python tool called unittest2pytest that can help automate parts of this conversion
 
 
-
-
-
-https://github.com/iterative/dvc/issues/1819
-https://github.com/gaphor/gaphor/issues/129   # still open
-https://github.com/sgeisler/termgraph/issues/15
-https://github.com/simpeg/simpeg/issues/702
-
-
-
 Casos a considerar:
-- Quando o arquivo de teste usa os dois
-- Quando o arquito de teste nao importa pytest explicitamente (foge da premissa de seguir as sugestões das documentações/boas práticas)
+- [ ] Quando o arquivo de teste usa os dois
+- [ ] Quando o arquivo de teste nao importa pytest explicitamente (foge da premissa de seguir as sugestões das documentações/boas práticas)
+- [ ] comentarios

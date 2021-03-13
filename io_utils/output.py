@@ -1,6 +1,10 @@
 import os
-# import json
+import shutil
 from pprint import PrettyPrinter
+
+def clear_out_path():
+    if os.path.exists("out/") and os.path.isdir("out/"):
+        shutil.rmtree("out/")
 
 def make_repository_out_path(repo_name):
     if not os.path.exists("out"):

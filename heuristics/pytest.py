@@ -1,7 +1,7 @@
 import re
 
 class PytestHeuristics:
-    pattern = "(pytest)"
+    pattern = "(\s+pytest\s+)"
     subclass_pattern = "\s*class\s*.*\(.+\).*"
     test_function_pattern = "(def\s*test_)"
 

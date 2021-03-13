@@ -16,7 +16,7 @@ class Occurrences:
         return
 
     def set_last_occurrence(self, commit, modification):
-        self.first = {
+        self.last = {
             "file": modification.new_path,
             "author": commit.author.name,
             "date": str(commit.author_date),
@@ -28,7 +28,7 @@ class Occurrences:
         return
 
     def has_first_occurrence(self):
-        return self.first == {}
+        return self.first != {}
 
     def has_last_occurrence(self):
-        return self.last == {}
+        return self.last != {}

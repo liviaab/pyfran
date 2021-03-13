@@ -1,45 +1,31 @@
 import re
 
-# PYTEST_REGEX = "(import\s*pytest)"
-PYTEST_REGEX = "(pytest)"
-# PYTEST_REGEX += "|(Test)"             # classes que começam com Test << também pode dar match com unittest
-TEST_REGEX = "(def\s*test_)"            # funções que começam com Test << também pode dar match com unittest
-                                        # mas precisamos de algo para identificar o arquivo de teste caso ele
-                                        # não importe pytest explicitamente
+class PytestHeuristics:
+    pattern = "(pytest)"
+    subclass_pattern = "\s*class\s*.*\(.+\).*"
+    test_function_pattern = "(def\s*test_)"
 
+    def matches_a(self, text):
+        if text == None:
+            return False
 
-def check_pytest(parsed_modifications):
-    if parsed_modifications == None or parsed_modifications == []:
+        return re.search(PytestHeuristics.pattern, text) != None
+
+    def matches_any(self, text_list):
+        for element in text_list:
+            if matches_a(element):
+                return True
+
         return False
 
-    for line, modification in parsed_modifications:
-        matches = re.search(PYTEST_REGEX, modification)
-        if matches != None:
-            return True
+    def matches_testfuncion(self, text):
+        function_match = re.search(TEST_REGEX, source_code)
+        subclass_match = re.search(SUBCLASS_REGEX, source_code)
+        return function_match != None and subclass_match == None
 
-    return False
+    def matches_testfuncion_in_list(self, text_list):
+        for element in text_list:
+            if matches_testfuncion(element):
+                return True
 
-
-def check_pytest_code(source_code):
-    if source_code == None:
         return False
-
-    return re.search(PYTEST_REGEX, source_code) != None
-
-
-def check_src_for_test_function(source_code):
-    if source_code == None:
-        return False
-
-    return re.search(TEST_REGEX, source_code) != None
-
-def check_diff_for_test_function(parsed_modifications):
-    if parsed_modifications == None or parsed_modifications == []:
-        return False
-
-    for line, modification in parsed_modifications:
-        matches = re.search(PYTEST_REGEX, modification)
-        if matches != None:
-            return True
-
-    return False

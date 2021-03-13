@@ -19,17 +19,16 @@ class CommitsMetrics:
         This method can only be used for migrated repositories
 
     """
-    def calculate(self, first_hash_unittest, last_hash_unittest, first_hash_pytest, last_hash_pytest):
+    def calculate(self, first_hash_unittest, last_hash_unittest, first_hash_pytest):
         idx_first_unittest_commit = self.commit_hashes.index(first_hash_unittest)
         idx_last_unittest_commit = self.commit_hashes.index(last_hash_unittest)
-
         idx_first_pytest_commit = self.commit_hashes.index(first_hash_pytest)
-        idx_last_pytest_commit = self.commit_hashes.index(last_hash_pytest)
 
         amount_total_commits = len(self.commit_hashes)
+        print(idx_first_unittest_commit, idx_last_unittest_commit, idx_first_pytest_commit)
         self.amount_commits_both = idx_last_unittest_commit - idx_first_pytest_commit
         self.amount_commits_unittest = idx_last_unittest_commit - idx_first_unittest_commit
-        self.amount_commits_pytest = idx_first_pytest_commit - idx_last_pytest_commit
+        self.amount_commits_pytest = amount_total_commits - 1 - idx_first_pytest_commit
         self.percentage_migration_commits = round(self.amount_commits_both/amount_total_commits * 100, 5)
 
         return

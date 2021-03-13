@@ -23,16 +23,25 @@ class CommitsAnalyzer:
         }
 
     def process_commits(self):
-        print("Analyzing ", self.project_name)
+        print("\nAnalyzing ", self.project_name, "...")
         for commit in self.miner.traverse_commits():
+            self.metrics.commit_hashes.append(commit.hash)
             for modification in commit.modifications:
+                if modification.source_code == None:
+                    continue
+
                 self.__match_patterns(modification)
                 self.__update_occurrences(commit, modification)
-                self.metrics.commit_hashes.append(commit.hash)
+
+        print("Analyzed", len(self.metrics.commit_hashes), " commits.")
         return
 
-    def process_metrics():
-        self.metrics.calculate()
+    def process_metrics(self):
+        first_hash_unittest = self.unittest_occurrences.first['commit_hash']
+        last_hash_unittest = self.unittest_occurrences.last['commit_hash']
+        first_hash_pytest = self.pytest_occurrences.first['commit_hash']
+
+        self.metrics.calculate(first_hash_unittest, last_hash_unittest, first_hash_pytest)
         return
 
     def __get_lines_from_diff(self, parsed_modifications):

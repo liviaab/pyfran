@@ -5,15 +5,17 @@ class UnittestHeuristics:
     pattern += "|(unittest)"
     pattern += "|(\s*from\s*unittest)"
 
-    def matches_a(self, text):
+    @classmethod
+    def matches_a(cls, text):
         if text == None:
             return False
 
-        return re.search(UnittestHeuristics.pattern, text) != None
+        return re.search(cls.pattern, text) != None
 
-    def matches_any(self, text_list):
+    @classmethod
+    def matches_any(cls, text_list):
         for element in text_list:
-            if matches_a(element):
+            if cls.matches_a(element):
                 return True
 
         return False

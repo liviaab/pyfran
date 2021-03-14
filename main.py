@@ -1,6 +1,7 @@
 from io_utils.input import *
 from io_utils.output import *
-from commits_analyzer.commits_analyzer import CommitsAnalyzer
+from analyzers.commits_analyzer import CommitsAnalyzer
+from analyzers.repository_analyzer import RepositoryAnalyzer
 
 
 def main(argv):
@@ -13,6 +14,29 @@ def main(argv):
 		analyzer.process_commits()
 		analyzer.process_metrics()
 
+		currentDefaultBranch = RepositoryAnalyzer(url)
+		# analyzer.metrics.print_default()
+
+		currentDefaultBranch.search_frameworks()
+		analyzer.metrics.print_default()
+
+		if (analyzer.unittest_occurrences.has_first_occurrence() \
+			and currentDefaultBranch.usesPytest() and not currentDefaultBranch.usesUnittest()
+			):
+			print("This repo was migrated")
+			analyzer.metrics.print_migration_percentage()
+		elif currentDefaultBranch.usesPytest() and currentDefaultBranch.usesUnittest():
+			print("This repo uses both frameworks")
+		elif currentDefaultBranch.usesPytest() \
+			and not analyzer.unittest_occurrences.has_first_occurrence():
+			print("This is a pytest repository since day one.")
+		elif currentDefaultBranch.usesUnittest() \
+			and not analyzer.pytest_occurrences.has_first_occurrence():
+			print("This is a unittest repository since day one.")
+		else:
+			print("Oops. I don't know about this repository.")
+
+		# print to file
 		fullpath = make_repository_out_path(analyzer.project_name)
 
 		# if(repo.unittest_first_occurrence != {}):
@@ -30,11 +54,6 @@ def main(argv):
 		# if(repo.pytest_last_occurrence != {}):
 		filename = fullpath + "pytest_last_removal.py"
 		create_file_from_source_code(filename, analyzer.pytest_occurrences.last)
-
-		print('amount_commits_unittest', analyzer.metrics.amount_commits_unittest)
-		print('amount_commits_pytest', analyzer.metrics.amount_commits_pytest)
-		print('amount_commits_both', analyzer.metrics.amount_commits_both)
-		print('percentage_migration_commits', analyzer.metrics.percentage_migration_commits)
 
 if __name__ == "__main__":
 	main(sys.argv[1:])

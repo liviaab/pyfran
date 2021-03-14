@@ -2,8 +2,8 @@ from heuristics.file import FileHeuristics
 from heuristics.pytest import PytestHeuristics
 from heuristics.unittest import UnittestHeuristics
 from pydriller import RepositoryMining
-from commits_analyzer.commits_metrics import CommitsMetrics
-from commits_analyzer.occurrences import Occurrences
+from analyzers.commits_metrics import CommitsMetrics
+from analyzers.occurrences import Occurrences
 
 class CommitsAnalyzer:
     def __init__(self, repo_url):

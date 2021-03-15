@@ -14,10 +14,11 @@ class RepositoryAnalyzer:
         self.__search_for_pytest()
 
     def usesUnittest(self):
-        return self.unittestResults["total_count"] and self.unittestResults["total_count"] > 0
+        return self.unittestResults["total_count"] > 0
 
     def usesPytest(self):
-        return self.pytestResults["total_count"] and self.pytestResults["total_count"] > 0
+
+        return self.pytestResults["total_count"] > 0
 
     def __search_for_unittest(self):
         query = "?q=unittest+in:file+repo:{}/{}".format(self.repo_org, self.repo_name)

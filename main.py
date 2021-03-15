@@ -15,8 +15,6 @@ def main(argv):
 		analyzer.process_metrics()
 
 		currentDefaultBranch = RepositoryAnalyzer(url)
-		# analyzer.metrics.print_default()
-
 		currentDefaultBranch.search_frameworks()
 		analyzer.metrics.print_default()
 
@@ -35,6 +33,7 @@ def main(argv):
 			print("This is a unittest repository since day one.")
 		else:
 			print("Oops. I don't know about this repository.")
+			print(currentDefaultBranch.usesPytest(), currentDefaultBranch.usesUnittest())
 
 		# print to file
 		fullpath = make_repository_out_path(analyzer.project_name)

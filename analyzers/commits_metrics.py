@@ -24,7 +24,7 @@ class CommitsMetrics:
         amount_total_commits = len(self.commit_hashes)
         self.amount_commits_both = idx_last_unittest_commit - idx_first_pytest_commit
         self.amount_commits_unittest = idx_last_unittest_commit - idx_first_unittest_commit
-        self.amount_commits_pytest = amount_total_commits - 1 - idx_first_pytest_commit
+        self.amount_commits_pytest = amount_total_commits - idx_first_pytest_commit
         self.percentage_migration_commits = round(self.amount_commits_both/amount_total_commits * 100, 5)
 
         return

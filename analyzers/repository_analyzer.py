@@ -1,33 +1,41 @@
+import os
+import sys
+from heuristics.file import FileHeuristics
+from heuristics.pytest import PytestHeuristics
+from heuristics.unittest import UnittestHeuristics
 from analyzers.github_service import GithubService
+
+VALID_EXTENSIONS = ['.py', '.yaml', '.yml', '.txt', '.md', '.ini', '.toml']
 
 class RepositoryAnalyzer:
     def __init__(self, repo_url):
-
         self.repo_org = repo_url.split('/')[-2]
         self.repo_name = repo_url.split('/')[-1]
         self.gh_service = GithubService()
-        self.unittestResults = {}
-        self.pytestResults = {}
+        self.usesUnittest = False
+        self.usesPytest = False
 
     def search_frameworks(self):
-        self.__search_for_unittest()
-        self.__search_for_pytest()
+        root_folder = self.gh_service.clone_repository(self.repo_org, self.repo_name)
+        self.__examine_repository(root_folder)
+        self.gh_service.remove_local_repository(self.repo_org, self.repo_name)
 
-    def usesUnittest(self):
-        return self.unittestResults["total_count"] > 0
+    def __examine_repository(self, root_folder):
+        walk_dir = os.path.abspath(root_folder)
 
-    def usesPytest(self):
+        for currentpath, folders, files in os.walk(walk_dir):
+            for file in files:
+                name, extension = os.path.splitext(file)
+                if extension not in VALID_EXTENSIONS:
+                    continue
 
-        return self.pytestResults["total_count"] > 0
+                with open(os.path.join(currentpath, file), 'r') as src:
+                    content = src.read()
+                    if UnittestHeuristics.matches_a(content):
+                        self.usesUnittest = True
 
-    def __search_for_unittest(self):
-        query = "?q=unittest+in:file+repo:{}/{}".format(self.repo_org, self.repo_name)
+                    if PytestHeuristics.matches_a(content):
+                        self.usesPytest = True
 
-        jsonResponse = self.gh_service.search_code(query)
-        self.unittestResults = jsonResponse
-
-    def __search_for_pytest(self):
-        query = "?q=pytest+in:file+repo:{}/{}".format(self.repo_org, self.repo_name)
-
-        jsonResponse = self.gh_service.search_code(query)
-        self.pytestResults = jsonResponse
+            if self.usesUnittest and self.usesPytest:
+                return

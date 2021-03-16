@@ -19,21 +19,21 @@ def main(argv):
 		analyzer.metrics.print_default()
 
 		if (analyzer.unittest_occurrences.has_first_occurrence() \
-			and currentDefaultBranch.usesPytest() and not currentDefaultBranch.usesUnittest()
+			and currentDefaultBranch.usesPytest and not currentDefaultBranch.usesUnittest
 			):
 			print("This repo was migrated")
 			analyzer.metrics.print_migration_percentage()
-		elif currentDefaultBranch.usesPytest() and currentDefaultBranch.usesUnittest():
+		elif currentDefaultBranch.usesPytest and currentDefaultBranch.usesUnittest:
 			print("This repo uses both frameworks")
-		elif currentDefaultBranch.usesPytest() \
+		elif currentDefaultBranch.usesPytest \
 			and not analyzer.unittest_occurrences.has_first_occurrence():
 			print("This is a pytest repository since day one.")
-		elif currentDefaultBranch.usesUnittest() \
+		elif currentDefaultBranch.usesUnittest \
 			and not analyzer.pytest_occurrences.has_first_occurrence():
 			print("This is a unittest repository since day one.")
 		else:
 			print("Oops. I don't know about this repository.")
-			print(currentDefaultBranch.usesPytest(), currentDefaultBranch.usesUnittest())
+			print(currentDefaultBranch.usesPytest, currentDefaultBranch.usesUnittest)
 
 		# print to file
 		fullpath = make_repository_out_path(analyzer.project_name)

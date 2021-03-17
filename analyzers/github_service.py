@@ -32,7 +32,6 @@ class GithubService:
             zip_ref.extractall(filepath)
 
         os.remove(zip_path)
-        print("Downloaded Repo")
         return filepath
 
     def remove_local_repository(self, org, name):

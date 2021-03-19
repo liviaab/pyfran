@@ -32,7 +32,7 @@ def process_aggregated(metrics):
 
 	print()
 	if len(metrics['ongoing']) == 0:
-		print('This batch does not have pytest only repositories')
+		print('This batch does not have repositories with ongoing migration')
 	else:
 		print('Repositories with ongoing migration', len(metrics['ongoing']))
 		print('Average of the amount of commits containing:')
@@ -46,7 +46,7 @@ def process_aggregated(metrics):
 
 	print()
 	if len(metrics['migrated']) == 0:
-		print('This batch does not have pytest only repositories')
+		print('This batch does not have migrated repositories')
 	else:
 		print('Migrated repositories', len(metrics['migrated']))
 		print('Average of the amount of commits containing:')

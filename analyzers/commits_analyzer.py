@@ -9,7 +9,6 @@ from analyzers.repository_analyzer import RepositoryAnalyzer
 class CommitsAnalyzer:
     def __init__(self, repo_url):
         self.repo_url = repo_url
-        self.miner = RepositoryMining(repo_url, only_in_branch="master", only_no_merge=True)
         self.project_name = repo_url.split('/')[-1]
         self.commit_hashes = []
         self.metrics = CommitsMetrics()
@@ -27,7 +26,17 @@ class CommitsAnalyzer:
 
     def process_commits(self):
         print("\nAnalyzing", self.project_name, "...")
-        for commit in self.miner.traverse_commits():
+        try:
+            self.__process_commits("master")
+        except:
+            self.__process_commits("main")
+
+        print("Analyzed", len(self.commit_hashes), " commits.")
+        return
+
+    def __process_commits(self, branch):
+        miner = RepositoryMining(self.repo_url, only_no_merge=True)
+        for commit in miner.traverse_commits():
             self.commit_hashes.append(commit.hash)
             for modification in commit.modifications:
                 if modification.source_code == None:
@@ -36,8 +45,6 @@ class CommitsAnalyzer:
                 self.__match_patterns(modification)
                 self.__update_occurrences(commit, modification)
 
-        print("Analyzed", len(self.commit_hashes), " commits.")
-        return
 
     def classify_and_process_metrics(self):
         """

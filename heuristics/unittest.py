@@ -1,16 +1,18 @@
 import re
+from pyparsing import Keyword, QuotedString, pythonStyleComment, quotedString
+
+docString = QuotedString(quoteChar='"""', multiline=True, unquoteResults=False)
 
 class UnittestHeuristics:
-    pattern =  "(\s*import\s*unittest)"
-    pattern += "|(unittest)"
-    pattern += "|(\s*from\s*unittest)"
+    keyword = "unittest"
 
     @classmethod
     def matches_a(cls, text):
         if text == None:
             return False
 
-        return re.search(cls.pattern, text) != None
+        expr = Keyword(cls.keyword).ignore(pythonStyleComment | quotedString | docString)
+        return list(expr.scanString(text)) != []
 
     @classmethod
     def matches_any(cls, text_list):

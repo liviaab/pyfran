@@ -1,7 +1,9 @@
+from pydriller import RepositoryMining
+
 from heuristics.file import FileHeuristics
 from heuristics.pytest import PytestHeuristics
 from heuristics.unittest import UnittestHeuristics
-from pydriller import RepositoryMining
+
 from analyzers.commits_metrics import CommitsMetrics
 from analyzers.occurrences import Occurrences
 from analyzers.repository_analyzer import RepositoryAnalyzer
@@ -19,8 +21,6 @@ class CommitsAnalyzer:
             "unittest_in_removed_diffs": False,
             "pytest_in_code": False,
             "pytest_in_removed_diffs": False,
-            "testfunction_in_code": False,
-            "testfunction_in_removed_diffs": False,
             "is_test_file": False
         }
 
@@ -120,8 +120,6 @@ class CommitsAnalyzer:
             "unittest_in_removed_diffs": UnittestHeuristics.matches_any(removed_lines),
             "pytest_in_code": PytestHeuristics.matches_a(modification.source_code),
             "pytest_in_removed_diffs": PytestHeuristics.matches_any(removed_lines),
-            "testfunction_in_code": PytestHeuristics.matches_testfuncion(modification.source_code),
-            "testfunction_in_removed_diffs": PytestHeuristics.matches_testfuncion_in_list(removed_lines),
             "is_test_file": FileHeuristics.matches_test_file(modification.new_path)
         }
         return
@@ -144,7 +142,8 @@ class CommitsAnalyzer:
             and self.memo["pytest_in_removed_diffs"] and not self.memo["pytest_in_code"] \
             or (not self.memo["unittest_in_removed_diffs"] \
                 and not self.memo["pytest_in_removed_diffs"] \
-                and self.memo["testfunction_in_removed_diffs"]):
+                # and self.memo["testfunction_in_removed_diffs"]
+                ):
             self.pytest_occurrences.set_last_occurrence(commit, modification)
 
         return

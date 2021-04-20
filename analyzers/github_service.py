@@ -20,7 +20,7 @@ class GithubService:
         )
 
         if response.status_code != 200:
-            raise Exception("Failed to query Github API")
+            raise Exception("Failed to query Github API. Response status {}".format(response.status_code))
 
         zip_path = "{}-{}.zip".format(org, name)
         with open(zip_path, "wb") as fd:

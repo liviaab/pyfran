@@ -1,41 +1,73 @@
 import os
 import sys
-from heuristics.file import FileHeuristics
+
 from heuristics.pytest import PytestHeuristics
 from heuristics.unittest import UnittestHeuristics
 from analyzers.github_service import GithubService
 
 VALID_EXTENSIONS = ['.py', '.yaml', '.yml', '.txt', '.md', '.ini', '.toml']
 
+def examine_local_repository(root_folder):
+    usesUnittest = False
+    usesPytest = False
+    walk_dir = os.path.abspath(root_folder)
+
+    for currentpath, _folders, files in os.walk(walk_dir):
+        for file in files:
+            _name, extension = os.path.splitext(file)
+            if extension not in VALID_EXTENSIONS:
+                continue
+
+            with open(os.path.join(currentpath, file), 'r') as src:
+                content = src.read()
+                if UnittestHeuristics.matches_a(content):
+                    usesUnittest = True
+
+                if PytestHeuristics.matches_a(content):
+                    usesPytest = True
+
+        if usesUnittest and usesPytest:
+            break
+
+    return (usesUnittest, usesPytest)
+
 class RepositoryAnalyzer:
     def __init__(self, repo_url):
-        self.repo_org = repo_url.split('/')[-2]
-        self.repo_name = repo_url.split('/')[-1]
-        self.gh_service = GithubService()
+        self.repo_url = repo_url
+        self.is_local = False if repo_url.startswith('http') else True
         self.usesUnittest = False
         self.usesPytest = False
 
     def search_frameworks(self):
-        root_folder = self.gh_service.clone_repository(self.repo_org, self.repo_name)
-        self.__examine_repository(root_folder)
-        self.gh_service.remove_local_repository(self.repo_org, self.repo_name)
+        service = RemoteRepositoryAnalyzer(self.repo_url)
 
-    def __examine_repository(self, root_folder):
-        walk_dir = os.path.abspath(root_folder)
+        if (self.is_local):
+            service = LocalRepositoryAnalyzer(self.repo_url)
 
-        for currentpath, folders, files in os.walk(walk_dir):
-            for file in files:
-                name, extension = os.path.splitext(file)
-                if extension not in VALID_EXTENSIONS:
-                    continue
+        usesUnittest, usesPytest = service.search_frameworks()
 
-                with open(os.path.join(currentpath, file), 'r') as src:
-                    content = src.read()
-                    if UnittestHeuristics.matches_a(content):
-                        self.usesUnittest = True
+        self.usesUnittest = usesUnittest
+        self.usesPytest = usesPytest
 
-                    if PytestHeuristics.matches_a(content):
-                        self.usesPytest = True
 
-            if self.usesUnittest and self.usesPytest:
-                return
+class LocalRepositoryAnalyzer:
+    def __init__(self, path):
+        self.path = path
+
+    def search_frameworks(self):
+        usesUnittest, usesPytest = examine_local_repository(self.path)
+        return (usesUnittest, usesPytest)
+
+class RemoteRepositoryAnalyzer:
+    def __init__(self, url):
+        self.url = url
+        self.repo_org = url.split('/')[-2]
+        self.repo_name = url.split('/')[-1]
+
+    def search_frameworks(self):
+        gh_service = GithubService()
+
+        root_folder = gh_service.clone_repository(self.repo_org, self.repo_name)
+        usesUnittest, usesPytest = examine_local_repository(root_folder)
+        gh_service.remove_local_repository(self.repo_org, self.repo_name)
+        return (usesUnittest, usesPytest)

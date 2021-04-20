@@ -59,6 +59,13 @@ def process_aggregated(metrics):
 		print('\t{}\t{}\t{}\t{}\t{}'.format(total, both,  pytest, unittest, percentage))
 	pass
 
+	print()
+	if len(metrics['undefined']) > 0:
+		print('We were unable to assign one of the previous classes to {} repositories'.format(len(metrics['undefined'])))
+	return
+
+
+
 def main(argv):
 	input_file = parse_command_line_arguments(argv)
 	urls = urls_from_input(input_file)
@@ -66,7 +73,8 @@ def main(argv):
 		'unittest': [],
 		'pytest': [],
 		'ongoing': [],
-		'migrated': []
+		'migrated': [],
+		'undefined': []
 	}
 
 	for url in urls:

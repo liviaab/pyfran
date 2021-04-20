@@ -1,8 +1,9 @@
 from pydriller import RepositoryMining
+from pyparsing import pythonStyleComment
 
-from heuristics.file import FileHeuristics
-from heuristics.pytest import PytestHeuristics
-from heuristics.unittest import UnittestHeuristics
+from heuristics.file import FileHeuristics as fh
+from heuristics.pytest import PytestHeuristics as ph
+from heuristics.unittest import UnittestHeuristics as uh
 
 from analyzers.commits_metrics import CommitsMetrics
 from analyzers.occurrences import Occurrences
@@ -25,7 +26,7 @@ class CommitsAnalyzer:
         }
 
     def process_commits(self):
-        print("\nAnalyzing", self.project_name, "...")
+        print("\nAnalyzing {}...".format(self.project_name))
         try:
             self.__process_commits("master")
         except:
@@ -38,10 +39,10 @@ class CommitsAnalyzer:
         miner = RepositoryMining(self.repo_url, only_no_merge=True)
         for commit in miner.traverse_commits():
             self.commit_hashes.append(commit.hash)
+
             for modification in commit.modifications:
                 if modification.source_code == None:
                     continue
-
                 self.__match_patterns(modification)
                 self.__update_occurrences(commit, modification)
 
@@ -50,7 +51,7 @@ class CommitsAnalyzer:
         """
             return: (class, metrics)
 
-            classes: unittest | pytest | ongoing | migrated
+            classes: unittest | pytest | ongoing | migrated | undefined
 
             metrics for ongoing and migrated repositories:
                 (
@@ -64,7 +65,7 @@ class CommitsAnalyzer:
         """
         if not self.unittest_occurrences.has_first_occurrence() \
             and self.pytest_occurrences.has_first_occurrence():
-
+            print("This is a pytest repository since the beginning")
             return 'pytest', len(self.commit_hashes)
 
         if not self.pytest_occurrences.has_first_occurrence() \
@@ -107,7 +108,7 @@ class CommitsAnalyzer:
                 return 'ongoing', metrics
 
         print("Unexpected control flow")
-        return
+        return 'undefined', 0
 
     def __get_lines_from_diff(self, parsed_modifications):
         return [ removed_line for line, removed_line in parsed_modifications ]
@@ -116,34 +117,42 @@ class CommitsAnalyzer:
         removed_lines = self.__get_lines_from_diff(modification.diff_parsed['deleted'])
 
         self.memo = {
-            "unittest_in_code": UnittestHeuristics.matches_a(modification.source_code),
-            "unittest_in_removed_diffs": UnittestHeuristics.matches_any(removed_lines),
-            "pytest_in_code": PytestHeuristics.matches_a(modification.source_code),
-            "pytest_in_removed_diffs": PytestHeuristics.matches_any(removed_lines),
-            "is_test_file": FileHeuristics.matches_test_file(modification.new_path)
+            "unittest_in_code": uh.matches_a(modification.source_code),
+            "unittest_in_removed_diffs": uh.matches_any(removed_lines, ignoreComments=False),
+            "pytest_in_code": ph.matches_a(modification.source_code),
+            "pytest_in_removed_diffs": ph.matches_any(removed_lines, ignoreComments=False),
+            "is_test_file": fh.matches_test_file(modification.new_path)
         }
+
         return
 
     def __update_occurrences(self, commit, modification):
-        if (not self.unittest_occurrences.has_first_occurrence()) \
-            and self.memo["unittest_in_code"]:
+        if self.__can_update_unittest_first_occurrence():
             self.unittest_occurrences.set_first_occurrence(commit, modification)
 
-        if self.unittest_occurrences.has_first_occurrence() \
-            and (self.memo["unittest_in_removed_diffs"] and (not self.memo["unittest_in_code"])):
+        if self.__can_update_unittest_last_occurrence():
             self.unittest_occurrences.set_last_occurrence(commit, modification)
 
-        if (not self.pytest_occurrences.has_first_occurrence()) \
-            and (self.memo["pytest_in_code"]):
+        if self.__can_update_pytest_first_occurrence():
             self.pytest_occurrences.set_first_occurrence(commit, modification)
 
-
-        if self.pytest_occurrences.has_first_occurrence() \
-            and self.memo["pytest_in_removed_diffs"] and not self.memo["pytest_in_code"] \
-            or (not self.memo["unittest_in_removed_diffs"] \
-                and not self.memo["pytest_in_removed_diffs"] \
-                # and self.memo["testfunction_in_removed_diffs"]
-                ):
+        if self.__can_update_pytest_last_occurrence():
             self.pytest_occurrences.set_last_occurrence(commit, modification)
 
         return
+
+    def __can_update_unittest_first_occurrence(self):
+        return (not self.unittest_occurrences.has_first_occurrence()) \
+            and self.memo["unittest_in_code"]
+
+    def __can_update_pytest_first_occurrence(self):
+        return (not self.pytest_occurrences.has_first_occurrence()) \
+            and self.memo["pytest_in_code"]
+
+    def __can_update_unittest_last_occurrence(self):
+        return self.unittest_occurrences.has_first_occurrence() \
+                and (self.memo["unittest_in_removed_diffs"])
+
+    def __can_update_pytest_last_occurrence(self):
+        return self.pytest_occurrences.has_first_occurrence() \
+            and self.memo["pytest_in_removed_diffs"]

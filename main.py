@@ -1,6 +1,6 @@
-from io_utils.input import *
-from io_utils.output import *
+from io_utils.input import InputUtil as iu
 from analyzers.commits_analyzer import CommitsAnalyzer
+import sys
 
 def avg(list):
 	return sum(list)/len(list)
@@ -67,8 +67,8 @@ def process_aggregated(metrics):
 
 
 def main(argv):
-	input_file = parse_command_line_arguments(argv)
-	urls = urls_from_input(input_file)
+	input_file = iu.parse_command_line_arguments(argv)
+	urls = iu.urls_from_input(input_file)
 	aggregated_metrics = {
 		'unittest': [],
 		'pytest': [],

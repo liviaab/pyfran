@@ -1,0 +1,8 @@
+https://github.com/pyca/cryptography, # 'fatal: bad revision 'master'
+https://github.com/RaRe-Technologies/smart_open, # branch principal é develop
+https://github.com/powerline/powerline,
+https://github.com/aiidateam/aiida-core,
+https://github.com/pyca/cryptography,
+https://github.com/zentralopensource/zentral,
+https://github.com/mail-in-a-box/mailinabox,  # Unexpected control flow
+https://github.com/sfepy/sfepy, # Unexpected control flow

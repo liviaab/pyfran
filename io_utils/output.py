@@ -1,25 +1,41 @@
 import os
 import shutil
+import csv
 from pprint import PrettyPrinter
+from datetime import datetime
+
+DEFAULT_DIR_PATH = "out/"
+DEFAULT_EXTENSION = '.csv'
 
 class OutputUtil:
     @classmethod
-    def clear_out_path(cls):
-        if os.path.exists("out/") and os.path.isdir("out/"):
-            shutil.rmtree("out/")
+    def create_out_path(cls, dir=DEFAULT_DIR_PATH):
+        # if os.path.exists(dir) and os.path.isdir(dir):
+        #     shutil.rmtree(dir)
+        
+        os.makedirs(dir)
+        return
 
     @classmethod
-    def make_repository_out_path(cls, repo_name):
-        if not os.path.exists("out"):
-            os.makedirs("out")
+    def output_to(cls, repo_name, data, extension=DEFAULT_EXTENSION, filepath=DEFAULT_DIR_PATH, depth=1):
+        full_path = os.path.join(filepath, repo_name + extension)
+        pprinter = PrettyPrinter(depth=depth)
 
-        if not os.path.exists("out/" + repo_name):
-            os.makedirs("out/" + repo_name)
+        with open(full_path, "w") as f:
+            f.write(pprinter.pformat(data))
 
-        return "out/" + repo_name + "/"
+        return
 
     @classmethod
-    def create_file_from_source_code(cls, filename, info_dict):
-        pprinter = PrettyPrinter()
-        with open(filename,"w") as f:
-            f.write(pprinter.pformat(info_dict))
+    def output_as_csv(cls, filename, data, columns, filepath=DEFAULT_DIR_PATH):
+        full_path = os.path.join(filepath, filename + DEFAULT_EXTENSION)
+
+        with open(full_path, "w") as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=columns)
+            writer.writeheader()
+
+            for _category, repos in data.items():
+                for repo in repos:
+                    writer.writerow(repo)
+        
+        return

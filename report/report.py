@@ -2,11 +2,11 @@ import statistics
 from pprint import PrettyPrinter
 
 def mean(values):
-    return statistics.mean(values) if len(values) > 0 else '-'
+    return round(statistics.mean(values), 2) if len(values) > 0 else '-'
     
 
 def median(values):
-    return statistics.median(values) if len(values) > 0 else '-'
+    return round(statistics.median(values),2) if len(values) > 0 else '-'
 
 def safe_max(values):
     return max(values) if len(values) > 0 else '-'

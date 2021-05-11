@@ -24,17 +24,20 @@ def examine_local_repository(root_folder):
                 continue
 
             with open(os.path.join(currentpath, file), 'r') as src:
-                content = src.read()
-                if UnittestHeuristics.matches_a(content):
-                    usesUnittest = True
-                    nof_unittest += 1
+                try:
+                    content = src.read()
+                    if UnittestHeuristics.matches_a(content):
+                        usesUnittest = True
+                        nof_unittest += 1
 
-                if PytestHeuristics.matches_a(content):
-                    usesPytest = True
-                    nof_pytest +=1
+                    if PytestHeuristics.matches_a(content):
+                        usesPytest = True
+                        nof_pytest +=1
 
-                if UnittestHeuristics.matches_a(content) and PytestHeuristics.matches_a(content):
-                    nof_both += 1
+                    if UnittestHeuristics.matches_a(content) and PytestHeuristics.matches_a(content):
+                        nof_both += 1
+                except:
+                    print("Something went wrong at {}".format(os.path.join(currentpath, file)))
 
     return (usesUnittest, usesPytest, nof_unittest, nof_pytest, nof_both)
 

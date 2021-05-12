@@ -7,7 +7,7 @@ class Occurrences:
         self.first = {
             "file": modification.new_path,
             "author": commit.author.name,
-            "date": str(commit.author_date),
+            "date": commit.author_date,
             "commit_hash": commit.hash,
             "commit_message": commit.msg,
             "project_name": commit.project_name,
@@ -19,7 +19,7 @@ class Occurrences:
         self.last = {
             "file": modification.new_path,
             "author": commit.author.name,
-            "date": str(commit.author_date),
+            "date": commit.author_date,
             "commit_hash": commit.hash,
             "commit_message": commit.msg,
             "project_name": commit.project_name,

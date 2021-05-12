@@ -45,6 +45,7 @@ class Report:
         NOC_BOTH: number of commits using unittest
 
         OCM: the migration happened in one commit?
+        NOD: number of days the migration took (or is taking)
 
         NOF = Number of files analyzed
         NOF_UNITTEST: Number of files using unittest

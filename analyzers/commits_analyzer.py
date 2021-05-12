@@ -91,7 +91,9 @@ class CommitsAnalyzer:
             
             'NOC': amount_total_commits,
 
+            'NOD': 0,
             'OCM': False,
+
             'NOF': currentDefaultBranch.count_files(),
             'NOF_UNITTEST': currentDefaultBranch.nof_unittest,
             'NOF_PYTEST': currentDefaultBranch.nof_pytest,
@@ -135,6 +137,7 @@ class CommitsAnalyzer:
             and self.pytest_occurrences.has_first_occurrence()):
             idx_first_unittest_commit = self.commit_hashes.index(self.unittest_occurrences.first["commit_hash"])
             idx_first_pytest_commit = self.commit_hashes.index(self.pytest_occurrences.first["commit_hash"])
+            timedelta = self.pytest_occurrences.first["date"] - self.unittest_occurrences.last["date"] 
 
             if(currentDefaultBranch.usesPytest and not currentDefaultBranch.usesUnittest):
                 idx_last_unittest_commit = self.commit_hashes.index(self.unittest_occurrences.last["commit_hash"])
@@ -144,7 +147,8 @@ class CommitsAnalyzer:
                     'NOC_UNITTEST': idx_last_unittest_commit - idx_first_unittest_commit,
                     'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
                     'NOC_BOTH': idx_last_unittest_commit - idx_first_pytest_commit,
-                    'OCM': True if idx_last_unittest_commit - idx_first_pytest_commit else False
+                    'OCM': True if idx_last_unittest_commit - idx_first_pytest_commit else False,
+                    'NOD': timedelta.days
                 }
 
                 base.update(data)
@@ -155,7 +159,8 @@ class CommitsAnalyzer:
                     'CATEGORY': 'ongoing',
                     'NOC_UNITTEST': amount_total_commits - idx_first_unittest_commit,
                     'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
-                    'NOC_BOTH': amount_total_commits - idx_first_pytest_commit
+                    'NOC_BOTH': amount_total_commits - idx_first_pytest_commit,
+                    'NOD': timedelta.days
                 }
                 base.update(data)
                 return base

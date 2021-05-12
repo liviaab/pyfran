@@ -91,6 +91,7 @@ class CommitsAnalyzer:
             
             'NOC': amount_total_commits,
 
+            'OCM': False,
             'NOF': currentDefaultBranch.count_files(),
             'NOF_UNITTEST': currentDefaultBranch.nof_unittest,
             'NOF_PYTEST': currentDefaultBranch.nof_pytest,
@@ -142,7 +143,8 @@ class CommitsAnalyzer:
                     'CATEGORY': 'migrated',
                     'NOC_UNITTEST': idx_last_unittest_commit - idx_first_unittest_commit,
                     'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
-                    'NOC_BOTH': idx_last_unittest_commit - idx_first_pytest_commit
+                    'NOC_BOTH': idx_last_unittest_commit - idx_first_pytest_commit,
+                    'OCM': True if idx_last_unittest_commit - idx_first_pytest_commit else False
                 }
 
                 base.update(data)

@@ -44,6 +44,8 @@ class Report:
         NOC_PYTEST: number of commits using pytest
         NOC_BOTH: number of commits using unittest
 
+        OCM: the migration happened in one commit?
+
         NOF = Number of files analyzed
         NOF_UNITTEST: Number of files using unittest
         NOF_PYTEST: Number of files using pytest

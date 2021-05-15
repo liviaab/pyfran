@@ -1,30 +1,16 @@
+from analyzers.custom_commit import CustomCommit
+
 class Occurrences:
     def __init__(self):
-        self.first = {}
-        self.last = {}
+        self.first = CustomCommit()
+        self.last = CustomCommit()
 
-    def set_first_occurrence(self, commit, modification):
-        self.first = {
-            "file": modification.new_path,
-            "author": commit.author.name,
-            "date": commit.author_date,
-            "commit_hash": commit.hash,
-            "commit_message": commit.msg,
-            "project_name": commit.project_name,
-            "source_code": modification.source_code
-        }
+    def set_first_occurrence(self, index, commit):
+        self.first.setCommit(index, commit)
         return
 
-    def set_last_occurrence(self, commit, modification):
-        self.last = {
-            "file": modification.new_path,
-            "author": commit.author.name,
-            "date": commit.author_date,
-            "commit_hash": commit.hash,
-            "commit_message": commit.msg,
-            "project_name": commit.project_name,
-            "source_code": modification.source_code
-        }
+    def set_last_occurrence(self, index, commit):
+        self.last.setCommit(index, commit)
         return
 
     def has_first_occurrence(self):

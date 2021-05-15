@@ -8,7 +8,7 @@ from heuristics.file import FileHeuristics as fh
 from heuristics.pytest import PytestHeuristics as ph
 from heuristics.unittest import UnittestHeuristics as uh
 
-# from analyzers.commits_metrics import CommitsMetrics
+from analyzers.custom_commit import CustomCommit
 from analyzers.occurrences import Occurrences
 from analyzers.repository_analyzer import RepositoryAnalyzer
 
@@ -18,7 +18,6 @@ class CommitsAnalyzer:
     def __init__(self, repo_url):
         self.repo_url = repo_url
         self.project_name = repo_url.split('/')[-1]
-        self.commit_hashes = []
         self.noc_unittest = 0
         self.noc_pytest = 0
         self.noc_both = 0
@@ -31,6 +30,7 @@ class CommitsAnalyzer:
             "pytest_in_removed_diffs": False,
             "is_test_file": False
         }
+        self.commits = []
 
     def process_and_classify(self):
         now = datetime.now()
@@ -43,6 +43,7 @@ class CommitsAnalyzer:
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
         print("Time marker #3 - classify", dt_string)
         data = self.__classify_and_process_metrics()
+
         return data
 
     def __process_commits(self):
@@ -52,17 +53,18 @@ class CommitsAnalyzer:
         except:
             self.__do_process_commits("main")
 
-        print("Analyzed {} commits.".format(len(self.commit_hashes)))
+        print("Analyzed {} commits.".format(len(self.commits)))
         return
 
     def __do_process_commits(self, branch):
         miner = RepositoryMining(self.repo_url, only_no_merge=True)
+        index = 0
         for commit in miner.traverse_commits():
             now = datetime.now()
-            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-            print("\t\t{} at {}".format(commit.hash, dt_string))
+            print("\t\t{} at {}".format(commit.hash, now.strftime("%d/%m/%Y %H:%M:%S")))
 
-            self.commit_hashes.append(commit.hash)
+            custom_commit = CustomCommit(index, commit)
+            self.commits.append(custom_commit)
 
             for modification in commit.modifications:
                 _filename, extension = os.path.splitext(modification.filename)
@@ -70,7 +72,9 @@ class CommitsAnalyzer:
                     continue
 
                 self.__match_patterns(modification)
-                self.__update_occurrences(commit, modification)
+                self.__update_occurrences(index, commit, modification)
+
+            index += 1
 
         return
 
@@ -83,7 +87,8 @@ class CommitsAnalyzer:
 
         commit_base_url = self.repo_url + '/commit/'
 
-        amount_total_commits = len(self.commit_hashes)
+        amount_total_commits = len(self.commits)
+        number_of_authors = CustomCommit.get_total_count_authors(self.commits)
 
         base = {
             'REPOSITORY_NAME': self.project_name,
@@ -93,6 +98,8 @@ class CommitsAnalyzer:
 
             'NOD': 0,
             'OCM': False,
+            'NOA': number_of_authors,
+            'NOMA': '-',
 
             'NOF': currentDefaultBranch.count_files(),
             'NOF_UNITTEST': currentDefaultBranch.nof_unittest,
@@ -135,37 +142,41 @@ class CommitsAnalyzer:
 
         if (self.unittest_occurrences.has_first_occurrence() \
             and self.pytest_occurrences.has_first_occurrence()):
-            idx_first_unittest_commit = self.commit_hashes.index(self.unittest_occurrences.first["commit_hash"])
-            idx_first_pytest_commit = self.commit_hashes.index(self.pytest_occurrences.first["commit_hash"])
-            timedelta = self.pytest_occurrences.first["date"] - self.unittest_occurrences.last["date"] 
+            idx_first_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.first["commit_hash"])
+            idx_first_pytest_commit = CustomCommit.indexOf(self.commits, self.pytest_occurrences.first["commit_hash"])
+            timedelta = self.unittest_occurrences.last["date"] - self.pytest_occurrences.first["date"] 
 
             if(currentDefaultBranch.usesPytest and not currentDefaultBranch.usesUnittest):
-                idx_last_unittest_commit = self.commit_hashes.index(self.unittest_occurrences.last["commit_hash"])
+                idx_last_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.last["commit_hash"])
+                number_of_migration_authors = CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, idx_last_unittest_commit)
 
                 data = {
                     'CATEGORY': 'migrated',
                     'NOC_UNITTEST': idx_last_unittest_commit - idx_first_unittest_commit,
                     'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
                     'NOC_BOTH': idx_last_unittest_commit - idx_first_pytest_commit,
-                    'OCM': True if idx_last_unittest_commit - idx_first_pytest_commit else False,
-                    'NOD': timedelta.days
+                    'OCM': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
+                    'NOD': timedelta.days,
+                    'NOMA': number_of_migration_authors
                 }
-
                 base.update(data)
                 return base
 
             if(currentDefaultBranch.usesPytest and currentDefaultBranch.usesUnittest):
+                number_of_migration_authors = CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, amount_total_commits - 1)
+
                 data = {
                     'CATEGORY': 'ongoing',
                     'NOC_UNITTEST': amount_total_commits - idx_first_unittest_commit,
                     'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
                     'NOC_BOTH': amount_total_commits - idx_first_pytest_commit,
-                    'NOD': timedelta.days
+                    'NOD': timedelta.days,
+                    'NOMA': number_of_migration_authors
                 }
                 base.update(data)
                 return base
 
-        data = {'CATEGORY': 'unknown' }
+        data = {'CATEGORY': 'unknown'}
         base.update(data)
         return base
 
@@ -186,18 +197,18 @@ class CommitsAnalyzer:
 
         return
 
-    def __update_occurrences(self, commit, modification):
+    def __update_occurrences(self, index, commit, modification):
         if self.__can_update_unittest_first_occurrence():
-            self.unittest_occurrences.set_first_occurrence(commit, modification)
+            self.unittest_occurrences.set_first_occurrence(index, commit, modification)
 
         if self.__can_update_unittest_last_occurrence():
-            self.unittest_occurrences.set_last_occurrence(commit, modification)
+            self.unittest_occurrences.set_last_occurrence(index, commit, modification)
 
         if self.__can_update_pytest_first_occurrence():
-            self.pytest_occurrences.set_first_occurrence(commit, modification)
+            self.pytest_occurrences.set_first_occurrence(index, commit, modification)
 
         if self.__can_update_pytest_last_occurrence():
-            self.pytest_occurrences.set_last_occurrence(commit, modification)
+            self.pytest_occurrences.set_last_occurrence(index, commit, modification)
 
         return
 

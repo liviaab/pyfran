@@ -1,14 +1,20 @@
 class CustomCommit:
     def __init__(self, index=None, pydrillerCommitObj=None):
-        if pydrillerCommitObj == None:
-            self.commit = {}
-        else: 
-            self.commit.setCommit(index, pydrillerCommitObj)
+        self.commit = {}
+
+        if pydrillerCommitObj != None:
+            self.commit = {
+                "commit_index": index,
+                "author": pydrillerCommitObj.author.email,
+                "date": pydrillerCommitObj.author_date,
+                "commit_hash": pydrillerCommitObj.hash,
+                "commit_message": pydrillerCommitObj.msg
+            }
 
     def setCommit(self, index, pydrillerCommitObj):
         self.commit = {
             "commit_index": index,
-            "author": pydrillerCommitObj.author.name,
+            "author": pydrillerCommitObj.author.email,
             "date": pydrillerCommitObj.author_date,
             "commit_hash": pydrillerCommitObj.hash,
             "commit_message": pydrillerCommitObj.msg

@@ -15,6 +15,8 @@ def repository_columns():
                 "NOC_PYTEST",
                 "NOC_BOTH",
                 "OCM",
+                "NOA",
+                "NOMA",
                 "NOD",
                 "NOF",
                 "NOF_UNITTEST",

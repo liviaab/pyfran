@@ -1,3 +1,4 @@
+from io_utils.output import OutputUtil
 import os
 from datetime import datetime
 
@@ -33,16 +34,16 @@ class CommitsAnalyzer:
         self.commits = []
 
     def process_and_classify(self):
-        now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        print("Time marker #2 - process commits", dt_string)
-
+        print("Time marker #2 - process commits", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         self.__process_commits()
 
-        now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        print("Time marker #3 - classify", dt_string)
+        print("Time marker #3 - classify", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         data = self.__classify_and_process_metrics()
+
+        print("Time marker #3.5 - dump commit messages", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        columns = ["commit_index", "author", "date", "commit_hash", "commit_message"]
+        OutputUtil.create_out_path("commit_messages/")
+        OutputUtil.output_list_as_csv(self.project_name, self.commits, columns, "commit_messages/")
 
         return data
 
@@ -63,8 +64,8 @@ class CommitsAnalyzer:
             now = datetime.now()
             print("\t\t{} at {}".format(commit.hash, now.strftime("%d/%m/%Y %H:%M:%S")))
 
-            custom_commit = CustomCommit(index, commit)
-            self.commits.append(custom_commit)
+            custom = CustomCommit(index, commit)
+            self.commits.append(custom.commit)
 
             for modification in commit.modifications:
                 _filename, extension = os.path.splitext(modification.filename)
@@ -106,15 +107,15 @@ class CommitsAnalyzer:
             'NOF_PYTEST': currentDefaultBranch.nof_pytest,
             'NOF_BOTH': currentDefaultBranch.nof_both,
 
-            'FC_UNITTEST': self.unittest_occurrences.first['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
-            'FC_PYTEST': self.pytest_occurrences.first['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
-            'FC_UNITTEST_LINK': commit_base_url + self.unittest_occurrences.first['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
-            'FC_PYTEST_LINK': commit_base_url + self.pytest_occurrences.first['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
+            'FC_UNITTEST': self.unittest_occurrences.first.commit['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
+            'FC_PYTEST': self.pytest_occurrences.first.commit['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
+            'FC_UNITTEST_LINK': commit_base_url + self.unittest_occurrences.first.commit['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
+            'FC_PYTEST_LINK': commit_base_url + self.pytest_occurrences.first.commit['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
 
-            'LC_UNITTEST': self.unittest_occurrences.last['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
-            'LC_PYTEST': self.pytest_occurrences.last['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
-            'LC_UNITTEST_LINK': commit_base_url + self.unittest_occurrences.last['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
-            'LC_PYTEST_LINK': commit_base_url + self.pytest_occurrences.last['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
+            'LC_UNITTEST': self.unittest_occurrences.last.commit['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
+            'LC_PYTEST': self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
+            'LC_UNITTEST_LINK': commit_base_url + self.unittest_occurrences.last.commit['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
+            'LC_PYTEST_LINK': commit_base_url + self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
         }
 
         if not self.unittest_occurrences.has_first_occurrence() \
@@ -142,12 +143,12 @@ class CommitsAnalyzer:
 
         if (self.unittest_occurrences.has_first_occurrence() \
             and self.pytest_occurrences.has_first_occurrence()):
-            idx_first_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.first["commit_hash"])
-            idx_first_pytest_commit = CustomCommit.indexOf(self.commits, self.pytest_occurrences.first["commit_hash"])
-            timedelta = self.unittest_occurrences.last["date"] - self.pytest_occurrences.first["date"] 
+            idx_first_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.first.commit["commit_hash"])
+            idx_first_pytest_commit = CustomCommit.indexOf(self.commits, self.pytest_occurrences.first.commit["commit_hash"])
+            timedelta = self.unittest_occurrences.last.commit["date"] - self.pytest_occurrences.first.commit["date"] 
 
             if(currentDefaultBranch.usesPytest and not currentDefaultBranch.usesUnittest):
-                idx_last_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.last["commit_hash"])
+                idx_last_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.last.commit["commit_hash"])
                 number_of_migration_authors = CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, idx_last_unittest_commit)
 
                 data = {
@@ -199,16 +200,16 @@ class CommitsAnalyzer:
 
     def __update_occurrences(self, index, commit, modification):
         if self.__can_update_unittest_first_occurrence():
-            self.unittest_occurrences.set_first_occurrence(index, commit, modification)
+            self.unittest_occurrences.set_first_occurrence(index, commit)
 
         if self.__can_update_unittest_last_occurrence():
-            self.unittest_occurrences.set_last_occurrence(index, commit, modification)
+            self.unittest_occurrences.set_last_occurrence(index, commit)
 
         if self.__can_update_pytest_first_occurrence():
-            self.pytest_occurrences.set_first_occurrence(index, commit, modification)
+            self.pytest_occurrences.set_first_occurrence(index, commit)
 
         if self.__can_update_pytest_last_occurrence():
-            self.pytest_occurrences.set_last_occurrence(index, commit, modification)
+            self.pytest_occurrences.set_last_occurrence(index, commit)
 
         return
 

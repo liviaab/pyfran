@@ -14,7 +14,7 @@ class Occurrences:
         return
 
     def has_first_occurrence(self):
-        return self.first != {}
+        return self.first.commit != {}
 
     def has_last_occurrence(self):
-        return self.last != {}
+        return self.last.commit != {}

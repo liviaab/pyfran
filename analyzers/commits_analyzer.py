@@ -100,7 +100,7 @@ class CommitsAnalyzer:
             'NOD': 0,
             'OCM': False,
             'NOA': number_of_authors,
-            'NOMA': '-',
+            'NOMA': 0,
 
             'NOF': currentDefaultBranch.count_files(),
             'NOF_UNITTEST': currentDefaultBranch.nof_unittest,

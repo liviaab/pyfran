@@ -33,7 +33,7 @@ class CustomCommit:
         sortedList = sorted(customCommitList, key=lambda x: x["commit_index"])
         authors = set()
 
-        for i in range(initialIndex, finalIndex):
+        for i in range(initialIndex, finalIndex+1):
             authors.add(sortedList[i]["author"])
 
         return len(authors)

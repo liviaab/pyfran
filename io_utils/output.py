@@ -10,10 +10,9 @@ DEFAULT_EXTENSION = '.csv'
 class OutputUtil:
     @classmethod
     def create_out_path(cls, dir=DEFAULT_DIR_PATH):
-        # if os.path.exists(dir) and os.path.isdir(dir):
-        #     shutil.rmtree(dir)
-        
-        os.makedirs(dir)
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+
         return
 
     @classmethod
@@ -38,4 +37,17 @@ class OutputUtil:
                 for repo in repos:
                     writer.writerow(repo)
         
+        return
+
+    @classmethod
+    def output_list_as_csv(cls, filename, dataList, columns, filepath=DEFAULT_DIR_PATH):
+        full_path = os.path.join(filepath, filename + DEFAULT_EXTENSION)
+
+        with open(full_path, "w") as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=columns)
+            writer.writeheader()
+
+            for item in dataList:
+                writer.writerow(item)
+
         return

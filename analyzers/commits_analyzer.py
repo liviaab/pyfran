@@ -41,7 +41,7 @@ class CommitsAnalyzer:
         data = self.__classify_and_process_metrics()
 
         print("Time marker #3.5 - dump commit messages", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-        columns = ["commit_index", "author", "date", "commit_hash", "commit_message"]
+        columns = ["commit_index", "author_name", "author_email", "date", "commit_hash", "commit_message"]
         OutputUtil.create_out_path("commit_messages/")
         OutputUtil.output_list_as_csv(self.project_name, self.commits, columns, "commit_messages/")
 

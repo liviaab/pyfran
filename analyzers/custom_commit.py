@@ -5,7 +5,8 @@ class CustomCommit:
         if pydrillerCommitObj != None:
             self.commit = {
                 "commit_index": index,
-                "author": pydrillerCommitObj.author.email,
+                "author_email": pydrillerCommitObj.author.email,
+                "author_name": pydrillerCommitObj.author.name,
                 "date": pydrillerCommitObj.author_date,
                 "commit_hash": pydrillerCommitObj.hash,
                 "commit_message": pydrillerCommitObj.msg
@@ -14,7 +15,8 @@ class CustomCommit:
     def setCommit(self, index, pydrillerCommitObj):
         self.commit = {
             "commit_index": index,
-            "author": pydrillerCommitObj.author.email,
+            "author_email": pydrillerCommitObj.author.email,
+            "author_name": pydrillerCommitObj.author.name,
             "date": pydrillerCommitObj.author_date,
             "commit_hash": pydrillerCommitObj.hash,
             "commit_message": pydrillerCommitObj.msg
@@ -24,7 +26,7 @@ class CustomCommit:
     def get_total_count_authors(cls, customCommitList):
         authors = set()
         for el in customCommitList:
-            authors.add(el["author"])
+            authors.add(el["author_name"])
         
         return len(authors)
     
@@ -34,7 +36,7 @@ class CustomCommit:
         authors = set()
 
         for i in range(initialIndex, finalIndex+1):
-            authors.add(sortedList[i]["author"])
+            authors.add(sortedList[i]["author_name"])
 
         return len(authors)
     

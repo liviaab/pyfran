@@ -83,13 +83,17 @@ class CommitsAnalyzer:
         """
             classes: unittest | pytest | ongoing | migrated | unknown
         """
+
+        idx_first_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.first.commit["commit_hash"])
+        idx_first_pytest_commit = CustomCommit.indexOf(self.commits, self.pytest_occurrences.first.commit["commit_hash"])
+
         currentDefaultBranch = RepositoryAnalyzer(self.repo_url)
         currentDefaultBranch.search_frameworks()
 
         commit_base_url = self.repo_url + '/commit/'
 
         amount_total_commits = len(self.commits)
-        number_of_authors = CustomCommit.get_total_count_authors(self.commits)
+        number_of_authors_names, number_of_authors_emails  = CustomCommit.get_total_count_authors(self.commits)
 
         base = {
             'REPOSITORY_NAME': self.project_name,
@@ -99,8 +103,12 @@ class CommitsAnalyzer:
 
             'NOD': 0,
             'OCM': False,
-            'NOA': number_of_authors,
-            'NOMA': 0,
+            'NOA (name)': number_of_authors_names,
+            'NOMA (name)': 0,
+            "NOMAP (name)": 0,
+            'NOA (email)': number_of_authors_emails,
+            'NOMA (email)': 0,
+            "NOMAP (email)": 0,
 
             'NOF': currentDefaultBranch.count_files(),
             'NOF_UNITTEST': currentDefaultBranch.nof_unittest,
@@ -118,7 +126,8 @@ class CommitsAnalyzer:
             'LC_PYTEST_LINK': commit_base_url + self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
         }
 
-        if not self.unittest_occurrences.has_first_occurrence() \
+        if idx_first_unittest_commit <= idx_first_pytest_commit and \
+            not self.unittest_occurrences.has_first_occurrence() \
             and self.pytest_occurrences.has_first_occurrence():
 
             data = {
@@ -130,7 +139,8 @@ class CommitsAnalyzer:
             base.update(data)
             return base
 
-        if not self.pytest_occurrences.has_first_occurrence() \
+        if idx_first_unittest_commit <= idx_first_pytest_commit and \
+            not self.pytest_occurrences.has_first_occurrence() \
             and self.unittest_occurrences.has_first_occurrence():
             data = {
                 'CATEGORY': 'unittest',
@@ -141,15 +151,15 @@ class CommitsAnalyzer:
             base.update(data)
             return base
 
-        if (self.unittest_occurrences.has_first_occurrence() \
-            and self.pytest_occurrences.has_first_occurrence()):
-            idx_first_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.first.commit["commit_hash"])
-            idx_first_pytest_commit = CustomCommit.indexOf(self.commits, self.pytest_occurrences.first.commit["commit_hash"])
-            timedelta = self.unittest_occurrences.last.commit["date"] - self.pytest_occurrences.first.commit["date"] 
+        if (self.unittest_occurrences.has_first_occurrence() and \
+            self.pytest_occurrences.has_first_occurrence()) and \
+            idx_first_unittest_commit <= idx_first_pytest_commit:
 
             if(currentDefaultBranch.usesPytest and not currentDefaultBranch.usesUnittest):
                 idx_last_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.last.commit["commit_hash"])
-                number_of_migration_authors = CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, idx_last_unittest_commit)
+                number_of_migration_authors_names, number_of_migration_authors_emails = \
+                    CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, idx_last_unittest_commit)
+                timedelta = self.unittest_occurrences.last.commit["date"] - self.pytest_occurrences.first.commit["date"]
 
                 data = {
                     'CATEGORY': 'migrated',
@@ -158,13 +168,19 @@ class CommitsAnalyzer:
                     'NOC_BOTH': idx_last_unittest_commit - idx_first_pytest_commit,
                     'OCM': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
                     'NOD': timedelta.days,
-                    'NOMA': number_of_migration_authors
+                    'NOMA (name)': number_of_migration_authors_names,
+                    "NOMAP (name)": number_of_migration_authors_names / base["NOA (name)"],
+                    'NOMA (email)': number_of_migration_authors_emails,
+                    "NOMAP (email)": number_of_migration_authors_emails / base["NOA (email)"]
                 }
                 base.update(data)
                 return base
 
             if(currentDefaultBranch.usesPytest and currentDefaultBranch.usesUnittest):
-                number_of_migration_authors = CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, amount_total_commits - 1)
+                number_of_migration_authors_names, number_of_migration_authors_emails = \
+                    CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, amount_total_commits - 1)
+
+                timedelta = datetime.datetime.now() - self.pytest_occurrences.first.commit["date"]
 
                 data = {
                     'CATEGORY': 'ongoing',
@@ -172,7 +188,10 @@ class CommitsAnalyzer:
                     'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
                     'NOC_BOTH': amount_total_commits - idx_first_pytest_commit,
                     'NOD': timedelta.days,
-                    'NOMA': number_of_migration_authors
+                    'NOMA (name)': number_of_migration_authors_names,
+                    "NOMAP (name)": number_of_migration_authors_names / base["NOA (name)"],
+                    'NOMA (email)': number_of_migration_authors_emails,
+                    "NOMAP (email)": number_of_migration_authors_emails / base["NOA (email)"]
                 }
                 base.update(data)
                 return base

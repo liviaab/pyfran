@@ -24,21 +24,25 @@ class CustomCommit:
     
     @classmethod
     def get_total_count_authors(cls, customCommitList):
-        authors = set()
+        author_names = set()
+        author_emails = set()
         for el in customCommitList:
-            authors.add(el["author_name"])
+            author_names.add(el["author_name"])
+            author_emails.add(el["author_emails"])
         
-        return len(authors)
+        return len(author_names), len(author_emails)
     
     @classmethod
     def get_authors_count_between(cls, customCommitList, initialIndex, finalIndex):
         sortedList = sorted(customCommitList, key=lambda x: x["commit_index"])
-        authors = set()
+        author_names = set()
+        author_emails = set()
 
         for i in range(initialIndex, finalIndex+1):
-            authors.add(sortedList[i]["author_name"])
+            author_names.add(sortedList[i]["author_name"])
+            author_emails.add(sortedList[i]["author_emails"])
 
-        return len(authors)
+        return len(author_names), len(author_emails)
     
     @classmethod
     def indexOf(cls, customCommitList, commit_hash):

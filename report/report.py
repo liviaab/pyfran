@@ -83,6 +83,8 @@ class Report:
     Aggregated metrics of all categories 
     """
     def process_aggregated(self):
+        pprinter = PrettyPrinter()
+        pprinter.pprint(self.metrics_per_category)
         for key, repos in self.metrics_per_category.items():
             nocs = [ r['NOC'] for r in repos ]
             nocs_unittest = [ r['NOC_UNITTEST'] for r in repos ]

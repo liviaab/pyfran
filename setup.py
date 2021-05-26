@@ -7,5 +7,5 @@ setup(
     author="Lívia Almeida Barbosa",
     description="This project is the backend of an application used to "
                 "something...",
-    url="https://github.com/liviaab/pydriller_basics",
+    url="https://github.com/liviaab/pyfran",
 )

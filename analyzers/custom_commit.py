@@ -1,26 +1,40 @@
 class CustomCommit:
-    def __init__(self, index=None, pydrillerCommitObj=None):
-        self.commit = {}
-
+    def __init__(self, index=None, pydrillerCommitObj=None, custom_obj=None):
+        obj = {}
         if pydrillerCommitObj != None:
-            self.commit = {
+            obj = {
                 "commit_index": index,
                 "author_email": pydrillerCommitObj.author.email,
                 "author_name": pydrillerCommitObj.author.name,
                 "date": pydrillerCommitObj.author_date,
                 "commit_hash": pydrillerCommitObj.hash,
+                "change_set": len(pydrillerCommitObj.modifications),
                 "commit_message": pydrillerCommitObj.msg
             }
 
-    def setCommit(self, index, pydrillerCommitObj):
-        self.commit = {
-            "commit_index": index,
-            "author_email": pydrillerCommitObj.author.email,
-            "author_name": pydrillerCommitObj.author.name,
-            "date": pydrillerCommitObj.author_date,
-            "commit_hash": pydrillerCommitObj.hash,
-            "commit_message": pydrillerCommitObj.msg
-        }
+        if custom_obj != None:
+            obj.update(custom_obj)
+
+        self.commit = obj
+        return
+
+    def setCommit(self, index, pydrillerCommitObj, custom_obj=None):
+        if pydrillerCommitObj != None:
+            obj = {
+                "commit_index": index,
+                "author_email": pydrillerCommitObj.author.email,
+                "author_name": pydrillerCommitObj.author.name,
+                "date": pydrillerCommitObj.author_date,
+                "commit_hash": pydrillerCommitObj.hash,
+                "change_set": len(pydrillerCommitObj.modifications),
+                "commit_message": pydrillerCommitObj.msg
+            }
+
+        if custom_obj != None:
+            obj.update(custom_obj)
+
+        self.commit = obj
+        return
     
     @classmethod
     def get_total_count_authors(cls, customCommitList):
@@ -28,7 +42,7 @@ class CustomCommit:
         author_emails = set()
         for el in customCommitList:
             author_names.add(el["author_name"])
-            author_emails.add(el["author_emails"])
+            author_emails.add(el["author_email"])
         
         return len(author_names), len(author_emails)
     
@@ -40,7 +54,7 @@ class CustomCommit:
 
         for i in range(initialIndex, finalIndex+1):
             author_names.add(sortedList[i]["author_name"])
-            author_emails.add(sortedList[i]["author_emails"])
+            author_emails.add(sortedList[i]["author_email"])
 
         return len(author_names), len(author_emails)
     

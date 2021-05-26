@@ -1,6 +1,6 @@
-from io_utils.output import OutputUtil
 import os
-from datetime import datetime
+from io_utils.output import OutputUtil
+from datetime import datetime, timezone
 
 from pydriller import RepositoryMining
 from pyparsing import pythonStyleComment
@@ -13,10 +13,13 @@ from analyzers.custom_commit import CustomCommit
 from analyzers.occurrences import Occurrences
 from analyzers.repository_analyzer import RepositoryAnalyzer
 
+from report.column_names import commit_columns
+
 VALID_EXTENSIONS = ['.py', '.yaml', '.yml', '.txt', '.md', '.ini', '.toml']
 
 class CommitsAnalyzer:
-    def __init__(self, repo_url):
+    def __init__(self, repo_url, out_dir):
+        self.out_dir = out_dir
         self.repo_url = repo_url
         self.project_name = repo_url.split('/')[-1]
         self.noc_unittest = 0
@@ -40,10 +43,9 @@ class CommitsAnalyzer:
         print("Time marker #3 - classify", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         data = self.__classify_and_process_metrics()
 
-        print("Time marker #3.5 - dump commit messages", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-        columns = ["commit_index", "author_name", "author_email", "date", "commit_hash", "commit_message"]
-        OutputUtil.create_out_path("commit_messages/")
-        OutputUtil.output_list_as_csv(self.project_name, self.commits, columns, "commit_messages/")
+        print("Time marker #4 - create csv with commits information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        columns = commit_columns()
+        OutputUtil.output_list_as_csv(self.project_name, self.commits, columns, self.out_dir)
 
         return data
 
@@ -58,14 +60,17 @@ class CommitsAnalyzer:
         return
 
     def __do_process_commits(self, branch):
-        miner = RepositoryMining(self.repo_url, only_no_merge=True)
         index = 0
-        for commit in miner.traverse_commits():
-            now = datetime.now()
-            print("\t\t{} at {}".format(commit.hash, now.strftime("%d/%m/%Y %H:%M:%S")))
+        for commit in RepositoryMining(self.repo_url, only_no_merge=True).traverse_commits():
+            print("\t\tcommit {}".format(commit.hash))
 
-            custom = CustomCommit(index, commit)
-            self.commits.append(custom.commit)
+            commit_memo = {
+                "unittest_in_code": False,
+                "unittest_in_removed_diffs": False,
+                "pytest_in_code": False,
+                "pytest_in_removed_diffs": False,
+                "has_test_file": False
+            }
 
             for modification in commit.modifications:
                 _filename, extension = os.path.splitext(modification.filename)
@@ -75,6 +80,16 @@ class CommitsAnalyzer:
                 self.__match_patterns(modification)
                 self.__update_occurrences(index, commit, modification)
 
+                commit_memo = {
+                    "unittest_in_code": commit_memo["unittest_in_code"] or self.memo["unittest_in_code"],
+                    "unittest_in_removed_diffs": commit_memo["unittest_in_removed_diffs"] or self.memo["unittest_in_removed_diffs"],
+                    "pytest_in_code": commit_memo["pytest_in_code"] or self.memo["pytest_in_code"],
+                    "pytest_in_removed_diffs": commit_memo["pytest_in_removed_diffs"] or self.memo["pytest_in_removed_diffs"],
+                    "has_test_file": commit_memo["has_test_file"] or self.memo["is_test_file"]
+                }
+
+            custom = CustomCommit(index, commit, commit_memo)
+            self.commits.append(custom.commit)
             index += 1
 
         return
@@ -83,9 +98,6 @@ class CommitsAnalyzer:
         """
             classes: unittest | pytest | ongoing | migrated | unknown
         """
-
-        idx_first_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.first.commit["commit_hash"])
-        idx_first_pytest_commit = CustomCommit.indexOf(self.commits, self.pytest_occurrences.first.commit["commit_hash"])
 
         currentDefaultBranch = RepositoryAnalyzer(self.repo_url)
         currentDefaultBranch.search_frameworks()
@@ -109,6 +121,8 @@ class CommitsAnalyzer:
             'NOA (email)': number_of_authors_emails,
             'NOMA (email)': 0,
             "NOMAP (email)": 0,
+            "NOA email - name": number_of_authors_emails - number_of_authors_names,
+            "PBU": False,
 
             'NOF': currentDefaultBranch.count_files(),
             'NOF_UNITTEST': currentDefaultBranch.nof_unittest,
@@ -126,8 +140,7 @@ class CommitsAnalyzer:
             'LC_PYTEST_LINK': commit_base_url + self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
         }
 
-        if idx_first_unittest_commit <= idx_first_pytest_commit and \
-            not self.unittest_occurrences.has_first_occurrence() \
+        if not self.unittest_occurrences.has_first_occurrence() \
             and self.pytest_occurrences.has_first_occurrence():
 
             data = {
@@ -139,8 +152,7 @@ class CommitsAnalyzer:
             base.update(data)
             return base
 
-        if idx_first_unittest_commit <= idx_first_pytest_commit and \
-            not self.pytest_occurrences.has_first_occurrence() \
+        if not self.pytest_occurrences.has_first_occurrence() \
             and self.unittest_occurrences.has_first_occurrence():
             data = {
                 'CATEGORY': 'unittest',
@@ -150,6 +162,10 @@ class CommitsAnalyzer:
             }
             base.update(data)
             return base
+
+
+        idx_first_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.first.commit["commit_hash"])
+        idx_first_pytest_commit = CustomCommit.indexOf(self.commits, self.pytest_occurrences.first.commit["commit_hash"])
 
         if (self.unittest_occurrences.has_first_occurrence() and \
             self.pytest_occurrences.has_first_occurrence()) and \
@@ -169,9 +185,9 @@ class CommitsAnalyzer:
                     'OCM': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
                     'NOD': timedelta.days,
                     'NOMA (name)': number_of_migration_authors_names,
-                    "NOMAP (name)": number_of_migration_authors_names / base["NOA (name)"],
+                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"], 2),
                     'NOMA (email)': number_of_migration_authors_emails,
-                    "NOMAP (email)": number_of_migration_authors_emails / base["NOA (email)"]
+                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"], 2)
                 }
                 base.update(data)
                 return base
@@ -180,7 +196,7 @@ class CommitsAnalyzer:
                 number_of_migration_authors_names, number_of_migration_authors_emails = \
                     CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, amount_total_commits - 1)
 
-                timedelta = datetime.datetime.now() - self.pytest_occurrences.first.commit["date"]
+                timedelta = datetime.now(timezone.utc) - self.pytest_occurrences.first.commit["date"]
 
                 data = {
                     'CATEGORY': 'ongoing',
@@ -189,14 +205,25 @@ class CommitsAnalyzer:
                     'NOC_BOTH': amount_total_commits - idx_first_pytest_commit,
                     'NOD': timedelta.days,
                     'NOMA (name)': number_of_migration_authors_names,
-                    "NOMAP (name)": number_of_migration_authors_names / base["NOA (name)"],
+                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"], 2),
                     'NOMA (email)': number_of_migration_authors_emails,
-                    "NOMAP (email)": number_of_migration_authors_emails / base["NOA (email)"]
+                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"], 2)
                 }
                 base.update(data)
                 return base
 
-        data = {'CATEGORY': 'unknown'}
+        pbu = idx_first_unittest_commit > idx_first_pytest_commit
+        data = {
+            'CATEGORY': 'unknown',
+            'PBU': pbu,
+            'NOC_UNITTEST': amount_total_commits - idx_first_unittest_commit,
+            'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
+            'NOC_BOTH': idx_first_pytest_commit - idx_first_unittest_commit if pbu else 0,
+            "NOMAP (name)": 0,
+            'NOMA (email)': 0,
+            "NOMAP (email)": 0,
+
+        }
         base.update(data)
         return base
 

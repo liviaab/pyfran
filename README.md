@@ -16,6 +16,6 @@ The main goal of **Py**thon **Fr**amework **An**alyzer is to determine if a pyth
 ### Running locally
 ```sh
 $ sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
-$ pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 $ python3 main.py -i in.csv
 ```

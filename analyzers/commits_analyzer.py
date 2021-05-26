@@ -185,9 +185,9 @@ class CommitsAnalyzer:
                     'OCM': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
                     'NOD': timedelta.days,
                     'NOMA (name)': number_of_migration_authors_names,
-                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"], 2),
+                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"], 4) * 100,
                     'NOMA (email)': number_of_migration_authors_emails,
-                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"], 2)
+                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"], 4) * 100
                 }
                 base.update(data)
                 return base
@@ -205,9 +205,9 @@ class CommitsAnalyzer:
                     'NOC_BOTH': amount_total_commits - idx_first_pytest_commit,
                     'NOD': timedelta.days,
                     'NOMA (name)': number_of_migration_authors_names,
-                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"], 2),
+                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"], 4) * 100,
                     'NOMA (email)': number_of_migration_authors_emails,
-                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"], 2)
+                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"], 4) * 100
                 }
                 base.update(data)
                 return base
@@ -218,7 +218,7 @@ class CommitsAnalyzer:
             'PBU': pbu,
             'NOC_UNITTEST': amount_total_commits - idx_first_unittest_commit,
             'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
-            'NOC_BOTH': idx_first_pytest_commit - idx_first_unittest_commit if pbu else 0,
+            'NOC_BOTH': amount_total_commits - idx_first_unittest_commit if pbu else 0,
             "NOMAP (name)": 0,
             'NOMA (email)': 0,
             "NOMAP (email)": 0,

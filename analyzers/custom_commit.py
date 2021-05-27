@@ -85,7 +85,7 @@ class CustomCommit:
             result.append({
                 "email": key,
                 "total_commits": value,
-                "migration_contributor": email in migration_authors,
+                "migration_contributor": key in migration_authors,
                 "migration_commits": migration_authors[key] if key in migration_authors else 0
             })
 

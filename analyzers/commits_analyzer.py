@@ -13,7 +13,7 @@ from analyzers.custom_commit import CustomCommit
 from analyzers.occurrences import Occurrences
 from analyzers.repository_analyzer import RepositoryAnalyzer
 
-from report.column_names import commit_columns
+from report.column_names import *
 
 VALID_EXTENSIONS = ['.py', '.yaml', '.yml', '.txt', '.md', '.ini', '.toml']
 
@@ -35,6 +35,7 @@ class CommitsAnalyzer:
             "is_test_file": False
         }
         self.commits = []
+        self.author_infos = []
 
     def process_and_classify(self):
         print("Time marker #2 - process commits", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
@@ -46,6 +47,9 @@ class CommitsAnalyzer:
         print("Time marker #4 - create csv with commits information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         columns = commit_columns()
         OutputUtil.output_list_as_csv(self.project_name, self.commits, columns, self.out_dir)
+
+        columns = author_columns()
+        OutputUtil.output_list_as_csv(self.project_name+"_authors", self.author_infos, columns, self.out_dir)
 
         return data
 
@@ -142,7 +146,7 @@ class CommitsAnalyzer:
 
         if not self.unittest_occurrences.has_first_occurrence() \
             and self.pytest_occurrences.has_first_occurrence():
-
+            self.author_infos = CustomCommit.characterize_authors(self.commits, amount_total_commits + 1, amount_total_commits + 1)
             data = {
                 'CATEGORY': 'pytest',
                 'NOC_UNITTEST': 0,
@@ -154,6 +158,8 @@ class CommitsAnalyzer:
 
         if not self.pytest_occurrences.has_first_occurrence() \
             and self.unittest_occurrences.has_first_occurrence():
+            self.author_infos = CustomCommit.characterize_authors(self.commits, amount_total_commits + 1, amount_total_commits + 1)
+
             data = {
                 'CATEGORY': 'unittest',
                 'NOC_UNITTEST': amount_total_commits,
@@ -177,6 +183,7 @@ class CommitsAnalyzer:
                     CustomCommit.get_authors_count_between(self.commits, idx_first_pytest_commit, idx_last_unittest_commit)
                 timedelta = self.unittest_occurrences.last.commit["date"] - self.pytest_occurrences.first.commit["date"]
 
+                self.author_infos = CustomCommit.characterize_authors(self.commits, idx_first_pytest_commit, idx_last_unittest_commit)
                 data = {
                     'CATEGORY': 'migrated',
                     'NOC_UNITTEST': idx_last_unittest_commit - idx_first_unittest_commit,
@@ -185,9 +192,9 @@ class CommitsAnalyzer:
                     'OCM': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
                     'NOD': timedelta.days,
                     'NOMA (name)': number_of_migration_authors_names,
-                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"], 4) * 100,
+                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"]* 100, 2),
                     'NOMA (email)': number_of_migration_authors_emails,
-                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"], 4) * 100
+                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"]* 100, 2)
                 }
                 base.update(data)
                 return base
@@ -198,6 +205,7 @@ class CommitsAnalyzer:
 
                 timedelta = datetime.now(timezone.utc) - self.pytest_occurrences.first.commit["date"]
 
+                self.author_infos = CustomCommit.characterize_authors(self.commits, idx_first_pytest_commit, amount_total_commits -1)
                 data = {
                     'CATEGORY': 'ongoing',
                     'NOC_UNITTEST': amount_total_commits - idx_first_unittest_commit,
@@ -205,9 +213,9 @@ class CommitsAnalyzer:
                     'NOC_BOTH': amount_total_commits - idx_first_pytest_commit,
                     'NOD': timedelta.days,
                     'NOMA (name)': number_of_migration_authors_names,
-                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"], 4) * 100,
+                    "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
                     'NOMA (email)': number_of_migration_authors_emails,
-                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"], 4) * 100
+                    "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"]* 100, 2)
                 }
                 base.update(data)
                 return base

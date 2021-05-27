@@ -57,7 +57,40 @@ class CustomCommit:
             author_emails.add(sortedList[i]["author_email"])
 
         return len(author_names), len(author_emails)
-    
+
+    @classmethod
+    def characterize_authors(cls, customCommitList, initialIndex, finalIndex):
+        sortedList = sorted(customCommitList, key=lambda x: x["commit_index"])
+        authors = {}
+        migration_authors = {}
+
+        for i in range(len(sortedList)):
+            commit = sortedList[i]
+            email = commit["author_email"]
+
+            if email in authors:
+                authors[email] += 1
+            else:
+                authors[email] = 1
+
+            if i >= initialIndex and i <= finalIndex:
+                if email in migration_authors:
+                    migration_authors[email] += 1
+                else:
+                    migration_authors[email] = 1
+
+
+        result = []
+        for key, value in authors.items():
+            result.append({
+                "email": key,
+                "total_commits": value,
+                "migration_contributor": email in migration_authors,
+                "migration_commits": migration_authors[key] if key in migration_authors else 0
+            })
+
+        return result
+
     @classmethod
     def indexOf(cls, customCommitList, commit_hash):
         for commit in customCommitList:

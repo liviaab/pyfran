@@ -1,3 +1,11 @@
+def author_columns():
+	return [
+		"email",
+		"total_commits",
+		"migration_contributor",
+		"migration_commits"
+	]
+
 def commit_columns(): 
 	return [
 		"commit_index",

@@ -13,7 +13,7 @@ def commit_columns():
 		"author_email",
 		"date",
 		"commit_hash",
-		"change_set",
+		"files_changed",
 		"pytest_in_removed_diffs",
 		"has_test_file",
 		"unittest_in_code",

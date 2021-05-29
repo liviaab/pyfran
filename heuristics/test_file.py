@@ -1,7 +1,7 @@
 import re
 
-class FileHeuristics:
-    testpath_pattern = "(test)"
+class TestFileHeuristics:
+    testpath_pattern = "test"
 
     @classmethod
     def matches_test_file(cls, path):

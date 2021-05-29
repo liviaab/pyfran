@@ -2,10 +2,10 @@ import os
 from io_utils.output import OutputUtil
 from datetime import datetime, timezone
 
-from pydriller import RepositoryMining
+from pydriller import RepositoryMining, GitRepository
 from pyparsing import pythonStyleComment
 
-from heuristics.file import FileHeuristics as fh
+from heuristics.test_file import TestFileHeuristics as fh
 from heuristics.pytest import PytestHeuristics as ph
 from heuristics.unittest import UnittestHeuristics as uh
 
@@ -169,6 +169,17 @@ class CommitsAnalyzer:
             base.update(data)
             return base
 
+        if not self.pytest_occurrences.has_first_occurrence() \
+            and not self.unittest_occurrences.has_first_occurrence():
+
+            data = {
+                'CATEGORY': 'unknown',
+                'NOC_UNITTEST': 0,
+                'NOC_PYTEST': 0,
+                'NOC_BOTH': 0,
+            }
+            base.update(data)
+            return base
 
         idx_first_unittest_commit = CustomCommit.indexOf(self.commits, self.unittest_occurrences.first.commit["commit_hash"])
         idx_first_pytest_commit = CustomCommit.indexOf(self.commits, self.pytest_occurrences.first.commit["commit_hash"])
@@ -227,10 +238,6 @@ class CommitsAnalyzer:
             'NOC_UNITTEST': amount_total_commits - idx_first_unittest_commit,
             'NOC_PYTEST': amount_total_commits - idx_first_pytest_commit,
             'NOC_BOTH': amount_total_commits - idx_first_unittest_commit if pbu else 0,
-            "NOMAP (name)": 0,
-            'NOMA (email)': 0,
-            "NOMAP (email)": 0,
-
         }
         base.update(data)
         return base

@@ -8,7 +8,7 @@ class CustomCommit:
                 "author_name": pydrillerCommitObj.author.name,
                 "date": pydrillerCommitObj.author_date,
                 "commit_hash": pydrillerCommitObj.hash,
-                "change_set": len(pydrillerCommitObj.modifications),
+                "files_changed": len(pydrillerCommitObj.modifications),
                 "commit_message": pydrillerCommitObj.msg
             }
 
@@ -26,7 +26,7 @@ class CustomCommit:
                 "author_name": pydrillerCommitObj.author.name,
                 "date": pydrillerCommitObj.author_date,
                 "commit_hash": pydrillerCommitObj.hash,
-                "change_set": len(pydrillerCommitObj.modifications),
+                "files_changed": len(pydrillerCommitObj.modifications),
                 "commit_message": pydrillerCommitObj.msg
             }
 

@@ -138,3 +138,7 @@ dmypy.json
 cython_debug/
 
 .DS_Store
+
+in*.csv
+oracles/
+out*/

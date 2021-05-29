@@ -8,6 +8,8 @@ from pyparsing import pythonStyleComment
 from heuristics.test_file import TestFileHeuristics as fh
 from heuristics.pytest import PytestHeuristics as ph
 from heuristics.unittest import UnittestHeuristics as uh
+from heuristics.test_methods import TestMethodsHeuristics as mh
+from heuristics.apis import UnittestAPIHeuristics as uAPIh, PytestAPIHeuristics as pAPIh
 
 from analyzers.custom_commit import CustomCommit
 from analyzers.occurrences import Occurrences
@@ -36,6 +38,7 @@ class CommitsAnalyzer:
         }
         self.commits = []
         self.author_infos = []
+        self.apis_info = []
 
     def process_and_classify(self):
         print("Time marker #2 - process commits objects", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
@@ -47,9 +50,12 @@ class CommitsAnalyzer:
         print("Time marker #4 - classify", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         data = self.__classify_and_process_metrics()
 
-        print("Time marker #5 - create csv with commits information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        print("Time marker #5 - create csv with commits, authors and APIs information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         columns = commit_columns()
-        OutputUtil.output_list_as_csv(self.project_name, self.commits, columns, self.out_dir)
+        OutputUtil.output_list_as_csv(self.project_name+"_commit", self.commits, columns, self.out_dir)
+
+        columns = api_columns()
+        OutputUtil.output_list_as_csv(self.project_name+"_api", self.apis_info, columns, self.out_dir)
 
         columns = author_columns()
         OutputUtil.output_list_as_csv(self.project_name+"_authors", self.author_infos, columns, self.out_dir)
@@ -103,18 +109,86 @@ class CommitsAnalyzer:
 
     def __process_checkouts(self):
         git = GitRepository(self.repo_url)
+
         try:
             for commit in self.commits:
                 git.checkout(commit["commit_hash"])
-
                 files = git.files()
-                print("Commit",commit["commit_hash"],"\nModified Files:", files)
-                print("Files content:")
-                for file in files:
-                    with open(file, 'r') as src:
-                        content = src.read()
-                        print("\t\t",file, ":\n", content)
-                print("")
+
+                print("Commit", commit["commit_hash"],"\nModified Files:", files)
+
+                test_files = 0
+                test_methods = 0
+
+                testCaseSubclasses = 0
+                u_api_asserts = 0
+                u_api_setUps = 0
+                u_api_setUpClasses = 0
+                u_api_tearDown = 0
+                u_api_tearDownClasses = 0
+                u_api_skiptests = 0
+                u_api_expectedFailures = 0
+
+                p_api_asserts = 0
+                p_api_raiseError = 0
+                p_api_skiptests = 0
+                p_api_expectedFailures = 0
+                p_api_fixtures = 0
+
+                for filepath in files:
+                    is_test_file = fh.matches_test_file(filepath)
+
+                    if is_test_file:
+                        test_files += 1
+
+                        with open(filepath, 'r') as src:
+                            content = src.read()
+                            test_methods += mh.count_test_methods(content)
+
+                            quantity_by_api = uAPIh.count_apis(content)
+
+                            testCaseSubclasses += quantity_by_api["testCaseSubclass"]
+                            u_api_asserts += quantity_by_api["assert"]
+                            u_api_setUps += quantity_by_api["setUp"]
+                            u_api_setUpClasses += quantity_by_api["setUpClass"]
+                            u_api_tearDown += quantity_by_api["tearDown"]
+                            u_api_tearDownClasses += quantity_by_api["tearDownClass"]
+                            u_api_skiptests += quantity_by_api["skipTest"]
+                            u_api_expectedFailures += quantity_by_api["expectedFailure"]
+
+                            quantity_by_api = pAPIh.count_apis(content)
+                            p_api_asserts += quantity_by_api["assert"]
+                            p_api_raiseError += quantity_by_api["raiseError"]
+                            p_api_skiptests += quantity_by_api["skipTest"]
+                            p_api_expectedFailures += quantity_by_api["expectedFailure"]
+                            p_api_fixtures += quantity_by_api["fixture"]
+
+                apis_in_commit = {
+                    "commit_index": commit["commit_index"],
+                    "author_email": commit["author_email"],
+                    "date": commit["date"],
+                    "commit_hash": commit["commit_hash"],
+
+                    "test_files": test_files,
+                    "test_methods": test_methods,
+
+                    "u_api_testCaseSubclass": testCaseSubclasses,
+                    "u_api_assert": u_api_asserts,
+                    "u_api_setUp": u_api_setUps,
+                    "u_api_setUpClass": u_api_setUpClasses,
+                    "u_api_tearDown": u_api_tearDown,
+                    "u_api_tearDownClass": u_api_tearDownClasses,
+                    "u_api_skiptest": u_api_skiptests,
+                    "u_api_expectedFailure": u_api_expectedFailures,
+
+                    "p_api_assert": p_api_asserts,
+                    "p_api_raiseError": p_api_raiseError,
+                    "p_api_skiptest": p_api_skiptests,
+                    "p_api_expectedFailure": p_api_expectedFailures,
+                    "p_api_fixture": p_api_fixtures
+                }
+
+                self.apis_info.append(apis_in_commit)
         except:
             git.reset()
 

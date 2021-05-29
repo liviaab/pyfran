@@ -16,14 +16,14 @@ class UnittestAPIHeuristics:
 	@classmethod
 	def count_apis(cls, content):
 		quantity_by_api = {
-			"testCaseSubclass": count_pattern_in_content(testCaseSubclass_pattern, content),
-			"assert": count_pattern_in_content(assert_pattern, content),
-			"setUp": count_pattern_in_content(setUp_pattern, content),
-			"setUpClass": count_pattern_in_content(setUpClass_pattern, content),
-			"tearDown": count_pattern_in_content(tearDown_pattern, content),
-			"tearDownClass": count_pattern_in_content(tearDownClass_pattern, content),
-			"skipTest": count_pattern_in_content(skipTest_pattern, content),
-			"expectedFailure": count_pattern_in_content(expectedFailure_pattern, content)
+			"testCaseSubclass": count_pattern_in_content(cls.testCaseSubclass_pattern, content),
+			"assert": count_pattern_in_content(cls.assert_pattern, content),
+			"setUp": count_pattern_in_content(cls.setUp_pattern, content),
+			"setUpClass": count_pattern_in_content(cls.setUpClass_pattern, content),
+			"tearDown": count_pattern_in_content(cls.tearDown_pattern, content),
+			"tearDownClass": count_pattern_in_content(cls.tearDownClass_pattern, content),
+			"skipTest": count_pattern_in_content(cls.skipTest_pattern, content),
+			"expectedFailure": count_pattern_in_content(cls.expectedFailure_pattern, content)
 		}
 
 		return quantity_by_api
@@ -39,11 +39,11 @@ class PytestAPIHeuristics:
 	@classmethod
 	def count_apis(cls, content):
 		quantity_by_api = {
-			"assert": count_pattern_in_content(assert_pattern, content),
-			"raiseError": count_pattern_in_content(raiseError_pattern, content),
-			"skipTest": count_pattern_in_content(skipTest_pattern, content),
-			"expectedFailure": count_pattern_in_content(expectedFailure_pattern, content),
-			"fixture": count_pattern_in_content(fixture_pattern, content),
+			"assert": count_pattern_in_content(cls.assert_pattern, content),
+			"raiseError": count_pattern_in_content(cls.raiseError_pattern, content),
+			"skipTest": count_pattern_in_content(cls.skipTest_pattern, content),
+			"expectedFailure": count_pattern_in_content(cls.expectedFailure_pattern, content),
+			"fixture": count_pattern_in_content(cls.fixture_pattern, content),
 		}
 
 		return quantity_by_api

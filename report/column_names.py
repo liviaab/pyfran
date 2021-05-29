@@ -22,6 +22,32 @@ def commit_columns():
 		"commit_message"
 	]
 
+def api_columns():
+	return [
+		"commit_index",
+		"author_email",
+		"date",
+		"commit_hash",
+
+		"test_files",
+		"test_methods",
+
+		"u_api_testCaseSubclass",
+		"u_api_assert",
+		"u_api_setUp",
+		"u_api_setUpClass",
+		"u_api_tearDown",
+		"u_api_tearDownClass",
+		"u_api_skiptest",
+		"u_api_expectedFailure",
+
+		"p_api_assert",
+		"p_api_raiseError",
+		"p_api_skiptest",
+		"p_api_expectedFailure",
+		"p_api_fixture"
+	]
+
 def repository_columns():
 	return [
 		"CATEGORY",

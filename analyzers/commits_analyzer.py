@@ -38,13 +38,16 @@ class CommitsAnalyzer:
         self.author_infos = []
 
     def process_and_classify(self):
-        print("Time marker #2 - process commits", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        print("Time marker #2 - process commits objects", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         self.__process_commits()
 
-        print("Time marker #3 - classify", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        print("Time marker #3 - process files from each checkout", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        self.__process_checkouts()
+
+        print("Time marker #4 - classify", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         data = self.__classify_and_process_metrics()
 
-        print("Time marker #4 - create csv with commits information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        print("Time marker #5 - create csv with commits information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         columns = commit_columns()
         OutputUtil.output_list_as_csv(self.project_name, self.commits, columns, self.out_dir)
 
@@ -95,6 +98,25 @@ class CommitsAnalyzer:
             custom = CustomCommit(index, commit, commit_memo)
             self.commits.append(custom.commit)
             index += 1
+
+        return
+
+    def __process_checkouts(self):
+        git = GitRepository(self.repo_url)
+        try:
+            for commit in self.commits:
+                git.checkout(commit["commit_hash"])
+
+                files = git.files()
+                print("Commit",commit["commit_hash"],"\nModified Files:", files)
+                print("Files content:")
+                for file in files:
+                    with open(file, 'r') as src:
+                        content = src.read()
+                        print("\t\t",file, ":\n", content)
+                print("")
+        except:
+            git.reset()
 
         return
 

@@ -35,6 +35,10 @@ class CustomCommit:
 
         self.commit = obj
         return
+
+    def updateCommit(self, custom_obj):
+        self.commit.update(custom_obj)
+        return
     
     @classmethod
     def get_total_count_authors(cls, customCommitList):

@@ -100,12 +100,12 @@ class RemoteRepositoryAnalyzer:
 
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        print("Time marker #4 - Clone repo", dt_string)
+        print("Time marker #6 - Clone repo", dt_string)
         root_folder = gh_service.clone_repository(self.repo_org, self.repo_name)
 
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        print("Time marker #5 - Examine local repo", dt_string)
+        print("Time marker #7 - Examine local repo", dt_string)
         usesUnittest, usesPytest, nof_unittest, nof_pytest, nof_both = examine_local_repository(root_folder)
         gh_service.remove_local_repository(self.repo_org, self.repo_name)
         return (usesUnittest, usesPytest, nof_unittest, nof_pytest, nof_both)

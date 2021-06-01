@@ -184,6 +184,7 @@ class CommitsAnalyzer:
 
         if not self.pytest_occurrences.has_first_occurrence() \
             and not self.unittest_occurrences.has_first_occurrence():
+            self.author_infos = CustomCommit.characterize_authors(self.commits, amount_total_commits + 1, amount_total_commits + 1)
 
             data = {
                 'CATEGORY': 'unknown',
@@ -244,6 +245,7 @@ class CommitsAnalyzer:
                 base.update(data)
                 return base
 
+        self.author_infos = CustomCommit.characterize_authors(self.commits, amount_total_commits + 1, amount_total_commits + 1)
         pbu = idx_first_unittest_commit > idx_first_pytest_commit
         data = {
             'CATEGORY': 'unknown',
@@ -260,12 +262,11 @@ class CommitsAnalyzer:
 
     def __match_patterns(self, modification):
         removed_lines = self.__get_lines_from_diff(modification.diff_parsed['deleted'])
-        added_lines = self.__get_lines_from_diff(modification.diff_parsed['added'])
 
         self.memo = {
-            "unittest_in_code": uh.matches_any(added_lines),
+            "unittest_in_code": uh.matches_a(modification.source_code),
             "unittest_in_removed_diffs": uh.matches_any(removed_lines, ignoreComments=False),
-            "pytest_in_code": ph.matches_any(added_lines),
+            "pytest_in_code": ph.matches_a(modification.source_code),
             "pytest_in_removed_diffs": ph.matches_any(removed_lines, ignoreComments=False),
             "is_test_file": fh.matches_test_file(modification.new_path)
         }

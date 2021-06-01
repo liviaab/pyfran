@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 
 from heuristics.pytest import PytestHeuristics
 from heuristics.unittest import UnittestHeuristics

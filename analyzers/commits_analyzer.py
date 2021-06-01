@@ -1,5 +1,4 @@
 import os
-import shutil
 from io_utils.output import OutputUtil
 from datetime import datetime, timezone
 

@@ -1,10 +1,14 @@
+import os
+import shutil
 from git import Repo
-from pyparsing import Keyword, QuotedString, pythonStyleComment, quotedString
+from pyparsing import Keyword, QuotedString, pythonStyleComment, cppStyleComment, quotedString
 
+from heuristics.test_file import TestFileHeuristics as fh
 from heuristics.test_methods import TestMethodsHeuristics as mh
 from heuristics.apis import UnittestAPIHeuristics as uAPIh, PytestAPIHeuristics as pAPIh
 
 docString = QuotedString(quoteChar='"""', multiline=True, unquoteResults=False)
+VALID_EXTENSIONS = ['.py', '.yaml', '.yml', '.txt', '.md', '.ini', '.toml']
 
 class CheckoutsAnalyzer:
     @classmethod

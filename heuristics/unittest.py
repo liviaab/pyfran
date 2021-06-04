@@ -1,4 +1,3 @@
-import re
 from pyparsing import Keyword, QuotedString, pythonStyleComment, quotedString
 
 docString = QuotedString(quoteChar='"""', multiline=True, unquoteResults=False)

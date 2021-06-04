@@ -3,7 +3,6 @@ from pprint import PrettyPrinter
 
 def mean(values):
     return round(statistics.mean(values), 2) if len(values) > 0 else '-'
-    
 
 def median(values):
     return round(statistics.median(values),2) if len(values) > 0 else '-'

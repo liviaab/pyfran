@@ -1,7 +1,7 @@
 import os
 import shutil
 from git import Repo
-from pyparsing import QuotedString, pythonStyleComment, cppStyleComment, quotedString
+from pyparsing import pythonStyleComment, cppStyleComment, quotedString
 
 from common.common import VALID_EXTENSIONS, docString
 
@@ -10,10 +10,13 @@ from heuristics.test_methods import TestMethodsHeuristics as mh
 from heuristics.apis import UnittestAPIHeuristics as uAPIh, PytestAPIHeuristics as pAPIh
 
 class CheckoutsAnalyzer:
-    @classmethod
-    def process_checkouts(cls, repo_url, commits):
-        local_path_to_repo = repo_url.split('/')[-1]
-        repo = Repo.clone_from(repo_url, local_path_to_repo)
+    def __init__(self, repo_url):
+        self.repo_url = repo_url
+        self.local_path_to_repo = repo_url.split('/')[-1]
+
+    def process_checkouts(self, commits):
+        repo = Repo.clone_from(self.repo_url, self.local_path_to_repo)
+
         apis_info = []
 
         for commit in commits:
@@ -38,7 +41,7 @@ class CheckoutsAnalyzer:
             p_api_expectedFailures = 0
             p_api_fixtures = 0
 
-            for path, _, files in os.walk(local_path_to_repo):
+            for path, _, files in os.walk(self.local_path_to_repo):
                 if '.git' in path:
                     continue
 
@@ -104,7 +107,7 @@ class CheckoutsAnalyzer:
 
             apis_info.append(apis_in_commit)
 
-        if os.path.exists(local_path_to_repo) and os.path.isdir(local_path_to_repo):
-            shutil.rmtree(local_path_to_repo)
+        if os.path.exists(self.local_path_to_repo) and os.path.isdir(self.local_path_to_repo):
+            shutil.rmtree(self.local_path_to_repo)
 
         return apis_info

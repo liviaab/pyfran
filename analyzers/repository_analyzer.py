@@ -1,14 +1,11 @@
 import os
-import sys
-import shutil
+from datetime import datetime
 
 from heuristics.pytest import PytestHeuristics
 from heuristics.unittest import UnittestHeuristics
 from analyzers.github_service import GithubService
 
-from datetime import datetime
-
-VALID_EXTENSIONS = ['.py', '.yaml', '.yml', '.txt', '.md', '.ini', '.toml']
+from common.common import VALID_EXTENSIONS
 
 def examine_local_repository(root_folder):
     usesUnittest = False

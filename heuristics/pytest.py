@@ -1,6 +1,5 @@
-from pyparsing import Keyword, QuotedString, pythonStyleComment, quotedString
-
-docString = QuotedString(quoteChar='"""', multiline=True, unquoteResults=False)
+from pyparsing import Keyword, pythonStyleComment, quotedString
+from common.common import docString
 
 class PytestHeuristics:
     keyword = "pytest"

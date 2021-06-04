@@ -7,7 +7,6 @@ import sys
 from datetime import datetime
 
 
-
 def main(argv):
 	input_file = inUtil.parse_command_line_arguments(argv)
 	urls = inUtil.urls_from_input(input_file)

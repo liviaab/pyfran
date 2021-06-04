@@ -1,6 +1,5 @@
-from pyparsing import Keyword, QuotedString, pythonStyleComment, quotedString
-
-docString = QuotedString(quoteChar='"""', multiline=True, unquoteResults=False)
+from pyparsing import Keyword, pythonStyleComment, quotedString
+from common.common import docString
 
 class UnittestHeuristics:
     keyword = "unittest"
@@ -13,6 +12,7 @@ class UnittestHeuristics:
         expr = Keyword(cls.keyword).ignore(quotedString | docString)
         if ignoreComments:
             expr = Keyword(cls.keyword).ignore(pythonStyleComment | quotedString | docString)
+
         return list(expr.scanString(text)) != []
 
     @classmethod

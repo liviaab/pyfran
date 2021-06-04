@@ -4,7 +4,8 @@ from datetime import datetime, timezone
 
 from pydriller import RepositoryMining
 from git import Repo
-from pyparsing import pythonStyleComment
+
+from common.common import VALID_EXTENSIONS
 
 from heuristics.test_file import TestFileHeuristics as fh
 from heuristics.pytest import PytestHeuristics as ph
@@ -16,8 +17,6 @@ from analyzers.repository_analyzer import RepositoryAnalyzer
 from analyzers.checkouts_analyzer import CheckoutsAnalyzer
 
 from report.column_names import *
-
-VALID_EXTENSIONS = ['.py', '.yaml', '.yml', '.txt', '.md', '.ini', '.toml']
 
 class Analyzer:
     def __init__(self, repo_url, out_dir):

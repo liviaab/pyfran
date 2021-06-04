@@ -30,10 +30,6 @@ def main(argv):
 	columns = repository_columns()
 	outUtil.output_as_csv("metrics_per_category", report.metrics_per_category, columns, filepath=out_dir)
 
-	columns = aggregated_columns()
-	report.process_aggregated()
-	outUtil.output_as_csv("aggregated_metrics", report.aggregated_metrics, columns, filepath=out_dir)
-
 	print("Done!")
 
 if __name__ == "__main__":

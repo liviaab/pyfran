@@ -1,7 +1,7 @@
 import os
 import shutil
 from git import Repo
-from pyparsing import Keyword, QuotedString, pythonStyleComment, cppStyleComment, quotedString
+from pyparsing import QuotedString, pythonStyleComment, cppStyleComment, quotedString
 
 from heuristics.test_file import TestFileHeuristics as fh
 from heuristics.test_methods import TestMethodsHeuristics as mh

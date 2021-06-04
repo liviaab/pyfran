@@ -1,6 +1,6 @@
 from io_utils.input import InputUtil as inUtil
 from io_utils.output import OutputUtil as outUtil
-from analyzers.commits_analyzer import CommitsAnalyzer
+from analyzers.analyzer import Analyzer
 from report.report import Report
 from report.column_names import *
 import sys
@@ -21,7 +21,7 @@ def main(argv):
 	dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 	print("Time marker #1", dt_string)
 	for url in urls:
-		analyzer = CommitsAnalyzer(url, out_dir)
+		analyzer = Analyzer(url, out_dir)
 		data = analyzer.process_and_classify()
 		report.add(data)
 		print("This is a {} repository\n".format(data['CATEGORY']))

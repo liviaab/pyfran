@@ -19,7 +19,7 @@ from report.column_names import *
 
 VALID_EXTENSIONS = ['.py', '.yaml', '.yml', '.txt', '.md', '.ini', '.toml']
 
-class CommitsAnalyzer:
+class Analyzer:
     def __init__(self, repo_url, out_dir):
         self.out_dir = out_dir
         self.repo_url = repo_url

@@ -41,7 +41,7 @@ def api_columns():
 		"u_api_skiptest",
 		"u_api_expectedFailure",
 
-		"p_api_assert",
+		"native_asserts",
 		"p_api_raiseError",
 		"p_api_skiptest",
 		"p_api_expectedFailure",

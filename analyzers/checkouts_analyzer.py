@@ -33,7 +33,7 @@ class CheckoutsAnalyzer:
             u_api_skiptests = 0
             u_api_expectedFailures = 0
 
-            p_api_asserts = 0
+            native_asserts = 0
             p_api_raiseError = 0
             p_api_skiptests = 0
             p_api_expectedFailures = 0
@@ -72,7 +72,7 @@ class CheckoutsAnalyzer:
                             u_api_expectedFailures += quantity_by_api["expectedFailure"]
 
                             quantity_by_api = pAPIh.count_apis(content)
-                            p_api_asserts += quantity_by_api["assert"]
+                            native_asserts += quantity_by_api["assert"]
                             p_api_raiseError += quantity_by_api["raiseError"]
                             p_api_skiptests += quantity_by_api["skipTest"]
                             p_api_expectedFailures += quantity_by_api["expectedFailure"]
@@ -96,7 +96,7 @@ class CheckoutsAnalyzer:
                 "u_api_skiptest": u_api_skiptests,
                 "u_api_expectedFailure": u_api_expectedFailures,
 
-                "p_api_assert": p_api_asserts,
+                "native_asserts": native_asserts,
                 "p_api_raiseError": p_api_raiseError,
                 "p_api_skiptest": p_api_skiptests,
                 "p_api_expectedFailure": p_api_expectedFailures,

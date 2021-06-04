@@ -30,7 +30,7 @@ class UnittestAPIHeuristics:
 
 
 class PytestAPIHeuristics:
-	assert_pattern = "\s*assert\s+"
+	native_assert_pattern = "\s*assert\s+"
 	raiseError_pattern = "\s*raise\s+|pytest.raises\("
 	skipTest_pattern = "pytest.skip\(|@pytest.mark.skip\(|@pytest.mark.skipIf\("
 	expectedFailure_pattern = "@pytest.mark.xfail|pytest.xfail\("
@@ -39,7 +39,7 @@ class PytestAPIHeuristics:
 	@classmethod
 	def count_apis(cls, content):
 		quantity_by_api = {
-			"assert": count_pattern_in_content(cls.assert_pattern, content),
+			"assert": count_pattern_in_content(cls.native_assert_pattern, content),
 			"raiseError": count_pattern_in_content(cls.raiseError_pattern, content),
 			"skipTest": count_pattern_in_content(cls.skipTest_pattern, content),
 			"expectedFailure": count_pattern_in_content(cls.expectedFailure_pattern, content),

@@ -45,8 +45,10 @@ class PytestAPIHeuristics:
 	def count_apis(cls, content):
 		quantity_by_api = {
 			"assert": count_pattern_in_content(cls.native_assert_pattern, content),
-			"raiseError": count_pattern_in_content(cls.raiseError_pattern, content),
-			"skipTest": count_pattern_in_content(cls.skipTest_pattern, content),
+			"raiseError": count_pattern_in_content(cls.raise_pattern, content) \
+				+ count_pattern_in_content(cls.pytestRaise_pattern, content),
+			"skipTest": count_pattern_in_content(cls.simpleSkip_pattern, content) \
+				+ count_pattern_in_content(cls.markSkip_pattern, content) ,
 			"expectedFailure": count_pattern_in_content(cls.expectedFailure_pattern, content),
 			"fixture": count_pattern_in_content(cls.fixture_pattern, content),
 		}

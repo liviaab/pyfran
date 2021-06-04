@@ -184,6 +184,7 @@ class CommitsAnalyzer:
 
         if not self.pytest_occurrences.has_first_occurrence() \
             and not self.unittest_occurrences.has_first_occurrence():
+            self.author_infos = CustomCommit.characterize_authors(self.commits, amount_total_commits + 1, amount_total_commits + 1)
 
             data = {
                 'CATEGORY': 'unknown',
@@ -244,6 +245,7 @@ class CommitsAnalyzer:
                 base.update(data)
                 return base
 
+        self.author_infos = CustomCommit.characterize_authors(self.commits, amount_total_commits + 1, amount_total_commits + 1)
         pbu = idx_first_unittest_commit > idx_first_pytest_commit
         data = {
             'CATEGORY': 'unknown',

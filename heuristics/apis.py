@@ -35,7 +35,7 @@ class PytestAPIHeuristics:
 	pytestRaise_pattern = "pytest.raises(\(.*\))"
 	simpleSkip_pattern = "pytest.skip(\(.*\))"
 	markSkip_pattern = "[@]{0,1}pytest.mark.skip.*?(\(.*\))"
-	expectedFailure_pattern = "[@]{0,1}pytest.mark.xfail(\(.*\))|[@]{0,1}pytest.mark.xfail"s
+	expectedFailure_pattern = "[@]{0,1}pytest.mark.xfail(\(.*\))|[@]{0,1}pytest.mark.xfail"
 	fixture_pattern = "@pytest.fixture(.*)" # add generic pattern to @pytest.fixture
 	usefixture_pattern = "@pytest.mark.usefixtures(\(.*\))"
 	generalMark_pattern = "@{0,1}pytest.mark\.(.*?\()(.*\))" # add generic pattern to @pytest.mark

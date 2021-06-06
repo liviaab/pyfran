@@ -11,7 +11,7 @@ def main(argv):
 	input_file = inUtil.parse_command_line_arguments(argv)
 	urls = inUtil.urls_from_input(input_file)
 
-	dt_string = datetime.now().strftime("%d-%m-%Y_%H%M%S")
+	dt_string = datetime.now().strftime("%m-%d-%Y_%H%M%S")
 	out_dir = "out" + dt_string
 
 	outUtil.create_out_path(out_dir)

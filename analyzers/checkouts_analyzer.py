@@ -20,26 +20,35 @@ class CheckoutsAnalyzer:
         apis_info = []
 
         for commit in commits:
+            if not commit["are_we_interested"]:
+                continue
+
             repo.git.checkout(commit["commit_hash"])
             print("\t\tChecking out commit", commit["commit_hash"])
 
             test_files = 0
             test_methods = 0
 
-            testCaseSubclasses = 0
+            u_api_testCaseSubclasses = 0
             u_api_asserts = 0
             u_api_setUps = 0
             u_api_setUpClasses = 0
             u_api_tearDown = 0
             u_api_tearDownClasses = 0
-            u_api_skiptests = 0
+            u_api_unittestSkiptests = 0
+            u_api_selfSkiptests = 0
             u_api_expectedFailures = 0
 
             native_asserts = 0
-            p_api_raiseError = 0
-            p_api_skiptests = 0
+            p_api_raises = 0
+            p_api_pytestRaises = 0
+            p_api_simpleSkips = 0
+            p_api_markSkips = 0
             p_api_expectedFailures = 0
             p_api_fixtures = 0
+            p_api_useFixtures = 0
+            p_api_generalMark = 0
+            p_api_generalpytest = 0
 
             for path, _, files in os.walk(self.local_path_to_repo):
                 if '.git' in path:
@@ -62,23 +71,29 @@ class CheckoutsAnalyzer:
                             content = (cppStyleComment|pythonStyleComment|quotedString|docString).suppress().transformString(content)
 
                             test_methods += mh.count_test_methods(content)
-                            quantity_by_api = uAPIh.count_apis(content)
+                            
+                            quantity_by_api = uAPIh.check_apis(content)
+                            u_api_testCaseSubclasses += quantity_by_api["count_testCaseSubclass"]
+                            u_api_asserts += quantity_by_api["count_assert"]
+                            u_api_setUps += quantity_by_api["count_setUp"]
+                            u_api_setUpClasses += quantity_by_api["count_setUpClass"]
+                            u_api_tearDown += quantity_by_api["count_tearDown"]
+                            u_api_tearDownClasses += quantity_by_api["count_tearDownClass"]
+                            u_api_unittestSkiptests += quantity_by_api["count_unittestSkipTest"]
+                            u_api_selfSkiptests += quantity_by_api["count_selfSkipTest"]
+                            u_api_expectedFailures += quantity_by_api["count_expectedFailure"]
 
-                            testCaseSubclasses += quantity_by_api["testCaseSubclass"]
-                            u_api_asserts += quantity_by_api["assert"]
-                            u_api_setUps += quantity_by_api["setUp"]
-                            u_api_setUpClasses += quantity_by_api["setUpClass"]
-                            u_api_tearDown += quantity_by_api["tearDown"]
-                            u_api_tearDownClasses += quantity_by_api["tearDownClass"]
-                            u_api_skiptests += quantity_by_api["skipTest"]
-                            u_api_expectedFailures += quantity_by_api["expectedFailure"]
-
-                            quantity_by_api = pAPIh.count_apis(content)
-                            native_asserts += quantity_by_api["assert"]
-                            p_api_raiseError += quantity_by_api["raiseError"]
-                            p_api_skiptests += quantity_by_api["skipTest"]
-                            p_api_expectedFailures += quantity_by_api["expectedFailure"]
-                            p_api_fixtures += quantity_by_api["fixture"]
+                            quantity_by_api = pAPIh.check_apis(content)
+                            native_asserts += quantity_by_api["count_native_assert"]
+                            p_api_raises += quantity_by_api["count_raise"]
+                            p_api_pytestRaises += quantity_by_api["count_pytestRaise"]
+                            p_api_simpleSkips += quantity_by_api["count_simpleSkip"]
+                            p_api_markSkips += quantity_by_api["count_markSkip"]
+                            p_api_expectedFailures += quantity_by_api["count_expectedFailure"]
+                            p_api_fixtures += quantity_by_api["count_fixture"]
+                            p_api_useFixtures += quantity_by_api["count_usefixture"]
+                            p_api_generalMark += quantity_by_api["count_generalMark"]
+                            p_api_generalpytest += quantity_by_api["count_generalPytest"]
 
             apis_in_commit = {
                 "commit_index": commit["commit_index"],
@@ -89,20 +104,26 @@ class CheckoutsAnalyzer:
                 "test_files": test_files,
                 "test_methods": test_methods,
 
-                "u_api_testCaseSubclass": testCaseSubclasses,
-                "u_api_assert": u_api_asserts,
-                "u_api_setUp": u_api_setUps,
-                "u_api_setUpClass": u_api_setUpClasses,
+                "u_api_testCaseSubclasses": u_api_testCaseSubclasses,
+                "u_api_asserts": u_api_asserts,
+                "u_api_setUps": u_api_setUps,
+                "u_api_setUpClasses": u_api_setUpClasses,
                 "u_api_tearDown": u_api_tearDown,
-                "u_api_tearDownClass": u_api_tearDownClasses,
-                "u_api_skiptest": u_api_skiptests,
-                "u_api_expectedFailure": u_api_expectedFailures,
+                "u_api_tearDownClasses": u_api_tearDownClasses,
+                "u_api_unittestSkiptests": u_api_unittestSkiptests,
+                "u_api_selfSkiptests": u_api_selfSkiptests,
+                "u_api_expectedFailures": u_api_expectedFailures,
 
                 "native_asserts": native_asserts,
-                "p_api_raiseError": p_api_raiseError,
-                "p_api_skiptest": p_api_skiptests,
-                "p_api_expectedFailure": p_api_expectedFailures,
-                "p_api_fixture": p_api_fixtures
+                "p_api_raises": p_api_raises,
+                "p_api_pytestRaises": p_api_pytestRaises,
+                "p_api_simpleSkips": p_api_simpleSkips,
+                "p_api_markSkips": p_api_markSkips,
+                "p_api_expectedFailures": p_api_expectedFailures,
+                "p_api_fixtures": p_api_fixtures,
+                "p_api_useFixtures": p_api_useFixtures,
+                "p_api_generalMark": p_api_generalMark,
+                "p_api_generalpytest": p_api_generalpytest,
             }
 
             apis_info.append(apis_in_commit)

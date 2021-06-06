@@ -16,7 +16,7 @@ class OutputUtil:
         return
 
     @classmethod
-    def output_to(cls, repo_name, data, extension=DEFAULT_EXTENSION, filepath=DEFAULT_DIR_PATH, depth=1):
+    def output_to_stdout(cls, repo_name, data, extension=DEFAULT_EXTENSION, filepath=DEFAULT_DIR_PATH, depth=1):
         full_path = os.path.join(filepath, repo_name + extension)
         pprinter = PrettyPrinter(depth=depth)
 

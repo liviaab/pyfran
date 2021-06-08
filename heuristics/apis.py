@@ -73,6 +73,9 @@ class UnittestAPIHeuristics:
         }
 
         for content in contents:
+            if content.strip().startswith('#')
+                continue
+
             tmp = cls.check_apis(content)
             quantity_by_api = {
                 "count_testCaseSubclass": quantity_by_api["count_testCaseSubclass"] + tmp["count_testCaseSubclass"],
@@ -177,6 +180,9 @@ class PytestAPIHeuristics:
         }
 
         for content in contents:
+            if content.strip().startswith('#')
+                continue
+
             tmp = cls.check_apis(content)
             quantity_by_api = {
                 "count_native_assert": quantity_by_api["count_native_assert"] + tmp["count_native_assert"],

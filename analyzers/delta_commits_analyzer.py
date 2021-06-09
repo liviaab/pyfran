@@ -127,15 +127,15 @@ class DeltaCommits:
         apis_in_removed_lines = uAPIh.check_apis_in_list(removed_lines)
 
         unittest_memo = {
-            "count_added_testCaseSubclass": commit_memo["count_added_testCaseSubclass"] + apis_in_added_lines["count_testCaseSubclass"],
-            "count_added_assert": commit_memo["count_added_assert"] + apis_in_added_lines["count_assert"],
-            "count_added_setUp": commit_memo["count_added_setUp"] + apis_in_added_lines["count_setUp"],
-            "count_added_setUpClass": commit_memo["count_added_setUpClass"] + apis_in_added_lines["count_setUpClass"],
-            "count_added_tearDown": commit_memo["count_added_tearDown"] + apis_in_added_lines["count_tearDown"],
-            "count_added_tearDownClass": commit_memo["count_added_tearDownClass"] + apis_in_added_lines["count_tearDownClass"],
-            "count_added_unittestSkipTest": commit_memo["count_added_unittestSkipTest"] + apis_in_added_lines["count_unittestSkipTest"],
-            "count_added_selfSkipTest": commit_memo["count_added_selfSkipTest"] + apis_in_added_lines["count_selfSkipTest"],
-            "count_added_expectedFailure": commit_memo["count_added_expectedFailure"] + apis_in_added_lines["count_expectedFailure"],
+            "u_count_added_testCaseSubclass": commit_memo["u_count_added_testCaseSubclass"] + apis_in_added_lines["count_testCaseSubclass"],
+            "u_count_added_assert": commit_memo["u_count_added_assert"] + apis_in_added_lines["count_assert"],
+            "u_count_added_setUp": commit_memo["u_count_added_setUp"] + apis_in_added_lines["count_setUp"],
+            "u_count_added_setUpClass": commit_memo["u_count_added_setUpClass"] + apis_in_added_lines["count_setUpClass"],
+            "u_count_added_tearDown": commit_memo["u_count_added_tearDown"] + apis_in_added_lines["count_tearDown"],
+            "u_count_added_tearDownClass": commit_memo["u_count_added_tearDownClass"] + apis_in_added_lines["count_tearDownClass"],
+            "u_count_added_unittestSkipTest": commit_memo["u_count_added_unittestSkipTest"] + apis_in_added_lines["count_unittestSkipTest"],
+            "u_count_added_selfSkipTest": commit_memo["u_count_added_selfSkipTest"] + apis_in_added_lines["count_selfSkipTest"],
+            "u_count_added_expectedFailure": commit_memo["u_count_added_expectedFailure"] + apis_in_added_lines["count_expectedFailure"],
             "unittest_matches_in_added_lines": {
                 "testCaseSubclass": commit_memo["unittest_matches_in_added_lines"]["testCaseSubclass"] + apis_in_added_lines["matches_testCaseSubclass"],
                 "assert": commit_memo["unittest_matches_in_added_lines"]["assert"] + apis_in_added_lines["matches_assert"],
@@ -148,15 +148,15 @@ class DeltaCommits:
                 "expectedFailure": commit_memo["unittest_matches_in_added_lines"]["expectedFailure"] + apis_in_added_lines["matches_expectedFailure"]
             },
 
-            "count_removed_testCaseSubclass": commit_memo["count_removed_testCaseSubclass"] + apis_in_removed_lines["count_testCaseSubclass"],
-            "count_removed_assert": commit_memo["count_removed_assert"] + apis_in_removed_lines["count_assert"],
-            "count_removed_setUp": commit_memo["count_removed_setUp"] + apis_in_removed_lines["count_setUp"],
-            "count_removed_setUpClass": commit_memo["count_removed_setUpClass"] + apis_in_removed_lines["count_setUpClass"],
-            "count_removed_tearDown": commit_memo["count_removed_tearDown"] + apis_in_removed_lines["count_tearDown"],
-            "count_removed_tearDownClass": commit_memo["count_removed_tearDownClass"] + apis_in_removed_lines["count_tearDownClass"],
-            "count_removed_unittestSkipTest": commit_memo["count_removed_unittestSkipTest"] + apis_in_removed_lines["count_unittestSkipTest"],
-            "count_removed_selfSkipTest": commit_memo["count_removed_selfSkipTest"] + apis_in_removed_lines["count_selfSkipTest"],
-            "count_removed_expectedFailure": commit_memo["count_removed_expectedFailure"] + apis_in_removed_lines["count_expectedFailure"],
+            "u_count_removed_testCaseSubclass": commit_memo["u_count_removed_testCaseSubclass"] + apis_in_removed_lines["count_testCaseSubclass"],
+            "u_count_removed_assert": commit_memo["u_count_removed_assert"] + apis_in_removed_lines["count_assert"],
+            "u_count_removed_setUp": commit_memo["u_count_removed_setUp"] + apis_in_removed_lines["count_setUp"],
+            "u_count_removed_setUpClass": commit_memo["u_count_removed_setUpClass"] + apis_in_removed_lines["count_setUpClass"],
+            "u_count_removed_tearDown": commit_memo["u_count_removed_tearDown"] + apis_in_removed_lines["count_tearDown"],
+            "u_count_removed_tearDownClass": commit_memo["u_count_removed_tearDownClass"] + apis_in_removed_lines["count_tearDownClass"],
+            "u_count_removed_unittestSkipTest": commit_memo["u_count_removed_unittestSkipTest"] + apis_in_removed_lines["count_unittestSkipTest"],
+            "u_count_removed_selfSkipTest": commit_memo["u_count_removed_selfSkipTest"] + apis_in_removed_lines["count_selfSkipTest"],
+            "u_count_removed_expectedFailure": commit_memo["u_count_removed_expectedFailure"] + apis_in_removed_lines["count_expectedFailure"],
             "unittest_matches_in_removed_lines": {
                 "testCaseSubclass": commit_memo["unittest_matches_in_removed_lines"]["testCaseSubclass"] + apis_in_removed_lines["matches_testCaseSubclass"],
                 "assert": commit_memo["unittest_matches_in_removed_lines"]["assert"] + apis_in_removed_lines["matches_assert"],
@@ -181,16 +181,16 @@ class DeltaCommits:
         apis_in_removed_lines = pAPIh.check_apis_in_list(removed_lines)
 
         pytest_memo = {
-            "count_added_native_assert": commit_memo["count_added_native_assert"] + apis_in_added_lines["count_native_assert"],
-            "count_added_raise": commit_memo["count_added_raise"] + apis_in_added_lines["count_raise"],
-            "count_added_pytestRaise": commit_memo["count_added_pytestRaise"] + apis_in_added_lines["count_pytestRaise"],
-            "count_added_simpleSkip": commit_memo["count_added_simpleSkip"] + apis_in_added_lines["count_simpleSkip"],
-            "count_added_markSkip": commit_memo["count_added_markSkip"] + apis_in_added_lines["count_markSkip"],
-            "count_added_expectedFailure": commit_memo["count_added_expectedFailure"] + apis_in_added_lines["count_expectedFailure"],
-            "count_added_fixture": commit_memo["count_added_fixture"] + apis_in_added_lines["count_fixture"],
-            "count_added_usefixture": commit_memo["count_added_usefixture"] + apis_in_added_lines["count_usefixture"],
-            "count_added_generalMark": commit_memo["count_added_generalMark"] + apis_in_added_lines["count_generalMark"],
-            "count_added_generalPytest": commit_memo["count_added_generalPytest"] + apis_in_added_lines["count_generalPytest"],
+            "p_count_added_native_assert": commit_memo["p_count_added_native_assert"] + apis_in_added_lines["count_native_assert"],
+            "p_count_added_raise": commit_memo["p_count_added_raise"] + apis_in_added_lines["count_raise"],
+            "p_count_added_pytestRaise": commit_memo["p_count_added_pytestRaise"] + apis_in_added_lines["count_pytestRaise"],
+            "p_count_added_simpleSkip": commit_memo["p_count_added_simpleSkip"] + apis_in_added_lines["count_simpleSkip"],
+            "p_count_added_markSkip": commit_memo["p_count_added_markSkip"] + apis_in_added_lines["count_markSkip"],
+            "p_count_added_expectedFailure": commit_memo["p_count_added_expectedFailure"] + apis_in_added_lines["count_expectedFailure"],
+            "p_count_added_fixture": commit_memo["p_count_added_fixture"] + apis_in_added_lines["count_fixture"],
+            "p_count_added_usefixture": commit_memo["p_count_added_usefixture"] + apis_in_added_lines["count_usefixture"],
+            "p_count_added_generalMark": commit_memo["p_count_added_generalMark"] + apis_in_added_lines["count_generalMark"],
+            "p_count_added_generalPytest": commit_memo["p_count_added_generalPytest"] + apis_in_added_lines["count_generalPytest"],
             "pytest_matches_in_added_lines": {
                 "native_assert": commit_memo["pytest_matches_in_added_lines"]["native_assert"] + apis_in_added_lines["matches_native_assert"],
                 "raise": commit_memo["pytest_matches_in_added_lines"]["raise"] + apis_in_added_lines["matches_raise"],
@@ -204,16 +204,16 @@ class DeltaCommits:
                 "generalPytest": commit_memo["pytest_matches_in_added_lines"]["generalPytest"] + apis_in_added_lines["matches_generalPytest"]
             },
 
-            "count_removed_native_assert": commit_memo["count_removed_native_assert"] + apis_in_removed_lines["count_native_assert"],
-            "count_removed_raise": commit_memo["count_removed_raise"] + apis_in_removed_lines["count_raise"],
-            "count_removed_pytestRaise": commit_memo["count_removed_pytestRaise"] + apis_in_removed_lines["count_pytestRaise"],
-            "count_removed_simpleSkip": commit_memo["count_removed_simpleSkip"] + apis_in_removed_lines["count_simpleSkip"],
-            "count_removed_markSkip": commit_memo["count_removed_markSkip"] + apis_in_removed_lines["count_markSkip"],
-            "count_removed_expectedFailure": commit_memo["count_removed_expectedFailure"] + apis_in_removed_lines["count_expectedFailure"],
-            "count_removed_fixture": commit_memo["count_removed_fixture"] + apis_in_removed_lines["count_fixture"],
-            "count_removed_usefixture": commit_memo["count_removed_usefixture"] + apis_in_removed_lines["count_usefixture"],
-            "count_removed_generalMark": commit_memo["count_removed_generalMark"] + apis_in_removed_lines["count_generalMark"],
-            "count_removed_generalPytest": commit_memo["count_removed_generalPytest"] + apis_in_removed_lines["count_generalPytest"],
+            "p_count_removed_native_assert": commit_memo["p_count_removed_native_assert"] + apis_in_removed_lines["count_native_assert"],
+            "p_count_removed_raise": commit_memo["p_count_removed_raise"] + apis_in_removed_lines["count_raise"],
+            "p_count_removed_pytestRaise": commit_memo["p_count_removed_pytestRaise"] + apis_in_removed_lines["count_pytestRaise"],
+            "p_count_removed_simpleSkip": commit_memo["p_count_removed_simpleSkip"] + apis_in_removed_lines["count_simpleSkip"],
+            "p_count_removed_markSkip": commit_memo["p_count_removed_markSkip"] + apis_in_removed_lines["count_markSkip"],
+            "p_count_removed_expectedFailure": commit_memo["p_count_removed_expectedFailure"] + apis_in_removed_lines["count_expectedFailure"],
+            "p_count_removed_fixture": commit_memo["p_count_removed_fixture"] + apis_in_removed_lines["count_fixture"],
+            "p_count_removed_usefixture": commit_memo["p_count_removed_usefixture"] + apis_in_removed_lines["count_usefixture"],
+            "p_count_removed_generalMark": commit_memo["p_count_removed_generalMark"] + apis_in_removed_lines["count_generalMark"],
+            "p_count_removed_generalPytest": commit_memo["p_count_removed_generalPytest"] + apis_in_removed_lines["count_generalPytest"],
             "pytest_matches_in_removed_lines": {
                 "native_assert": commit_memo["pytest_matches_in_removed_lines"]["native_assert"] + apis_in_removed_lines["matches_native_assert"],
                 "raise": commit_memo["pytest_matches_in_removed_lines"]["raise"] + apis_in_removed_lines["matches_raise"],
@@ -234,26 +234,26 @@ class DeltaCommits:
     def __are_we_interested(self, commit_memo):
         return (commit_memo["unittest_in_code"] or commit_memo["unittest_in_removed_diffs"] \
                 or commit_memo["pytest_in_code"] or commit_memo["pytest_in_removed_diffs"] \
-                or commit_memo["has_test_file"] or commit_memo["count_added_testCaseSubclass"] \
-                or commit_memo["count_added_assert"] or commit_memo["count_added_setUp"] \
-                or commit_memo["count_added_setUpClass"] or commit_memo["count_added_tearDown"] \
-                or commit_memo["count_added_tearDownClass"] or commit_memo["count_added_unittestSkipTest"] \
-                or commit_memo["count_added_selfSkipTest"] or commit_memo["count_added_expectedFailure"] \
-                or commit_memo["count_removed_testCaseSubclass"] or commit_memo["count_removed_assert"] \
-                or commit_memo["count_removed_setUp"] or commit_memo["count_removed_setUpClass"] \
-                or commit_memo["count_removed_tearDown"] or commit_memo["count_removed_tearDownClass"] \
-                or commit_memo["count_removed_unittestSkipTest"] or commit_memo["count_removed_selfSkipTest"] \
-                or commit_memo["count_removed_expectedFailure"] or commit_memo["count_added_native_assert"] \
-                or commit_memo["count_added_raise"] or commit_memo["count_added_pytestRaise"] \
-                or commit_memo["count_added_simpleSkip"] or commit_memo["count_added_markSkip"] \
-                or commit_memo["count_added_expectedFailure"] or commit_memo["count_added_fixture"] \
-                or commit_memo["count_added_usefixture"] or commit_memo["count_added_generalMark"] \
-                or commit_memo["count_added_generalPytest"] or commit_memo["count_removed_native_assert"] \
-                or commit_memo["count_removed_raise"] or commit_memo["count_removed_pytestRaise"] \
-                or commit_memo["count_removed_simpleSkip"] or commit_memo["count_removed_markSkip"] \
-                or commit_memo["count_removed_expectedFailure"] or commit_memo["count_removed_fixture"] \
-                or commit_memo["count_removed_usefixture"] or commit_memo["count_removed_generalMark"] \
-                or commit_memo["count_removed_generalPytest"])
+                or commit_memo["has_test_file"] or commit_memo["u_count_added_testCaseSubclass"] \
+                or commit_memo["u_count_added_assert"] or commit_memo["u_count_added_setUp"] \
+                or commit_memo["u_count_added_setUpClass"] or commit_memo["u_count_added_tearDown"] \
+                or commit_memo["u_count_added_tearDownClass"] or commit_memo["u_count_added_unittestSkipTest"] \
+                or commit_memo["u_count_added_selfSkipTest"] or commit_memo["u_count_added_expectedFailure"] \
+                or commit_memo["u_count_removed_testCaseSubclass"] or commit_memo["u_count_removed_assert"] \
+                or commit_memo["u_count_removed_setUp"] or commit_memo["u_count_removed_setUpClass"] \
+                or commit_memo["u_count_removed_tearDown"] or commit_memo["u_count_removed_tearDownClass"] \
+                or commit_memo["u_count_removed_unittestSkipTest"] or commit_memo["u_count_removed_selfSkipTest"] \
+                or commit_memo["u_count_removed_expectedFailure"] or commit_memo["p_count_added_native_assert"] \
+                or commit_memo["p_count_added_raise"] or commit_memo["p_count_added_pytestRaise"] \
+                or commit_memo["p_count_added_simpleSkip"] or commit_memo["p_count_added_markSkip"] \
+                or commit_memo["p_count_added_expectedFailure"] or commit_memo["p_count_added_fixture"] \
+                or commit_memo["p_count_added_usefixture"] or commit_memo["p_count_added_generalMark"] \
+                or commit_memo["p_count_added_generalPytest"] or commit_memo["p_count_removed_native_assert"] \
+                or commit_memo["p_count_removed_raise"] or commit_memo["p_count_removed_pytestRaise"] \
+                or commit_memo["p_count_removed_simpleSkip"] or commit_memo["p_count_removed_markSkip"] \
+                or commit_memo["p_count_removed_expectedFailure"] or commit_memo["p_count_removed_fixture"] \
+                or commit_memo["p_count_removed_usefixture"] or commit_memo["p_count_removed_generalMark"] \
+                or commit_memo["p_count_removed_generalPytest"])
 
     def __initial_state_commit_memo(self):
         return {
@@ -264,15 +264,15 @@ class DeltaCommits:
                 "has_test_file": False,
                 "are_we_interested": False,
 
-                "count_added_testCaseSubclass": 0,
-                "count_added_assert": 0,
-                "count_added_setUp": 0,
-                "count_added_setUpClass": 0,
-                "count_added_tearDown": 0,
-                "count_added_tearDownClass": 0,
-                "count_added_unittestSkipTest": 0,
-                "count_added_selfSkipTest": 0,
-                "count_added_expectedFailure": 0,
+                "u_count_added_testCaseSubclass": 0,
+                "u_count_added_assert": 0,
+                "u_count_added_setUp": 0,
+                "u_count_added_setUpClass": 0,
+                "u_count_added_tearDown": 0,
+                "u_count_added_tearDownClass": 0,
+                "u_count_added_unittestSkipTest": 0,
+                "u_count_added_selfSkipTest": 0,
+                "u_count_added_expectedFailure": 0,
                 "unittest_matches_in_added_lines": {
                     "testCaseSubclass": [],
                     "assert": [],
@@ -285,15 +285,15 @@ class DeltaCommits:
                     "expectedFailure": []
                 },
 
-                "count_removed_testCaseSubclass": 0,
-                "count_removed_assert": 0,
-                "count_removed_setUp": 0,
-                "count_removed_setUpClass": 0,
-                "count_removed_tearDown": 0,
-                "count_removed_tearDownClass": 0,
-                "count_removed_unittestSkipTest": 0,
-                "count_removed_selfSkipTest": 0,
-                "count_removed_expectedFailure": 0,
+                "u_count_removed_testCaseSubclass": 0,
+                "u_count_removed_assert": 0,
+                "u_count_removed_setUp": 0,
+                "u_count_removed_setUpClass": 0,
+                "u_count_removed_tearDown": 0,
+                "u_count_removed_tearDownClass": 0,
+                "u_count_removed_unittestSkipTest": 0,
+                "u_count_removed_selfSkipTest": 0,
+                "u_count_removed_expectedFailure": 0,
                 "unittest_matches_in_removed_lines": {
                     "testCaseSubclass": [],
                     "assert": [],
@@ -306,16 +306,16 @@ class DeltaCommits:
                     "expectedFailure": [],
                 },
 
-                "count_added_native_assert": 0,
-                "count_added_raise": 0,
-                "count_added_pytestRaise": 0,
-                "count_added_simpleSkip": 0,
-                "count_added_markSkip": 0,
-                "count_added_expectedFailure": 0,
-                "count_added_fixture": 0,
-                "count_added_usefixture": 0,
-                "count_added_generalMark": 0,
-                "count_added_generalPytest": 0,
+                "p_count_added_native_assert": 0,
+                "p_count_added_raise": 0,
+                "p_count_added_pytestRaise": 0,
+                "p_count_added_simpleSkip": 0,
+                "p_count_added_markSkip": 0,
+                "p_count_added_expectedFailure": 0,
+                "p_count_added_fixture": 0,
+                "p_count_added_usefixture": 0,
+                "p_count_added_generalMark": 0,
+                "p_count_added_generalPytest": 0,
                 "pytest_matches_in_added_lines": {
                     "native_assert": [],
                     "raise": [],
@@ -329,16 +329,16 @@ class DeltaCommits:
                     "generalPytest": [],
                 },
 
-                "count_removed_native_assert": 0,
-                "count_removed_raise": 0,
-                "count_removed_pytestRaise": 0,
-                "count_removed_simpleSkip": 0,
-                "count_removed_markSkip": 0,
-                "count_removed_expectedFailure": 0,
-                "count_removed_fixture": 0,
-                "count_removed_usefixture": 0,
-                "count_removed_generalMark": 0,
-                "count_removed_generalPytest": 0,
+                "p_count_removed_native_assert": 0,
+                "p_count_removed_raise": 0,
+                "p_count_removed_pytestRaise": 0,
+                "p_count_removed_simpleSkip": 0,
+                "p_count_removed_markSkip": 0,
+                "p_count_removed_expectedFailure": 0,
+                "p_count_removed_fixture": 0,
+                "p_count_removed_usefixture": 0,
+                "p_count_removed_generalMark": 0,
+                "p_count_removed_generalPytest": 0,
                 "pytest_matches_in_removed_lines": {
                     "native_assert": [],
                     "raise": [],

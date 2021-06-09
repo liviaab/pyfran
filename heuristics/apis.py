@@ -2,12 +2,12 @@ import re
 
 
 class UnittestAPIHeuristics:
-    testCaseSubclass_pattern = "\(.*TestCase\):"
-    assert_pattern = "self.assert.*\(.*\)"
+    testCaseSubclass_pattern = "(class\s+\w+\(.*TestCase\):)" # só unittest.TestCase ou generico? ex class Test(IsolatedAsyncioTestCase):...
+    assert_pattern = "self.assert(\w*)(.*)"
     setUp_pattern = "def\s+setUp\(.*\):"
-    setUpClass_pattern = "def\s+setUpClass\(.*\):"
+    setUpClass_pattern = "def\s+setUp(\w+)(\(.*\)):" # setUpClass | setUpModule
     tearDown_pattern = "def\s+tearDown\(.*\):"
-    tearDownClass_pattern = "def\s+tearDownClass\(.*\):"
+    tearDownClass_pattern = "def\s+tearDown(\w+)(\(.*\)):" # tearDownClass | tearDownModule
     unittestSkipTest_pattern = "[@]{0,1}unittest.skip.*?\((.*\))"
     selfSkipTest_pattern = "self.skipTest(\(.*\))"
     expectedFailure_pattern = "@unittest.expectedFailure"
@@ -103,8 +103,8 @@ class UnittestAPIHeuristics:
 
 
 class PytestAPIHeuristics:
-    native_assert_pattern = "\s*assert\s+"
-    raise_pattern = "\s*raise\s+"
+    native_assert_pattern = "\s*assert\s+(.*)"
+    raise_pattern = "\s*raise\s+(.*)"
     pytestRaise_pattern = "pytest.raises(\(.*\))"
     simpleSkip_pattern = "pytest.skip(\(.*\))"
     markSkip_pattern = "[@]?pytest.mark.skip(.*\(.*\))?"

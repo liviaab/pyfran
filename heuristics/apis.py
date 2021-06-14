@@ -1,8 +1,7 @@
 import re
 
-
 class UnittestAPIHeuristics:
-    testCaseSubclass_pattern = "(class\s+\w+\(.*TestCase\):)" # só unittest.TestCase ou generico? ex class Test(IsolatedAsyncioTestCase):...
+    testCaseSubclass_pattern = "(class\s+.*[\.|\(]TestCase\):)"
     assert_pattern = "self.assert(\w*)(.*)"
     setUp_pattern = "def\s+setUp\(.*\):"
     setUpClass_pattern = "def\s+setUp(\w+)(\(.*\)):" # setUpClass | setUpModule

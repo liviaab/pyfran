@@ -22,7 +22,7 @@ class CheckoutsAnalyzer:
         for commit in commits:
             # if not commit["are_we_interested"]:
             #     continue
-            if commit["index"] % 5 != 0:
+            if commit["commit_index"] % 5 != 0:
                 continue
 
             repo.git.checkout(commit["commit_hash"])

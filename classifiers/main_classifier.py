@@ -104,7 +104,7 @@ class MainClassifier:
             if(currentDefaultBranch.usesPytest and not currentDefaultBranch.usesUnittest):
                 idx_last_unittest_commit = CustomCommit.indexOf(allCommits, unittest_occurrences.last.commit["commit_hash"])
                 number_of_migration_authors_names, number_of_migration_authors_emails = \
-                    CustomCommit.get_authors_count_between(allCommits, idx_first_pytest_commit, idx_last_unittest_commit)
+                    CustomCommit.get_migration_authors_count_between(allCommits, idx_first_pytest_commit, idx_last_unittest_commit)
                 timedelta = unittest_occurrences.last.commit["date"] - pytest_occurrences.first.commit["date"]
 
                 author_infos = CustomCommit.characterize_authors(allCommits, idx_first_pytest_commit, idx_last_unittest_commit)
@@ -125,7 +125,7 @@ class MainClassifier:
 
             if(currentDefaultBranch.usesPytest and currentDefaultBranch.usesUnittest):
                 number_of_migration_authors_names, number_of_migration_authors_emails = \
-                    CustomCommit.get_authors_count_between(allCommits, idx_first_pytest_commit, amount_total_commits - 1)
+                    CustomCommit.get_migration_authors_count_between(allCommits, idx_first_pytest_commit, amount_total_commits - 1)
 
                 timedelta = datetime.now(timezone.utc) - pytest_occurrences.first.commit["date"]
 

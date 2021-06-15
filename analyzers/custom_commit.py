@@ -47,14 +47,15 @@ class CustomCommit:
         return len(author_names), len(author_emails)
     
     @classmethod
-    def get_authors_count_between(cls, customCommitList, initialIndex, finalIndex):
+    def get_migration_authors_count_between(cls, customCommitList, initialIndex, finalIndex):
         sortedList = sorted(customCommitList, key=lambda x: x["commit_index"])
         author_names = set()
         author_emails = set()
 
         for i in range(initialIndex, finalIndex+1):
-            author_names.add(sortedList[i]["author_name"])
-            author_emails.add(sortedList[i]["author_email"])
+            if sortedList[i]["are_we_interested"]:
+                author_names.add(sortedList[i]["author_name"])
+                author_emails.add(sortedList[i]["author_email"])
 
         return len(author_names), len(author_emails)
 
@@ -73,7 +74,7 @@ class CustomCommit:
             else:
                 authors[email] = 1
 
-            if i >= initialIndex and i <= finalIndex:
+            if i >= initialIndex and i <= finalIndex and sortedList[i]["are_we_interested"]:
                 if email in migration_authors:
                     migration_authors[email] += 1
                 else:

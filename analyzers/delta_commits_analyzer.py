@@ -232,7 +232,7 @@ class DeltaCommits:
         return commit_memo
 
     def __are_we_interested(self, commit_memo):
-        return (commit_memo["unittest_in_code"] or commit_memo["unittest_in_removed_diffs"] \
+        return bool(commit_memo["unittest_in_code"] or commit_memo["unittest_in_removed_diffs"] \
                 or commit_memo["pytest_in_code"] or commit_memo["pytest_in_removed_diffs"] \
                 or commit_memo["has_test_file"] or commit_memo["u_count_added_testCaseSubclass"] \
                 or commit_memo["u_count_added_assert"] or commit_memo["u_count_added_setUp"] \

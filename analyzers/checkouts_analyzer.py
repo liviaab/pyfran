@@ -20,7 +20,9 @@ class CheckoutsAnalyzer:
         apis_info = []
 
         for commit in commits:
-            if not commit["are_we_interested"]:
+            # if not commit["are_we_interested"]:
+            #     continue
+            if commit["index"] % 5 != 0:
                 continue
 
             repo.git.checkout(commit["commit_hash"])

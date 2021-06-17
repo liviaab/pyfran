@@ -182,7 +182,6 @@ class DeltaCommits:
 
         pytest_memo = {
             "p_count_added_native_assert": commit_memo["p_count_added_native_assert"] + apis_in_added_lines["count_native_assert"],
-            "p_count_added_raise": commit_memo["p_count_added_raise"] + apis_in_added_lines["count_raise"],
             "p_count_added_pytestRaise": commit_memo["p_count_added_pytestRaise"] + apis_in_added_lines["count_pytestRaise"],
             "p_count_added_simpleSkip": commit_memo["p_count_added_simpleSkip"] + apis_in_added_lines["count_simpleSkip"],
             "p_count_added_markSkip": commit_memo["p_count_added_markSkip"] + apis_in_added_lines["count_markSkip"],
@@ -193,7 +192,6 @@ class DeltaCommits:
             "p_count_added_generalPytest": commit_memo["p_count_added_generalPytest"] + apis_in_added_lines["count_generalPytest"],
             "pytest_matches_in_added_lines": {
                 "native_assert": commit_memo["pytest_matches_in_added_lines"]["native_assert"] + apis_in_added_lines["matches_native_assert"],
-                "raise": commit_memo["pytest_matches_in_added_lines"]["raise"] + apis_in_added_lines["matches_raise"],
                 "pytestRaise": commit_memo["pytest_matches_in_added_lines"]["pytestRaise"] + apis_in_added_lines["matches_pytestRaise"],
                 "simpleSkip": commit_memo["pytest_matches_in_added_lines"]["simpleSkip"] + apis_in_added_lines["matches_simpleSkip"],
                 "markSkip": commit_memo["pytest_matches_in_added_lines"]["markSkip"] + apis_in_added_lines["matches_markSkip"],
@@ -205,7 +203,6 @@ class DeltaCommits:
             },
 
             "p_count_removed_native_assert": commit_memo["p_count_removed_native_assert"] + apis_in_removed_lines["count_native_assert"],
-            "p_count_removed_raise": commit_memo["p_count_removed_raise"] + apis_in_removed_lines["count_raise"],
             "p_count_removed_pytestRaise": commit_memo["p_count_removed_pytestRaise"] + apis_in_removed_lines["count_pytestRaise"],
             "p_count_removed_simpleSkip": commit_memo["p_count_removed_simpleSkip"] + apis_in_removed_lines["count_simpleSkip"],
             "p_count_removed_markSkip": commit_memo["p_count_removed_markSkip"] + apis_in_removed_lines["count_markSkip"],
@@ -216,7 +213,6 @@ class DeltaCommits:
             "p_count_removed_generalPytest": commit_memo["p_count_removed_generalPytest"] + apis_in_removed_lines["count_generalPytest"],
             "pytest_matches_in_removed_lines": {
                 "native_assert": commit_memo["pytest_matches_in_removed_lines"]["native_assert"] + apis_in_removed_lines["matches_native_assert"],
-                "raise": commit_memo["pytest_matches_in_removed_lines"]["raise"] + apis_in_removed_lines["matches_raise"],
                 "pytestRaise": commit_memo["pytest_matches_in_removed_lines"]["pytestRaise"] + apis_in_removed_lines["matches_pytestRaise"],
                 "simpleSkip": commit_memo["pytest_matches_in_removed_lines"]["simpleSkip"] + apis_in_removed_lines["matches_simpleSkip"],
                 "markSkip": commit_memo["pytest_matches_in_removed_lines"]["markSkip"] + apis_in_removed_lines["matches_markSkip"],
@@ -234,7 +230,7 @@ class DeltaCommits:
     def __are_we_interested(self, commit_memo):
         return bool(commit_memo["unittest_in_code"] or commit_memo["unittest_in_removed_diffs"] \
                 or commit_memo["pytest_in_code"] or commit_memo["pytest_in_removed_diffs"] \
-                or commit_memo["has_test_file"] or commit_memo["u_count_added_testCaseSubclass"] \
+                or commit_memo["u_count_added_testCaseSubclass"] \
                 or commit_memo["u_count_added_assert"] or commit_memo["u_count_added_setUp"] \
                 or commit_memo["u_count_added_setUpClass"] or commit_memo["u_count_added_tearDown"] \
                 or commit_memo["u_count_added_tearDownClass"] or commit_memo["u_count_added_unittestSkipTest"] \
@@ -244,12 +240,11 @@ class DeltaCommits:
                 or commit_memo["u_count_removed_tearDown"] or commit_memo["u_count_removed_tearDownClass"] \
                 or commit_memo["u_count_removed_unittestSkipTest"] or commit_memo["u_count_removed_selfSkipTest"] \
                 or commit_memo["u_count_removed_expectedFailure"] or commit_memo["p_count_added_native_assert"] \
-                or commit_memo["p_count_added_raise"] or commit_memo["p_count_added_pytestRaise"] \
-                or commit_memo["p_count_added_simpleSkip"] or commit_memo["p_count_added_markSkip"] \
-                or commit_memo["p_count_added_expectedFailure"] or commit_memo["p_count_added_fixture"] \
-                or commit_memo["p_count_added_usefixture"] or commit_memo["p_count_added_generalMark"] \
-                or commit_memo["p_count_added_generalPytest"] or commit_memo["p_count_removed_native_assert"] \
-                or commit_memo["p_count_removed_raise"] or commit_memo["p_count_removed_pytestRaise"] \
+                or commit_memo["p_count_added_pytestRaise"] or commit_memo["p_count_added_simpleSkip"] \
+                or commit_memo["p_count_added_markSkip"] or commit_memo["p_count_added_expectedFailure"] \
+                or commit_memo["p_count_added_fixture"] or commit_memo["p_count_added_usefixture"] \
+                or commit_memo["p_count_added_generalMark"] or commit_memo["p_count_added_generalPytest"] \
+                or commit_memo["p_count_removed_native_assert"] or commit_memo["p_count_removed_pytestRaise"] \
                 or commit_memo["p_count_removed_simpleSkip"] or commit_memo["p_count_removed_markSkip"] \
                 or commit_memo["p_count_removed_expectedFailure"] or commit_memo["p_count_removed_fixture"] \
                 or commit_memo["p_count_removed_usefixture"] or commit_memo["p_count_removed_generalMark"] \
@@ -307,7 +302,6 @@ class DeltaCommits:
                 },
 
                 "p_count_added_native_assert": 0,
-                "p_count_added_raise": 0,
                 "p_count_added_pytestRaise": 0,
                 "p_count_added_simpleSkip": 0,
                 "p_count_added_markSkip": 0,
@@ -318,7 +312,6 @@ class DeltaCommits:
                 "p_count_added_generalPytest": 0,
                 "pytest_matches_in_added_lines": {
                     "native_assert": [],
-                    "raise": [],
                     "pytestRaise": [],
                     "simpleSkip": [],
                     "markSkip": [],
@@ -330,7 +323,6 @@ class DeltaCommits:
                 },
 
                 "p_count_removed_native_assert": 0,
-                "p_count_removed_raise": 0,
                 "p_count_removed_pytestRaise": 0,
                 "p_count_removed_simpleSkip": 0,
                 "p_count_removed_markSkip": 0,
@@ -341,7 +333,6 @@ class DeltaCommits:
                 "p_count_removed_generalPytest": 0,
                 "pytest_matches_in_removed_lines": {
                     "native_assert": [],
-                    "raise": [],
                     "pytestRaise": [],
                     "simpleSkip": [],
                     "markSkip": [],

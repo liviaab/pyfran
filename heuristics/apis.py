@@ -1,7 +1,7 @@
 import re
 
 class UnittestAPIHeuristics:
-    testCaseSubclass_pattern = "(class\s+.*[\.|\(]TestCase\):)"
+    testCaseSubclass_pattern = "(class\s+.*\([unittest\.]*TestCase\):)"
     assert_pattern = "self.assert(\w*)(.*)"
     setUp_pattern = "def\s+setUp\(.*\):"
     setUpClass_pattern = "def\s+setUp(\w+)(\(.*\)):" # setUpClass | setUpModule
@@ -103,7 +103,6 @@ class UnittestAPIHeuristics:
 
 class PytestAPIHeuristics:
     native_assert_pattern = "\s*assert\s+(.*)"
-    raise_pattern = "\s*raise\s+(.*)"
     pytestRaise_pattern = "pytest.raises(\(.*\))"
     simpleSkip_pattern = "pytest.skip(\(.*\))"
     markSkip_pattern = "[@]?pytest.mark.skip(.*\(.*\))?"
@@ -116,7 +115,6 @@ class PytestAPIHeuristics:
     @classmethod
     def check_apis(cls, content):
         matches_native_assert = re.findall(cls.native_assert_pattern, content)
-        matches_raise = re.findall(cls.raise_pattern, content)
         matches_pytestRaise = re.findall(cls.pytestRaise_pattern, content)
         matches_simpleSkip = re.findall(cls.simpleSkip_pattern, content)
         matches_markSkip = re.findall(cls.markSkip_pattern, content)
@@ -128,7 +126,6 @@ class PytestAPIHeuristics:
 
         quantity_by_api = {
             "count_native_assert": len(matches_native_assert),
-            "count_raise": len(matches_raise),
             "count_pytestRaise": len(matches_pytestRaise),
             "count_simpleSkip": len(matches_simpleSkip),
             "count_markSkip": len(matches_markSkip),
@@ -139,7 +136,6 @@ class PytestAPIHeuristics:
             "count_generalPytest": len(matches_generalPytest),
 
             "matches_native_assert": matches_native_assert,
-            "matches_raise": matches_raise,
             "matches_pytestRaise": matches_pytestRaise,
             "matches_simpleSkip": matches_simpleSkip,
             "matches_markSkip": matches_markSkip,
@@ -156,7 +152,6 @@ class PytestAPIHeuristics:
     def check_apis_in_list(cls, contents):
         quantity_by_api = {
             "count_native_assert": 0,
-            "count_raise": 0,
             "count_pytestRaise": 0,
             "count_simpleSkip": 0,
             "count_markSkip": 0,
@@ -167,7 +162,6 @@ class PytestAPIHeuristics:
             "count_generalPytest": 0,
 
             "matches_native_assert": [],
-            "matches_raise": [],
             "matches_pytestRaise": [],
             "matches_simpleSkip": [],
             "matches_markSkip": [],
@@ -185,7 +179,6 @@ class PytestAPIHeuristics:
             tmp = cls.check_apis(content)
             quantity_by_api = {
                 "count_native_assert": quantity_by_api["count_native_assert"] + tmp["count_native_assert"],
-                "count_raise": quantity_by_api["count_raise"] + tmp["count_raise"],
                 "count_pytestRaise": quantity_by_api["count_pytestRaise"] + tmp["count_pytestRaise"],
                 "count_simpleSkip": quantity_by_api["count_simpleSkip"] + tmp["count_simpleSkip"],
                 "count_markSkip": quantity_by_api["count_markSkip"] + tmp["count_markSkip"],
@@ -196,7 +189,6 @@ class PytestAPIHeuristics:
                 "count_generalPytest": quantity_by_api["count_generalPytest"] + tmp["count_generalPytest"],
 
                 "matches_native_assert": quantity_by_api["matches_native_assert"] + tmp["matches_native_assert"],
-                "matches_raise": quantity_by_api["matches_raise"] + tmp["matches_raise"],
                 "matches_pytestRaise": quantity_by_api["matches_pytestRaise"] + tmp["matches_pytestRaise"],
                 "matches_simpleSkip": quantity_by_api["matches_simpleSkip"] + tmp["matches_simpleSkip"],
                 "matches_markSkip": quantity_by_api["matches_markSkip"] + tmp["matches_markSkip"],

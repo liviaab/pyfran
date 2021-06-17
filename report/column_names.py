@@ -42,7 +42,6 @@ def commit_columns():
         "u_count_removed_expectedFailure",
 
         "p_count_added_native_assert",
-        "p_count_added_raise",
         "p_count_added_pytestRaise",
         "p_count_added_simpleSkip",
         "p_count_added_markSkip",
@@ -53,7 +52,6 @@ def commit_columns():
         "p_count_added_generalPytest",
 
         "p_count_removed_native_assert",
-        "p_count_removed_raise",
         "p_count_removed_pytestRaise",
         "p_count_removed_simpleSkip",
         "p_count_removed_markSkip",
@@ -92,7 +90,6 @@ def api_columns():
         "u_api_expectedFailures",
 
         "native_asserts",
-        "p_api_raises",
         "p_api_pytestRaises",
         "p_api_simpleSkips",
         "p_api_markSkips",

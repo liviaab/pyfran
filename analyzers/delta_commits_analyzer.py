@@ -31,25 +31,37 @@ class DeltaCommits:
         index = 0
         for commit in RepositoryMining(self.repo_url, only_no_merge=True).traverse_commits():
             print("\t\tcommit {}".format(commit.hash))
-
             commit_memo = self.__initial_state_commit_memo()
-            # print("commit_memo")
-            # print(commit_memo)
 
             for modification in commit.modifications:
+
                 _filename, extension = os.path.splitext(modification.filename)
-                if modification.source_code == None or extension not in VALID_EXTENSIONS:
+                if extension not in VALID_EXTENSIONS:
                     continue
 
-                self.__match_patterns(modification)
-                self.__update_occurrences(index, commit, modification)
+                source_code = modification.source_code
+                removed_lines = []
+                added_lines = []
+                path = None
+
+                if modification.source_code == None:
+                    removed_lines = modification.source_code_before.splitlines()
+                    path = modification.old_path
+                else:
+                    removed_lines = self.__get_lines_from_diff(modification.diff_parsed['deleted'])
+                    added_lines = self.__get_lines_from_diff(modification.diff_parsed['added'])
+                    path = modification.new_path
+
+                self.__match_patterns(source_code, removed_lines, added_lines, path)
+                self.__update_occurrences(index, commit)
 
                 # check if a reference to pytest/unittest was added or removed
                 commit_memo = self.__update_base_commit_memo(commit_memo)
 
-                # check the apis of each framework
-                commit_memo = self.__update_memo_unittest_apis(commit_memo, modification)
-                commit_memo = self.__update_memo_pytest_apis(commit_memo, modification)
+                # check the apis of each framework if it is a test file
+                if self.tmp_memo["is_test_file"]:
+                    commit_memo = self.__update_memo_unittest_apis(commit_memo, removed_lines, added_lines)
+                    commit_memo = self.__update_memo_pytest_apis(commit_memo, removed_lines, added_lines)
 
             commit_memo["are_we_interested"] = self.__are_we_interested(commit_memo)
             custom = CustomCommit(index, commit, commit_memo)
@@ -61,22 +73,20 @@ class DeltaCommits:
         return (self.allcommits, self.unittest_occurrences, self.pytest_occurrences)
 
     def __get_lines_from_diff(self, parsed_modifications):
-        return [ removed_line for line, removed_line in parsed_modifications ]
+        return [ removed_line for line_number, removed_line in parsed_modifications ]
 
-    def __match_patterns(self, modification):
-        removed_lines = self.__get_lines_from_diff(modification.diff_parsed['deleted'])
-
+    def __match_patterns(self, source_code, removed_lines, added_lines, path):
         self.tmp_memo = {
-            "unittest_in_code": uh.matches_a(modification.source_code),
+            "unittest_in_code": uh.matches_a(source_code),
             "unittest_in_removed_diffs": uh.matches_any(removed_lines, ignoreComments=False),
-            "pytest_in_code": ph.matches_a(modification.source_code),
+            "pytest_in_code": ph.matches_a(source_code),
             "pytest_in_removed_diffs": ph.matches_any(removed_lines, ignoreComments=False),
-            "is_test_file": fh.matches_test_file(modification.new_path)
+            "is_test_file": fh.matches_test_file(path)
         }
 
         return
 
-    def __update_occurrences(self, index, commit, modification):
+    def __update_occurrences(self, index, commit):
         if self.__can_update_unittest_first_occurrence():
             self.unittest_occurrences.set_first_occurrence(index, commit)
 
@@ -119,10 +129,7 @@ class DeltaCommits:
         commit_memo.update(updated_memo)
         return commit_memo
 
-    def __update_memo_unittest_apis(self, commit_memo, modification):
-        added_lines = self.__get_lines_from_diff(modification.diff_parsed['added'])
-        removed_lines = self.__get_lines_from_diff(modification.diff_parsed['deleted'])
-
+    def __update_memo_unittest_apis(self, commit_memo, removed_lines, added_lines):
         apis_in_added_lines = uAPIh.check_apis_in_list(added_lines)
         apis_in_removed_lines = uAPIh.check_apis_in_list(removed_lines)
 
@@ -173,10 +180,7 @@ class DeltaCommits:
         commit_memo.update(unittest_memo)
         return commit_memo
 
-    def __update_memo_pytest_apis(self, commit_memo, modification):
-        added_lines = self.__get_lines_from_diff(modification.diff_parsed['added'])
-        removed_lines = self.__get_lines_from_diff(modification.diff_parsed['deleted'])
-
+    def __update_memo_pytest_apis(self, commit_memo, removed_lines, added_lines):
         apis_in_added_lines = pAPIh.check_apis_in_list(added_lines)
         apis_in_removed_lines = pAPIh.check_apis_in_list(removed_lines)
 

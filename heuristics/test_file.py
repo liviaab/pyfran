@@ -1,7 +1,7 @@
 import re
 
 class TestFileHeuristics:
-    testpath_pattern = "\/test\/|\/tests\/|test_.*\.py|.*_test\.py"
+    testpath_pattern = ".*test\/.*|.*tests\/.*|.*test_.*\.py|.*_test\.py"
 
     @classmethod
     def matches_test_file(cls, path):

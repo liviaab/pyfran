@@ -1,8 +1,8 @@
 import re
 
 class UnittestAPIHeuristics:
-    testCaseSubclass_pattern = "(class\s+.*\([unittest\.]*TestCase\):)"
-    assert_pattern = "self.assert(\w*)(.*)"
+    testCaseSubclass_pattern = "(class\s+.*\([unittest\.]*TestCase.*\):)"
+    assert_pattern = "self.assert(\w*)(.*)"  # self.assert([^_]\w*)(.*)
     setUp_pattern = "def\s+setUp\(.*\):"
     setUpClass_pattern = "def\s+setUp(\w+)(\(.*\)):" # setUpClass | setUpModule
     tearDown_pattern = "def\s+tearDown\(.*\):"

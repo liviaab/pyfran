@@ -1,6 +1,6 @@
 import os
 
-from pydriller import RepositoryMining
+from pydriller import RepositoryMining, ModificationType
 from analyzers.custom_commit import CustomCommit
 from analyzers.occurrences import Occurrences
 
@@ -44,13 +44,16 @@ class DeltaCommits:
                 added_lines = []
                 path = None
 
-                if modification.source_code == None:
+                if modification.change_type == ModificationType.DELETE:
                     removed_lines = modification.source_code_before.splitlines()
                     path = modification.old_path
-                else:
+                elif modification.change_type == ModificationType.ADD or \
+                    modification.change_type == ModificationType.MODIFY:
                     removed_lines = self.__get_lines_from_diff(modification.diff_parsed['deleted'])
                     added_lines = self.__get_lines_from_diff(modification.diff_parsed['added'])
                     path = modification.new_path
+                else:
+                    continue
 
                 self.__match_patterns(source_code, removed_lines, added_lines, path)
                 self.__update_occurrences(index, commit)

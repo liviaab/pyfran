@@ -48,8 +48,8 @@ def commit_columns():
         "p_count_added_expectedFailure",
         "p_count_added_fixture",
         "p_count_added_usefixture",
-        "p_count_added_generalMark",
-        "p_count_added_generalPytest",
+        "p_count_added_genericMark",
+        "p_count_added_genericPytest",
 
         "p_count_removed_native_assert",
         "p_count_removed_pytestRaise",
@@ -58,8 +58,8 @@ def commit_columns():
         "p_count_removed_expectedFailure",
         "p_count_removed_fixture",
         "p_count_removed_usefixture",
-        "p_count_removed_generalMark",
-        "p_count_removed_generalPytest",
+        "p_count_removed_genericMark",
+        "p_count_removed_genericPytest",
 
         "unittest_matches_in_added_lines",
         "unittest_matches_in_removed_lines",
@@ -96,8 +96,8 @@ def api_columns():
         "p_api_expectedFailures",
         "p_api_fixtures",
         "p_api_useFixtures",
-        "p_api_generalMark",
-        "p_api_generalpytest",
+        "p_api_genericMark",
+        "p_api_genericPytest",
     ]
 
 def repository_columns():

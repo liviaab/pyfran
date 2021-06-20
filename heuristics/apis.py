@@ -107,10 +107,10 @@ class PytestAPIHeuristics:
     simpleSkip_pattern = "pytest.skip(\(.*\))"
     markSkip_pattern = "[@]?pytest.mark.skip(.*\(.*\))?"
     expectedFailure_pattern = "[@]?pytest.mark.xfail(\(.*\))?"
-    fixture_pattern = "@pytest.fixture(.*)" # add generic pattern to @pytest.fixture
+    fixture_pattern = "@pytest.fixture(.*)"
     usefixture_pattern = "@pytest.mark.usefixtures(\(.*\))"
-    generalMark_pattern = "[@]?pytest.mark\.(.*?\()(.*\))" # add generic pattern to @pytest.mark
-    generalPytest_pattern = "@pytest\.(.*?\()(.*\))" # add generic pattern to @pytest.mark
+    genericMark_pattern = "[@]?pytest.mark\.(.*)(\(.*)" 
+    genericPytest_pattern = "@pytest\.(.*?\()(.*)" 
 
     @classmethod
     def check_apis(cls, content):
@@ -121,8 +121,8 @@ class PytestAPIHeuristics:
         matches_expectedFailure = re.findall(cls.expectedFailure_pattern, content)
         matches_fixture = re.findall(cls.fixture_pattern, content)
         matches_usefixture = re.findall(cls.usefixture_pattern, content)
-        matches_generalMark = re.findall(cls.generalMark_pattern, content)
-        matches_generalPytest = re.findall(cls.generalPytest_pattern, content)
+        matches_genericMark = re.findall(cls.genericMark_pattern, content)
+        matches_genericPytest = re.findall(cls.genericPytest_pattern, content)
 
         quantity_by_api = {
             "count_native_assert": len(matches_native_assert),
@@ -132,8 +132,8 @@ class PytestAPIHeuristics:
             "count_expectedFailure": len(matches_expectedFailure),
             "count_fixture": len(matches_fixture),
             "count_usefixture": len(matches_usefixture),
-            "count_generalMark": len(matches_generalMark),
-            "count_generalPytest": len(matches_generalPytest),
+            "count_genericMark": len(matches_genericMark),
+            "count_genericPytest": len(matches_genericPytest),
 
             "matches_native_assert": matches_native_assert,
             "matches_pytestRaise": matches_pytestRaise,
@@ -142,8 +142,8 @@ class PytestAPIHeuristics:
             "matches_expectedFailure": matches_expectedFailure,
             "matches_fixture": matches_fixture,
             "matches_usefixture": matches_usefixture,
-            "matches_generalMark": matches_generalMark,
-            "matches_generalPytest": matches_generalPytest
+            "matches_genericMark": matches_genericMark,
+            "matches_genericPytest": matches_genericPytest
         }
 
         return quantity_by_api
@@ -158,8 +158,8 @@ class PytestAPIHeuristics:
             "count_expectedFailure": 0,
             "count_fixture": 0,
             "count_usefixture": 0,
-            "count_generalMark": 0,
-            "count_generalPytest": 0,
+            "count_genericMark": 0,
+            "count_genericPytest": 0,
 
             "matches_native_assert": [],
             "matches_pytestRaise": [],
@@ -168,8 +168,8 @@ class PytestAPIHeuristics:
             "matches_expectedFailure": [],
             "matches_fixture": [],
             "matches_usefixture": [],
-            "matches_generalMark": [],
-            "matches_generalPytest": []
+            "matches_genericMark": [],
+            "matches_genericPytest": []
         }
 
         for content in contents:
@@ -185,8 +185,8 @@ class PytestAPIHeuristics:
                 "count_expectedFailure": quantity_by_api["count_expectedFailure"] + tmp["count_expectedFailure"],
                 "count_fixture": quantity_by_api["count_fixture"] + tmp["count_fixture"],
                 "count_usefixture": quantity_by_api["count_usefixture"] + tmp["count_usefixture"],
-                "count_generalMark": quantity_by_api["count_generalMark"] + tmp["count_generalMark"],
-                "count_generalPytest": quantity_by_api["count_generalPytest"] + tmp["count_generalPytest"],
+                "count_genericMark": quantity_by_api["count_genericMark"] + tmp["count_genericMark"],
+                "count_genericPytest": quantity_by_api["count_genericPytest"] + tmp["count_genericPytest"],
 
                 "matches_native_assert": quantity_by_api["matches_native_assert"] + tmp["matches_native_assert"],
                 "matches_pytestRaise": quantity_by_api["matches_pytestRaise"] + tmp["matches_pytestRaise"],
@@ -195,8 +195,8 @@ class PytestAPIHeuristics:
                 "matches_expectedFailure": quantity_by_api["matches_expectedFailure"] + tmp["matches_expectedFailure"],
                 "matches_fixture": quantity_by_api["matches_fixture"] + tmp["matches_fixture"],
                 "matches_usefixture": quantity_by_api["matches_usefixture"] + tmp["matches_usefixture"],
-                "matches_generalMark": quantity_by_api["matches_generalMark"] + tmp["matches_generalMark"],
-                "matches_generalPytest": quantity_by_api["matches_generalPytest"] + tmp["matches_generalPytest"],
+                "matches_genericMark": quantity_by_api["matches_genericMark"] + tmp["matches_genericMark"],
+                "matches_genericPytest": quantity_by_api["matches_genericPytest"] + tmp["matches_genericPytest"],
             }
 
         return quantity_by_api

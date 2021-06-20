@@ -48,25 +48,25 @@ class CheckoutsAnalyzer:
             p_api_expectedFailures = 0
             p_api_fixtures = 0
             p_api_useFixtures = 0
-            p_api_generalMark = 0
-            p_api_generalpytest = 0
+            p_api_genericMark = 0
+            p_api_genericPytest = 0
 
             for path, _, files in os.walk(self.local_path_to_repo):
                 if '.git' in path:
                     continue
 
-                for filepath in files:
-                    _name, extension = os.path.splitext(filepath)
+                for filename in files:
+                    _name, extension = os.path.splitext(filename)
 
                     if extension not in VALID_EXTENSIONS:
                         continue
 
-                    is_test_file = fh.matches_test_file(filepath)
+                    is_test_file = fh.matches_test_file(os.path.join(path, filename))
 
                     if is_test_file:
                         test_files += 1
 
-                        with open(os.path.join(path, filepath), 'r') as src:
+                        with open(os.path.join(path, filename), 'r') as src:
                             content = src.read()
 
                             content = (cppStyleComment|pythonStyleComment|quotedString|docString).suppress().transformString(content)
@@ -92,8 +92,8 @@ class CheckoutsAnalyzer:
                             p_api_expectedFailures += quantity_by_api["count_expectedFailure"]
                             p_api_fixtures += quantity_by_api["count_fixture"]
                             p_api_useFixtures += quantity_by_api["count_usefixture"]
-                            p_api_generalMark += quantity_by_api["count_generalMark"]
-                            p_api_generalpytest += quantity_by_api["count_generalPytest"]
+                            p_api_genericMark += quantity_by_api["count_genericMark"]
+                            p_api_genericPytest += quantity_by_api["count_genericPytest"]
 
             apis_in_commit = {
                 "commit_index": commit["commit_index"],
@@ -121,8 +121,8 @@ class CheckoutsAnalyzer:
                 "p_api_expectedFailures": p_api_expectedFailures,
                 "p_api_fixtures": p_api_fixtures,
                 "p_api_useFixtures": p_api_useFixtures,
-                "p_api_generalMark": p_api_generalMark,
-                "p_api_generalpytest": p_api_generalpytest,
+                "p_api_genericMark": p_api_genericMark,
+                "p_api_genericPytest": p_api_genericPytest,
             }
 
             apis_info.append(apis_in_commit)

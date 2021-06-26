@@ -110,7 +110,7 @@ class PytestAPIHeuristics:
     fixture_pattern = "@pytest.fixture(.*)"
     usefixture_pattern = "@pytest.mark.usefixtures(\(.*\))"
     genericMark_pattern = "[@]?pytest.mark\.(.*)(\(.*)" 
-    genericPytest_pattern = "@pytest\.(.*?\()(.*)" 
+    genericPytest_pattern = "@pytest\.(.*)"
 
     @classmethod
     def check_apis(cls, content):

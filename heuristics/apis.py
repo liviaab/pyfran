@@ -10,6 +10,7 @@ class UnittestAPIHeuristics:
     unittestSkipTest_pattern = "[@]{0,1}unittest.skip.*?\((.*\))"
     selfSkipTest_pattern = "self.skipTest(\(.*\))"
     expectedFailure_pattern = "@unittest.expectedFailure"
+    unittestMock_pattern = "(\s+unittest.mock\s+)"
 
     @classmethod
     def check_apis(cls, content):
@@ -22,6 +23,7 @@ class UnittestAPIHeuristics:
         matches_unittestSkipTest = re.findall(cls.unittestSkipTest_pattern, content)
         matches_selfSkipTest = re.findall(cls.selfSkipTest_pattern, content)
         matches_expectedFailure = re.findall(cls.expectedFailure_pattern, content)
+        matches_unittestMock = re.findall(cls.unittestMock_pattern, content)
 
         quantity_by_api = {
             "count_testCaseSubclass": len(matches_testCaseSubclass),
@@ -33,6 +35,7 @@ class UnittestAPIHeuristics:
             "count_unittestSkipTest": len(matches_unittestSkipTest),
             "count_selfSkipTest": len(matches_selfSkipTest),
             "count_expectedFailure": len(matches_expectedFailure),
+            "count_unittestMock": len(matches_unittestMock),
 
             "matches_testCaseSubclass": matches_testCaseSubclass,
             "matches_assert": matches_assert,
@@ -42,7 +45,8 @@ class UnittestAPIHeuristics:
             "matches_tearDownClass": matches_tearDownClass,
             "matches_unittestSkipTest": matches_unittestSkipTest,
             "matches_selfSkipTest": matches_selfSkipTest,
-            "matches_expectedFailure": matches_expectedFailure
+            "matches_expectedFailure": matches_expectedFailure,
+            "matches_unittestMock": matches_unittestMock
         }
 
         return quantity_by_api
@@ -59,6 +63,7 @@ class UnittestAPIHeuristics:
             "count_unittestSkipTest": 0,
             "count_selfSkipTest": 0,
             "count_expectedFailure": 0,
+            "count_unittestMock": 0,
 
             "matches_testCaseSubclass": [],
             "matches_assert": [],
@@ -69,6 +74,7 @@ class UnittestAPIHeuristics:
             "matches_unittestSkipTest": [],
             "matches_selfSkipTest": [],
             "matches_expectedFailure": [],
+            "matches_unittestMock": []
         }
 
         for content in contents:
@@ -86,6 +92,7 @@ class UnittestAPIHeuristics:
                 "count_unittestSkipTest": quantity_by_api["count_unittestSkipTest"] + tmp["count_unittestSkipTest"],
                 "count_selfSkipTest": quantity_by_api["count_selfSkipTest"] + tmp["count_selfSkipTest"],
                 "count_expectedFailure": quantity_by_api["count_expectedFailure"] + tmp["count_expectedFailure"],
+                "count_unittestMock": quantity_by_api["count_unittestMock"] + tmp["count_unittestMock"],
 
                 "matches_testCaseSubclass": quantity_by_api["matches_testCaseSubclass"] + tmp["matches_testCaseSubclass"],
                 "matches_assert": quantity_by_api["matches_assert"] + tmp["matches_assert"],
@@ -95,7 +102,8 @@ class UnittestAPIHeuristics:
                 "matches_tearDownClass": quantity_by_api["matches_tearDownClass"] + tmp["matches_tearDownClass"],
                 "matches_unittestSkipTest": quantity_by_api["matches_unittestSkipTest"] + tmp["matches_unittestSkipTest"],
                 "matches_selfSkipTest": quantity_by_api["matches_selfSkipTest"] + tmp["matches_selfSkipTest"],
-                "matches_expectedFailure": quantity_by_api["matches_expectedFailure"] + tmp["matches_expectedFailure"]
+                "matches_expectedFailure": quantity_by_api["matches_expectedFailure"] + tmp["matches_expectedFailure"],
+                "matches_unittestMock": quantity_by_api["matches_unittestMock"] + tmp["matches_unittestMock"]
             }
 
         return quantity_by_api

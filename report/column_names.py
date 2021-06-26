@@ -30,6 +30,7 @@ def commit_columns():
         "u_count_added_unittestSkipTest",
         "u_count_added_selfSkipTest",
         "u_count_added_expectedFailure",
+        "u_count_added_unittestMock",
 
         "u_count_removed_testCaseSubclass",
         "u_count_removed_assert",
@@ -40,6 +41,7 @@ def commit_columns():
         "u_count_removed_unittestSkipTest",
         "u_count_removed_selfSkipTest",
         "u_count_removed_expectedFailure",
+        "u_count_removed_unittestMock",
 
         "p_count_added_native_assert",
         "p_count_added_pytestRaise",

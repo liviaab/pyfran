@@ -4,7 +4,7 @@ from pydriller import RepositoryMining, ModificationType
 from analyzers.custom_commit import CustomCommit
 from analyzers.occurrences import Occurrences
 
-from common.common import VALID_EXTENSIONS
+from common.common import VALID_EXTENSIONS, TAGS
 from heuristics.test_file import TestFileHeuristics as fh
 from heuristics.pytest import PytestHeuristics as ph
 from heuristics.unittest import UnittestHeuristics as uh
@@ -146,6 +146,7 @@ class DeltaCommits:
             "u_count_added_unittestSkipTest": commit_memo["u_count_added_unittestSkipTest"] + apis_in_added_lines["count_unittestSkipTest"],
             "u_count_added_selfSkipTest": commit_memo["u_count_added_selfSkipTest"] + apis_in_added_lines["count_selfSkipTest"],
             "u_count_added_expectedFailure": commit_memo["u_count_added_expectedFailure"] + apis_in_added_lines["count_expectedFailure"],
+            "u_count_added_unittestMock": commit_memo["u_count_added_unittestMock"] + apis_in_added_lines["count_unittestMock"],
             "unittest_matches_in_added_lines": {
                 "testCaseSubclass": commit_memo["unittest_matches_in_added_lines"]["testCaseSubclass"] + apis_in_added_lines["matches_testCaseSubclass"],
                 "assert": commit_memo["unittest_matches_in_added_lines"]["assert"] + apis_in_added_lines["matches_assert"],
@@ -155,7 +156,8 @@ class DeltaCommits:
                 "tearDownClass": commit_memo["unittest_matches_in_added_lines"]["tearDownClass"] + apis_in_added_lines["matches_tearDownClass"],
                 "unittestSkipTest": commit_memo["unittest_matches_in_added_lines"]["unittestSkipTest"] + apis_in_added_lines["matches_unittestSkipTest"],
                 "selfSkipTest": commit_memo["unittest_matches_in_added_lines"]["selfSkipTest"] + apis_in_added_lines["matches_selfSkipTest"],
-                "expectedFailure": commit_memo["unittest_matches_in_added_lines"]["expectedFailure"] + apis_in_added_lines["matches_expectedFailure"]
+                "expectedFailure": commit_memo["unittest_matches_in_added_lines"]["expectedFailure"] + apis_in_added_lines["matches_expectedFailure"],
+                "unittestMock": commit_memo["unittest_matches_in_added_lines"]["unittestMock"] + apis_in_added_lines["matches_unittestMock"]
             },
 
             "u_count_removed_testCaseSubclass": commit_memo["u_count_removed_testCaseSubclass"] + apis_in_removed_lines["count_testCaseSubclass"],
@@ -167,6 +169,7 @@ class DeltaCommits:
             "u_count_removed_unittestSkipTest": commit_memo["u_count_removed_unittestSkipTest"] + apis_in_removed_lines["count_unittestSkipTest"],
             "u_count_removed_selfSkipTest": commit_memo["u_count_removed_selfSkipTest"] + apis_in_removed_lines["count_selfSkipTest"],
             "u_count_removed_expectedFailure": commit_memo["u_count_removed_expectedFailure"] + apis_in_removed_lines["count_expectedFailure"],
+            "u_count_removed_unittestMock": commit_memo["u_count_removed_unittestMock"] + apis_in_removed_lines["count_unittestMock"],
             "unittest_matches_in_removed_lines": {
                 "testCaseSubclass": commit_memo["unittest_matches_in_removed_lines"]["testCaseSubclass"] + apis_in_removed_lines["matches_testCaseSubclass"],
                 "assert": commit_memo["unittest_matches_in_removed_lines"]["assert"] + apis_in_removed_lines["matches_assert"],
@@ -176,7 +179,8 @@ class DeltaCommits:
                 "tearDownClass": commit_memo["unittest_matches_in_removed_lines"]["tearDownClass"] + apis_in_removed_lines["matches_tearDownClass"],
                 "unittestSkipTest": commit_memo["unittest_matches_in_removed_lines"]["unittestSkipTest"] + apis_in_removed_lines["matches_unittestSkipTest"],
                 "selfSkipTest": commit_memo["unittest_matches_in_removed_lines"]["selfSkipTest"] + apis_in_removed_lines["matches_selfSkipTest"],
-                "expectedFailure": commit_memo["unittest_matches_in_removed_lines"]["expectedFailure"] + apis_in_removed_lines["matches_expectedFailure"]
+                "expectedFailure": commit_memo["unittest_matches_in_removed_lines"]["expectedFailure"] + apis_in_removed_lines["matches_expectedFailure"],
+                "unittestMock": commit_memo["unittest_matches_in_removed_lines"]["unittestMock"] + apis_in_removed_lines["matches_unittestMock"]
             }
         }
 
@@ -275,6 +279,7 @@ class DeltaCommits:
                 "u_count_added_unittestSkipTest": 0,
                 "u_count_added_selfSkipTest": 0,
                 "u_count_added_expectedFailure": 0,
+                "u_count_added_unittestMock": 0,
                 "unittest_matches_in_added_lines": {
                     "testCaseSubclass": [],
                     "assert": [],
@@ -284,7 +289,8 @@ class DeltaCommits:
                     "tearDownClass": [],
                     "unittestSkipTest": [],
                     "selfSkipTest": [],
-                    "expectedFailure": []
+                    "expectedFailure": [],
+                    "unittestMock": []
                 },
 
                 "u_count_removed_testCaseSubclass": 0,
@@ -296,6 +302,7 @@ class DeltaCommits:
                 "u_count_removed_unittestSkipTest": 0,
                 "u_count_removed_selfSkipTest": 0,
                 "u_count_removed_expectedFailure": 0,
+                "u_count_removed_unittestMock": 0,
                 "unittest_matches_in_removed_lines": {
                     "testCaseSubclass": [],
                     "assert": [],
@@ -306,6 +313,7 @@ class DeltaCommits:
                     "unittestSkipTest": [],
                     "selfSkipTest": [],
                     "expectedFailure": [],
+                    "unittestMock": []
                 },
 
                 "p_count_added_native_assert": 0,

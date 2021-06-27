@@ -4,7 +4,7 @@ from pydriller import RepositoryMining, ModificationType
 from analyzers.custom_commit import CustomCommit
 from analyzers.occurrences import Occurrences
 
-from common.common import VALID_EXTENSIONS, TAGS
+from common.common import VALID_EXTENSIONS
 from heuristics.test_file import TestFileHeuristics as fh
 from heuristics.pytest import PytestHeuristics as ph
 from heuristics.unittest import UnittestHeuristics as uh
@@ -31,7 +31,7 @@ class DeltaCommits:
         index = 0
         for commit in RepositoryMining(self.repo_url, only_no_merge=True).traverse_commits():
             print("\t\tcommit {}".format(commit.hash))
-            commit_memo = self.__initial_state_commit_memo()
+            commit_memo = self.__initial_state_commit_memo(commit.hash)
 
             for modification in commit.modifications:
 
@@ -66,7 +66,7 @@ class DeltaCommits:
                     commit_memo = self.__update_memo_unittest_apis(commit_memo, removed_lines, added_lines)
                     commit_memo = self.__update_memo_pytest_apis(commit_memo, removed_lines, added_lines)
 
-            commit_memo["are_we_interested"] = self.__are_we_interested(commit_memo)
+            self.__set_interest_and_tags(commit_memo)
             custom = CustomCommit(index, commit, commit_memo)
             self.allcommits.append(custom.commit)
             index += 1
@@ -83,6 +83,7 @@ class DeltaCommits:
             "unittest_in_code": uh.matches_a(source_code),
             "unittest_in_removed_diffs": uh.matches_any(removed_lines, ignoreComments=False),
             "pytest_in_code": ph.matches_a(source_code),
+            "pytest_in_added_diffs": ph.matches_any(added_lines),
             "pytest_in_removed_diffs": ph.matches_any(removed_lines, ignoreComments=False),
             "is_test_file": fh.matches_test_file(path)
         }
@@ -125,6 +126,7 @@ class DeltaCommits:
             "unittest_in_code": commit_memo["unittest_in_code"] or self.tmp_memo["unittest_in_code"],
             "unittest_in_removed_diffs": commit_memo["unittest_in_removed_diffs"] or self.tmp_memo["unittest_in_removed_diffs"],
             "pytest_in_code": commit_memo["pytest_in_code"] or self.tmp_memo["pytest_in_code"],
+            "pytest_in_added_diffs": commit_memo["pytest_in_added_diffs"] or self.tmp_memo["pytest_in_added_diffs"],
             "pytest_in_removed_diffs": commit_memo["pytest_in_removed_diffs"] or self.tmp_memo["pytest_in_removed_diffs"],
             "has_test_file": commit_memo["has_test_file"] or self.tmp_memo["is_test_file"]
         }
@@ -238,34 +240,59 @@ class DeltaCommits:
         commit_memo.update(pytest_memo)
         return commit_memo
 
-    def __are_we_interested(self, commit_memo):
-        return bool(commit_memo["unittest_in_code"] or commit_memo["unittest_in_removed_diffs"] \
-                or commit_memo["pytest_in_code"] or commit_memo["pytest_in_removed_diffs"] \
-                or commit_memo["u_count_added_testCaseSubclass"] \
-                or commit_memo["u_count_added_assert"] or commit_memo["u_count_added_setUp"] \
-                or commit_memo["u_count_added_setUpClass"] or commit_memo["u_count_added_tearDown"] \
-                or commit_memo["u_count_added_tearDownClass"] or commit_memo["u_count_added_unittestSkipTest"] \
-                or commit_memo["u_count_added_selfSkipTest"] or commit_memo["u_count_added_expectedFailure"] \
-                or commit_memo["u_count_removed_testCaseSubclass"] or commit_memo["u_count_removed_assert"] \
-                or commit_memo["u_count_removed_setUp"] or commit_memo["u_count_removed_setUpClass"] \
-                or commit_memo["u_count_removed_tearDown"] or commit_memo["u_count_removed_tearDownClass"] \
-                or commit_memo["u_count_removed_unittestSkipTest"] or commit_memo["u_count_removed_selfSkipTest"] \
-                or commit_memo["u_count_removed_expectedFailure"] or commit_memo["p_count_added_native_assert"] \
-                or commit_memo["p_count_added_pytestRaise"] or commit_memo["p_count_added_simpleSkip"] \
-                or commit_memo["p_count_added_markSkip"] or commit_memo["p_count_added_expectedFailure"] \
-                or commit_memo["p_count_added_fixture"] or commit_memo["p_count_added_usefixture"] \
-                or commit_memo["p_count_added_genericMark"] or commit_memo["p_count_added_genericPytest"] \
-                or commit_memo["p_count_removed_native_assert"] or commit_memo["p_count_removed_pytestRaise"] \
-                or commit_memo["p_count_removed_simpleSkip"] or commit_memo["p_count_removed_markSkip"] \
-                or commit_memo["p_count_removed_expectedFailure"] or commit_memo["p_count_removed_fixture"] \
-                or commit_memo["p_count_removed_usefixture"] or commit_memo["p_count_removed_genericMark"] \
-                or commit_memo["p_count_removed_genericPytest"])
+    def __set_interest_and_tags(self, commit_memo):
 
-    def __initial_state_commit_memo(self):
+        if self.__migrates_testcase(commit_memo):
+            commit_memo["tags"].append("testcase_migration")
+
+        if self.__migrates_asserts(commit_memo):
+            commit_memo["tags"].append("assert_migration")
+
+        if self.__migrates_fixtures(commit_memo):
+            commit_memo["tags"].append("fixture_migration")
+
+        if self.__migrates_frameworks(commit_memo):
+            commit_memo["tags"].append("framework_migration")
+
+        if (self.__is_pytest_first_occurrence(commit_memo) #será que faz sentido?
+            or commit_memo["tags"] != []):
+            commit_memo["are_we_interested"] = True
+
+
+    def __is_pytest_first_occurrence(self, commit_memo):
+        return self.pytest_occurrences.has_first_occurrence() and \
+            commit_memo["commit_hash"] == self.pytest_occurrences.first.commit["commit_hash"]
+
+    def __migrates_testcase(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                commit_memo["u_count_removed_testCaseSubclass"] > 0
+                # tem mais algum correspondente no pytest?
+
+    def __migrates_asserts(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                commit_memo["u_count_removed_assert"] > 0 and \
+                commit_memo["p_count_added_native_assert"] > 0
+
+    def __migrates_fixtures(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                (commit_memo["u_count_added_setUp"] > 0 or commit_memo["u_count_added_setUpClass"] > 0 ) and \
+                (commit_memo["p_count_added_fixture"] > 0 or commit_memo["p_count_added_usefixture"])
+                # precisa incluir o teardown?
+
+    def __migrates_frameworks(self, commit_memo):
+        return commit_memo["unittest_in_removed_diffs"] and \
+                commit_memo["pytest_in_added_diffs"]
+
+    def __initial_state_commit_memo(self, hash):
         return {
+                "commit_hash": hash,
                 "unittest_in_code": False,
                 "unittest_in_removed_diffs": False,
                 "pytest_in_code": False,
+                "pytest_in_added_diffs": False,
                 "pytest_in_removed_diffs": False,
                 "has_test_file": False,
                 "are_we_interested": False,
@@ -356,5 +383,6 @@ class DeltaCommits:
                     "usefixture": [],
                     "genericMark": [],
                     "genericPytest": [],
-                }
+                },
+                "tags": []
             }

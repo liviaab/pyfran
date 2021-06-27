@@ -15,11 +15,13 @@ def commit_columns():
         "commit_hash",
         "files_changed",
         "are_we_interested",
+        "pytest_in_added_diffs",
         "pytest_in_removed_diffs",
         "has_test_file",
         "unittest_in_code",
         "unittest_in_removed_diffs",
         "pytest_in_code",
+        "tags",
 
         "u_count_added_testCaseSubclass",
         "u_count_added_assert",

@@ -144,6 +144,20 @@ class MainClassifier:
                 base.update(data)
                 return (base, author_infos)
 
+            if (not currentDefaultBranch.usesPytest and currentDefaultBranch.usesUnittest):
+                # started with unittest, added reference to pytest and then removed it.
+                author_infos = CustomCommit.characterize_authors(allCommits, amount_total_commits + 1, amount_total_commits + 1)
+                idx_last_pytest_commit = CustomCommit.indexOf(allCommits, pytest_occurrences.last.commit["commit_hash"])
+
+                data = {
+                    'CATEGORY': 'unittest',
+                    'NOC_UNITTEST': amount_total_commits - idx_first_unittest_commit,
+                    'NOC_PYTEST': idx_last_pytest_commit - idx_first_pytest_commit,
+                    'NOC_BOTH': idx_last_pytest_commit - idx_first_pytest_commit,
+                }
+                base.update(data)
+                return (base, author_infos)
+
         author_infos = CustomCommit.characterize_authors(allCommits, amount_total_commits + 1, amount_total_commits + 1)
         pbu = idx_first_unittest_commit > idx_first_pytest_commit
         data = {

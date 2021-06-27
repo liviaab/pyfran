@@ -60,7 +60,7 @@ class CustomCommit:
         return len(author_names), len(author_emails)
 
     @classmethod
-    def characterize_authors(cls, customCommitList, initialIndex, finalIndex):
+    def characterize_authors(cls, customCommitList, initialIndex=None, finalIndex=None):
         sortedList = sorted(customCommitList, key=lambda x: x["commit_index"])
         authors = {}
         migration_authors = {}
@@ -74,7 +74,9 @@ class CustomCommit:
             else:
                 authors[email] = 1
 
-            if i >= initialIndex and i <= finalIndex and sortedList[i]["are_we_interested"]:
+            # is the commit between the migration range and is it a migration commit?
+            if (initialIndex != None and finalIndex != None) and \
+                (i >= initialIndex and i <= finalIndex) and sortedList[i]["are_we_interested"]:
                 if email in migration_authors:
                     migration_authors[email] += 1
                 else:

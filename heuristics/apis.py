@@ -119,6 +119,7 @@ class PytestAPIHeuristics:
     usefixture_pattern = "@pytest.mark.usefixtures(\(.*\))"
     genericMark_pattern = "[@]?pytest.mark\.(.*)(\(.*)" 
     genericPytest_pattern = "@pytest\.(.*)"
+    monkeypatch_pattern = "\s*monkeypatch\.(.*)"
 
     @classmethod
     def check_apis(cls, content):
@@ -131,6 +132,7 @@ class PytestAPIHeuristics:
         matches_usefixture = re.findall(cls.usefixture_pattern, content)
         matches_genericMark = re.findall(cls.genericMark_pattern, content)
         matches_genericPytest = re.findall(cls.genericPytest_pattern, content)
+        matches_monkeypatch = re.findall(cls.monkeypatch_pattern, content)
 
         quantity_by_api = {
             "count_native_assert": len(matches_native_assert),
@@ -142,6 +144,7 @@ class PytestAPIHeuristics:
             "count_usefixture": len(matches_usefixture),
             "count_genericMark": len(matches_genericMark),
             "count_genericPytest": len(matches_genericPytest),
+            "count_monkeypatch": len(matches_genericPytest),
 
             "matches_native_assert": matches_native_assert,
             "matches_pytestRaise": matches_pytestRaise,
@@ -151,7 +154,8 @@ class PytestAPIHeuristics:
             "matches_fixture": matches_fixture,
             "matches_usefixture": matches_usefixture,
             "matches_genericMark": matches_genericMark,
-            "matches_genericPytest": matches_genericPytest
+            "matches_genericPytest": matches_genericPytest,
+            "matches_monkeypatch": matches_monkeypatch
         }
 
         return quantity_by_api
@@ -168,6 +172,7 @@ class PytestAPIHeuristics:
             "count_usefixture": 0,
             "count_genericMark": 0,
             "count_genericPytest": 0,
+            "count_monkeypatch": 0,
 
             "matches_native_assert": [],
             "matches_pytestRaise": [],
@@ -177,7 +182,8 @@ class PytestAPIHeuristics:
             "matches_fixture": [],
             "matches_usefixture": [],
             "matches_genericMark": [],
-            "matches_genericPytest": []
+            "matches_genericPytest": [],
+            "matches_monkeypatch": []
         }
 
         for content in contents:
@@ -195,6 +201,7 @@ class PytestAPIHeuristics:
                 "count_usefixture": quantity_by_api["count_usefixture"] + tmp["count_usefixture"],
                 "count_genericMark": quantity_by_api["count_genericMark"] + tmp["count_genericMark"],
                 "count_genericPytest": quantity_by_api["count_genericPytest"] + tmp["count_genericPytest"],
+                "count_monkeypatch": quantity_by_api["count_monkeypatch"] + tmp["count_monkeypatch"],
 
                 "matches_native_assert": quantity_by_api["matches_native_assert"] + tmp["matches_native_assert"],
                 "matches_pytestRaise": quantity_by_api["matches_pytestRaise"] + tmp["matches_pytestRaise"],
@@ -205,6 +212,7 @@ class PytestAPIHeuristics:
                 "matches_usefixture": quantity_by_api["matches_usefixture"] + tmp["matches_usefixture"],
                 "matches_genericMark": quantity_by_api["matches_genericMark"] + tmp["matches_genericMark"],
                 "matches_genericPytest": quantity_by_api["matches_genericPytest"] + tmp["matches_genericPytest"],
+                "matches_monkeypatch": quantity_by_api["matches_monkeypatch"] + tmp["matches_monkeypatch"],
             }
 
         return quantity_by_api

@@ -54,6 +54,7 @@ def commit_columns():
         "p_count_added_usefixture",
         "p_count_added_genericMark",
         "p_count_added_genericPytest",
+        "p_count_added_monkeypatch",
 
         "p_count_removed_native_assert",
         "p_count_removed_pytestRaise",
@@ -64,6 +65,7 @@ def commit_columns():
         "p_count_removed_usefixture",
         "p_count_removed_genericMark",
         "p_count_removed_genericPytest",
+        "p_count_removed_monkeypatch",
 
         "unittest_matches_in_added_lines",
         "unittest_matches_in_removed_lines",

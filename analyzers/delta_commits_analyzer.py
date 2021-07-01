@@ -203,6 +203,7 @@ class DeltaCommits:
             "p_count_added_usefixture": commit_memo["p_count_added_usefixture"] + apis_in_added_lines["count_usefixture"],
             "p_count_added_genericMark": commit_memo["p_count_added_genericMark"] + apis_in_added_lines["count_genericMark"],
             "p_count_added_genericPytest": commit_memo["p_count_added_genericPytest"] + apis_in_added_lines["count_genericPytest"],
+            "p_count_added_monkeypatch": commit_memo["p_count_added_monkeypatch"] + apis_in_added_lines["count_monkeypatch"],
             "pytest_matches_in_added_lines": {
                 "native_assert": commit_memo["pytest_matches_in_added_lines"]["native_assert"] + apis_in_added_lines["matches_native_assert"],
                 "pytestRaise": commit_memo["pytest_matches_in_added_lines"]["pytestRaise"] + apis_in_added_lines["matches_pytestRaise"],
@@ -212,7 +213,8 @@ class DeltaCommits:
                 "fixture": commit_memo["pytest_matches_in_added_lines"]["fixture"] + apis_in_added_lines["matches_fixture"],
                 "usefixture": commit_memo["pytest_matches_in_added_lines"]["usefixture"] + apis_in_added_lines["matches_usefixture"],
                 "genericMark": commit_memo["pytest_matches_in_added_lines"]["genericMark"] + apis_in_added_lines["matches_genericMark"],
-                "genericPytest": commit_memo["pytest_matches_in_added_lines"]["genericPytest"] + apis_in_added_lines["matches_genericPytest"]
+                "genericPytest": commit_memo["pytest_matches_in_added_lines"]["genericPytest"] + apis_in_added_lines["matches_genericPytest"],
+                "monkeypatch": commit_memo["pytest_matches_in_added_lines"]["monkeypatch"] + apis_in_added_lines["matches_monkeypatch"]
             },
 
             "p_count_removed_native_assert": commit_memo["p_count_removed_native_assert"] + apis_in_removed_lines["count_native_assert"],
@@ -224,6 +226,7 @@ class DeltaCommits:
             "p_count_removed_usefixture": commit_memo["p_count_removed_usefixture"] + apis_in_removed_lines["count_usefixture"],
             "p_count_removed_genericMark": commit_memo["p_count_removed_genericMark"] + apis_in_removed_lines["count_genericMark"],
             "p_count_removed_genericPytest": commit_memo["p_count_removed_genericPytest"] + apis_in_removed_lines["count_genericPytest"],
+            "p_count_removed_monkeypatch": commit_memo["p_count_removed_monkeypatch"] + apis_in_removed_lines["count_monkeypatch"],
             "pytest_matches_in_removed_lines": {
                 "native_assert": commit_memo["pytest_matches_in_removed_lines"]["native_assert"] + apis_in_removed_lines["matches_native_assert"],
                 "pytestRaise": commit_memo["pytest_matches_in_removed_lines"]["pytestRaise"] + apis_in_removed_lines["matches_pytestRaise"],
@@ -233,7 +236,8 @@ class DeltaCommits:
                 "fixture": commit_memo["pytest_matches_in_removed_lines"]["fixture"] + apis_in_removed_lines["matches_fixture"],
                 "usefixture": commit_memo["pytest_matches_in_removed_lines"]["usefixture"] + apis_in_removed_lines["matches_usefixture"],
                 "genericMark": commit_memo["pytest_matches_in_removed_lines"]["genericMark"] + apis_in_removed_lines["matches_genericMark"],
-                "genericPytest": commit_memo["pytest_matches_in_removed_lines"]["genericPytest"] + apis_in_removed_lines["matches_genericPytest"]
+                "genericPytest": commit_memo["pytest_matches_in_removed_lines"]["genericPytest"] + apis_in_removed_lines["matches_genericPytest"],
+                "monkeypatch": commit_memo["pytest_matches_in_removed_lines"]["monkeypatch"] + apis_in_removed_lines["matches_monkeypatch"],
             }
         }
 
@@ -352,6 +356,7 @@ class DeltaCommits:
                 "p_count_added_usefixture": 0,
                 "p_count_added_genericMark": 0,
                 "p_count_added_genericPytest": 0,
+                "p_count_added_monkeypatch": 0,
                 "pytest_matches_in_added_lines": {
                     "native_assert": [],
                     "pytestRaise": [],
@@ -362,6 +367,7 @@ class DeltaCommits:
                     "usefixture": [],
                     "genericMark": [],
                     "genericPytest": [],
+                    "monkeypatch":[],
                 },
 
                 "p_count_removed_native_assert": 0,
@@ -373,6 +379,7 @@ class DeltaCommits:
                 "p_count_removed_usefixture": 0,
                 "p_count_removed_genericMark": 0,
                 "p_count_removed_genericPytest": 0,
+                "p_count_removed_monkeypatch": 0,
                 "pytest_matches_in_removed_lines": {
                     "native_assert": [],
                     "pytestRaise": [],
@@ -383,6 +390,7 @@ class DeltaCommits:
                     "usefixture": [],
                     "genericMark": [],
                     "genericPytest": [],
+                    "monkeypatch":[],
                 },
                 "tags": []
             }

@@ -1,17 +1,17 @@
-from pyparsing import Keyword, pythonStyleComment, quotedString
+from pyparsing import Regex, pythonStyleComment, quotedString
 from common.common import docString
 
 class UnittestHeuristics:
-    keyword = "unittest"
+    regex = "\s*unittest\s+"
 
     @classmethod
     def matches_a(cls, text, ignoreComments=True):
         if text == None:
             return False
 
-        expr = Keyword(cls.keyword).ignore(quotedString | docString)
+        expr = Regex(cls.regex).ignore(quotedString | docString)
         if ignoreComments:
-            expr = Keyword(cls.keyword).ignore(pythonStyleComment | quotedString | docString)
+            expr = Regex(cls.regex).ignore(pythonStyleComment | quotedString | docString)
 
         return list(expr.scanString(text)) != []
 

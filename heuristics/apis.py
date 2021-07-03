@@ -116,7 +116,8 @@ class PytestAPIHeuristics:
     markSkip_pattern = "[@]?pytest.mark.skip(.*\(.*\))?"
     expectedFailure_pattern = "[@]?pytest.mark.xfail(\(.*\))?"
     fixture_pattern = "@pytest.fixture(.*)"
-    usefixture_pattern = "@pytest.mark.usefixtures(\(.*\))"
+    usefixture_pattern = "@pytest.mark.usefixtures(\(.*\))?"
+    parametrize_pattern = "@pytest.mark.parametrize(\(.*\))?"
     genericMark_pattern = "[@]?pytest.mark\.(.*)(\(.*)" 
     genericPytest_pattern = "@pytest\.(.*)"
     monkeypatch_pattern = "\s*monkeypatch\.(.*)"
@@ -130,6 +131,7 @@ class PytestAPIHeuristics:
         matches_expectedFailure = re.findall(cls.expectedFailure_pattern, content)
         matches_fixture = re.findall(cls.fixture_pattern, content)
         matches_usefixture = re.findall(cls.usefixture_pattern, content)
+        matches_parametrize = re.findall(cls.parametrize_pattern, content)
         matches_genericMark = re.findall(cls.genericMark_pattern, content)
         matches_genericPytest = re.findall(cls.genericPytest_pattern, content)
         matches_monkeypatch = re.findall(cls.monkeypatch_pattern, content)
@@ -142,6 +144,7 @@ class PytestAPIHeuristics:
             "count_expectedFailure": len(matches_expectedFailure),
             "count_fixture": len(matches_fixture),
             "count_usefixture": len(matches_usefixture),
+            "count_parametrize": len(matches_parametrize),
             "count_genericMark": len(matches_genericMark),
             "count_genericPytest": len(matches_genericPytest),
             "count_monkeypatch": len(matches_genericPytest),
@@ -153,6 +156,7 @@ class PytestAPIHeuristics:
             "matches_expectedFailure": matches_expectedFailure,
             "matches_fixture": matches_fixture,
             "matches_usefixture": matches_usefixture,
+            "matches_parametrize": matches_parametrize,
             "matches_genericMark": matches_genericMark,
             "matches_genericPytest": matches_genericPytest,
             "matches_monkeypatch": matches_monkeypatch
@@ -170,6 +174,7 @@ class PytestAPIHeuristics:
             "count_expectedFailure": 0,
             "count_fixture": 0,
             "count_usefixture": 0,
+            "count_parametrize": 0,
             "count_genericMark": 0,
             "count_genericPytest": 0,
             "count_monkeypatch": 0,
@@ -181,6 +186,7 @@ class PytestAPIHeuristics:
             "matches_expectedFailure": [],
             "matches_fixture": [],
             "matches_usefixture": [],
+            "matches_parametrize": [],
             "matches_genericMark": [],
             "matches_genericPytest": [],
             "matches_monkeypatch": []
@@ -199,6 +205,7 @@ class PytestAPIHeuristics:
                 "count_expectedFailure": quantity_by_api["count_expectedFailure"] + tmp["count_expectedFailure"],
                 "count_fixture": quantity_by_api["count_fixture"] + tmp["count_fixture"],
                 "count_usefixture": quantity_by_api["count_usefixture"] + tmp["count_usefixture"],
+                "count_parametrize": quantity_by_api["count_parametrize"] + tmp["count_parametrize"],
                 "count_genericMark": quantity_by_api["count_genericMark"] + tmp["count_genericMark"],
                 "count_genericPytest": quantity_by_api["count_genericPytest"] + tmp["count_genericPytest"],
                 "count_monkeypatch": quantity_by_api["count_monkeypatch"] + tmp["count_monkeypatch"],
@@ -210,6 +217,7 @@ class PytestAPIHeuristics:
                 "matches_expectedFailure": quantity_by_api["matches_expectedFailure"] + tmp["matches_expectedFailure"],
                 "matches_fixture": quantity_by_api["matches_fixture"] + tmp["matches_fixture"],
                 "matches_usefixture": quantity_by_api["matches_usefixture"] + tmp["matches_usefixture"],
+                "matches_parametrize": quantity_by_api["matches_parametrize"] + tmp["matches_parametrize"],
                 "matches_genericMark": quantity_by_api["matches_genericMark"] + tmp["matches_genericMark"],
                 "matches_genericPytest": quantity_by_api["matches_genericPytest"] + tmp["matches_genericPytest"],
                 "matches_monkeypatch": quantity_by_api["matches_monkeypatch"] + tmp["matches_monkeypatch"],

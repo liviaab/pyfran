@@ -201,6 +201,7 @@ class DeltaCommits:
             "p_count_added_expectedFailure": commit_memo["p_count_added_expectedFailure"] + apis_in_added_lines["count_expectedFailure"],
             "p_count_added_fixture": commit_memo["p_count_added_fixture"] + apis_in_added_lines["count_fixture"],
             "p_count_added_usefixture": commit_memo["p_count_added_usefixture"] + apis_in_added_lines["count_usefixture"],
+            "p_count_added_parametrize": commit_memo["p_count_added_parametrize"] + apis_in_added_lines["count_parametrize"],
             "p_count_added_genericMark": commit_memo["p_count_added_genericMark"] + apis_in_added_lines["count_genericMark"],
             "p_count_added_genericPytest": commit_memo["p_count_added_genericPytest"] + apis_in_added_lines["count_genericPytest"],
             "p_count_added_monkeypatch": commit_memo["p_count_added_monkeypatch"] + apis_in_added_lines["count_monkeypatch"],
@@ -212,6 +213,7 @@ class DeltaCommits:
                 "expectedFailure": commit_memo["pytest_matches_in_added_lines"]["expectedFailure"] + apis_in_added_lines["matches_expectedFailure"],
                 "fixture": commit_memo["pytest_matches_in_added_lines"]["fixture"] + apis_in_added_lines["matches_fixture"],
                 "usefixture": commit_memo["pytest_matches_in_added_lines"]["usefixture"] + apis_in_added_lines["matches_usefixture"],
+                "parametrize": commit_memo["pytest_matches_in_added_lines"]["parametrize"] + apis_in_added_lines["matches_parametrize"],
                 "genericMark": commit_memo["pytest_matches_in_added_lines"]["genericMark"] + apis_in_added_lines["matches_genericMark"],
                 "genericPytest": commit_memo["pytest_matches_in_added_lines"]["genericPytest"] + apis_in_added_lines["matches_genericPytest"],
                 "monkeypatch": commit_memo["pytest_matches_in_added_lines"]["monkeypatch"] + apis_in_added_lines["matches_monkeypatch"]
@@ -224,6 +226,7 @@ class DeltaCommits:
             "p_count_removed_expectedFailure": commit_memo["p_count_removed_expectedFailure"] + apis_in_removed_lines["count_expectedFailure"],
             "p_count_removed_fixture": commit_memo["p_count_removed_fixture"] + apis_in_removed_lines["count_fixture"],
             "p_count_removed_usefixture": commit_memo["p_count_removed_usefixture"] + apis_in_removed_lines["count_usefixture"],
+            "p_count_removed_parametrize": commit_memo["p_count_removed_parametrize"] + apis_in_removed_lines["count_parametrize"],
             "p_count_removed_genericMark": commit_memo["p_count_removed_genericMark"] + apis_in_removed_lines["count_genericMark"],
             "p_count_removed_genericPytest": commit_memo["p_count_removed_genericPytest"] + apis_in_removed_lines["count_genericPytest"],
             "p_count_removed_monkeypatch": commit_memo["p_count_removed_monkeypatch"] + apis_in_removed_lines["count_monkeypatch"],
@@ -235,6 +238,7 @@ class DeltaCommits:
                 "expectedFailure": commit_memo["pytest_matches_in_removed_lines"]["expectedFailure"] + apis_in_removed_lines["matches_expectedFailure"],
                 "fixture": commit_memo["pytest_matches_in_removed_lines"]["fixture"] + apis_in_removed_lines["matches_fixture"],
                 "usefixture": commit_memo["pytest_matches_in_removed_lines"]["usefixture"] + apis_in_removed_lines["matches_usefixture"],
+                "parametrize": commit_memo["pytest_matches_in_removed_lines"]["parametrize"] + apis_in_removed_lines["matches_parametrize"],
                 "genericMark": commit_memo["pytest_matches_in_removed_lines"]["genericMark"] + apis_in_removed_lines["matches_genericMark"],
                 "genericPytest": commit_memo["pytest_matches_in_removed_lines"]["genericPytest"] + apis_in_removed_lines["matches_genericPytest"],
                 "monkeypatch": commit_memo["pytest_matches_in_removed_lines"]["monkeypatch"] + apis_in_removed_lines["matches_monkeypatch"],
@@ -276,7 +280,7 @@ class DeltaCommits:
     def __migrates_fixtures(self, commit_memo):
         return self.unittest_occurrences.has_first_occurrence() and \
                 self.pytest_occurrences.has_first_occurrence() and \
-                (commit_memo["u_count_added_setUp"] > 0 or commit_memo["u_count_added_setUpClass"] > 0 ) and \
+                (commit_memo["u_count_removed_setUp"] > 0 or commit_memo["u_count_removed_setUpClass"] > 0 ) and \
                 (commit_memo["p_count_added_fixture"] > 0 or commit_memo["p_count_added_usefixture"])
                 # precisa incluir o teardown?
 
@@ -348,6 +352,7 @@ class DeltaCommits:
                 "p_count_added_expectedFailure": 0,
                 "p_count_added_fixture": 0,
                 "p_count_added_usefixture": 0,
+                "p_count_added_parametrize": 0,
                 "p_count_added_genericMark": 0,
                 "p_count_added_genericPytest": 0,
                 "p_count_added_monkeypatch": 0,
@@ -359,6 +364,7 @@ class DeltaCommits:
                     "expectedFailure": [],
                     "fixture": [],
                     "usefixture": [],
+                    "parametrize": [],
                     "genericMark": [],
                     "genericPytest": [],
                     "monkeypatch":[],
@@ -371,6 +377,7 @@ class DeltaCommits:
                 "p_count_removed_expectedFailure": 0,
                 "p_count_removed_fixture": 0,
                 "p_count_removed_usefixture": 0,
+                "p_count_removed_parametrize": 0,
                 "p_count_removed_genericMark": 0,
                 "p_count_removed_genericPytest": 0,
                 "p_count_removed_monkeypatch": 0,
@@ -382,6 +389,7 @@ class DeltaCommits:
                     "expectedFailure": [],
                     "fixture": [],
                     "usefixture": [],
+                    "parametrize": [],
                     "genericMark": [],
                     "genericPytest": [],
                     "monkeypatch":[],

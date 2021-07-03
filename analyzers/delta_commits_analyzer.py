@@ -245,7 +245,6 @@ class DeltaCommits:
         return commit_memo
 
     def __set_interest_and_tags(self, commit_memo):
-
         if self.__migrates_testcase(commit_memo):
             commit_memo["tags"].append("testcase_migration")
 
@@ -258,14 +257,9 @@ class DeltaCommits:
         if self.__migrates_frameworks(commit_memo):
             commit_memo["tags"].append("framework_migration")
 
-        if (self.__is_pytest_first_occurrence(commit_memo) #será que faz sentido?
-            or commit_memo["tags"] != []):
+        if (commit_memo["tags"] != []):
             commit_memo["are_we_interested"] = True
 
-
-    def __is_pytest_first_occurrence(self, commit_memo):
-        return self.pytest_occurrences.has_first_occurrence() and \
-            commit_memo["commit_hash"] == self.pytest_occurrences.first.commit["commit_hash"]
 
     def __migrates_testcase(self, commit_memo):
         return self.unittest_occurrences.has_first_occurrence() and \

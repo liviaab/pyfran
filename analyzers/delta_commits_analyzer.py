@@ -261,6 +261,10 @@ class DeltaCommits:
         if self.__migrates_frameworks(commit_memo):
             commit_memo["tags"].append("framework_migration")
 
+        if self.__adds_parametrized_test(commit_memo):
+            commit_memo["tags"].append("adds_parametrized_test")
+
+
         if (commit_memo["tags"] != []):
             commit_memo["are_we_interested"] = True
 
@@ -287,6 +291,12 @@ class DeltaCommits:
     def __migrates_frameworks(self, commit_memo):
         return commit_memo["unittest_in_removed_diffs"] and \
                 commit_memo["pytest_in_added_diffs"]
+
+    def __adds_parametrized_test(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                commit_memo["p_count_added_parametrize"] > 0
+
 
     def __initial_state_commit_memo(self, hash):
         return {

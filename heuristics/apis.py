@@ -78,7 +78,7 @@ class UnittestAPIHeuristics:
         }
 
         for content in contents:
-            if content.strip().startswith('#'):
+            if content.strip().startswith('#') or content.strip().startswith('"""'):
                 continue
 
             tmp = cls.check_apis(content)
@@ -199,7 +199,7 @@ class PytestAPIHeuristics:
         }
 
         for content in contents:
-            if content.strip().startswith('#'):
+            if content.strip().startswith('#') or content.strip().startswith('"""'):
                 continue
 
             tmp = cls.check_apis(content)

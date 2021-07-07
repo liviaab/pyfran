@@ -82,36 +82,36 @@ class MainClassifier:
         number_of_authors_names, number_of_authors_emails = CustomCommit.get_total_count_authors(self.allCommits)
 
         return {
-            'REPOSITORY_NAME': self.project_name,
-            'REPOSITORY_LINK': self.repo_url,
+            'Repository Name': self.project_name,
+            'Repository Link': self.repo_url,
 
-            'NOC': self.amount_total_commits,
+            'No. Total Commits': self.amount_total_commits,
 
-            'NOD': 0,
-            'OCM': False,
-            'NOA (name)': number_of_authors_names,
-            'NOMA (name)': 0,
-            "NOMAP (name)": 0,
-            'NOA (email)': number_of_authors_emails,
-            'NOMA (email)': 0,
-            "NOMAP (email)": 0,
-            "NOA email - name": number_of_authors_emails - number_of_authors_names,
-            "PBU": False,
+            'No. Days': 0,
+            'One Commit Migration?': False,
+            'No. Authors (name)': number_of_authors_names,
+            'No. Migration Authors (name)': 0,
+            "Percentage of Migration Authors (name)": 0,
+            'No. Authors (email)': number_of_authors_emails,
+            'No. Migration Authors (email)': 0,
+            "Percentage of Migration Authors (email)": 0,
+            "No. Migration Authors (email - name)": number_of_authors_emails - number_of_authors_names,
+            "Pytest before Unittest?": False,
 
-            'NOF': self.currentDefaultBranch.count_files(),
-            'NOF_UNITTEST': self.currentDefaultBranch.nof_unittest,
-            'NOF_PYTEST': self.currentDefaultBranch.nof_pytest,
-            'NOF_BOTH': self.currentDefaultBranch.nof_both,
+            'No. Files (current state)': self.currentDefaultBranch.count_files(),
+            'No. Files with unittest': self.currentDefaultBranch.nof_unittest,
+            'No. Files with pytest': self.currentDefaultBranch.nof_pytest,
+            'No. Files with both': self.currentDefaultBranch.nof_both,
 
-            'FC_UNITTEST': self.unittest_occurrences.first.commit['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
-            'FC_PYTEST': self.pytest_occurrences.first.commit['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
-            'FC_UNITTEST_LINK': commit_base_url + self.unittest_occurrences.first.commit['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
-            'FC_PYTEST_LINK': commit_base_url + self.pytest_occurrences.first.commit['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
+            '1st commit UNITTEST': self.unittest_occurrences.first.commit['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
+            '1st commit PYTEST': self.pytest_occurrences.first.commit['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
+            '1st commit UNITTEST_LINK': commit_base_url + self.unittest_occurrences.first.commit['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
+            '1st commit PYTEST_LINK': commit_base_url + self.pytest_occurrences.first.commit['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
 
-            'LC_UNITTEST': self.unittest_occurrences.last.commit['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
-            'LC_PYTEST': self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
-            'LC_UNITTEST_LINK': commit_base_url + self.unittest_occurrences.last.commit['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
-            'LC_PYTEST_LINK': commit_base_url + self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
+            'Last commit UNITTEST': self.unittest_occurrences.last.commit['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
+            'Last commit PYTEST': self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
+            'Last commit UNITTEST_LINK': commit_base_url + self.unittest_occurrences.last.commit['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
+            'Last commit PYTEST_LINK': commit_base_url + self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
         }
 
     def __is_pytest_repository(self):
@@ -148,27 +148,28 @@ class MainClassifier:
     def __build_pytest_repository_data(self):
         data = {
             'CATEGORY': 'pytest',
-            'NOC_UNITTEST': 0,
-            'NOC_PYTEST': self.amount_total_commits,
-            'NOC_BOTH': 0
+            "No. Commits from 1st unittest occurrence": 0,
+            "No. Commits from 1st pytest occurrence": self.amount_total_commits,
+            "No. Commits between 1st unittest and last pytest commit": 0
+
         }
         return data
 
     def __build_unittest_repository_data(self):
         data = {
             'CATEGORY': 'unittest',
-            'NOC_UNITTEST': self.amount_total_commits,
-            'NOC_PYTEST': 0,
-            'NOC_BOTH': 0
+            "No. Commits from 1st unittest occurrence": self.amount_total_commits,
+            "No. Commits from 1st pytest occurrence": 0,
+            "No. Commits between 1st unittest and last pytest commit": 0
         }
         return data
 
     def __build_not_pytest_neither_unittest_data(self):
         data = {
             'CATEGORY': 'unknown',
-            'NOC_UNITTEST': 0,
-            'NOC_PYTEST': 0,
-            'NOC_BOTH': 0,
+            "No. Commits from 1st unittest occurrence": 0,
+            "No. Commits from 1st pytest occurrence": 0,
+            "No. Commits between 1st unittest and last pytest commit": 0
         }
         return data
 
@@ -181,15 +182,17 @@ class MainClassifier:
 
         data = {
             'CATEGORY': 'migrated',
-            'NOC_UNITTEST': idx_last_unittest_commit - idx_first_unittest_commit,
-            'NOC_PYTEST': self.amount_total_commits - idx_first_pytest_commit,
-            'NOC_BOTH': idx_last_unittest_commit - idx_first_pytest_commit,
-            'OCM': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
-            'NOD': timedelta.days,
-            'NOMA (name)': number_of_migration_authors_names,
-            "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
-            'NOMA (email)': number_of_migration_authors_emails,
-            "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2)
+
+            "No. Commits from 1st unittest occurrence": idx_last_unittest_commit - idx_first_unittest_commit,
+            "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
+            "No. Commits between 1st unittest and last pytest commit": idx_last_unittest_commit - idx_first_pytest_commit,
+
+            'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
+            'No. Days': timedelta.days,
+            'No. Migration Authors (name)': number_of_migration_authors_names,
+            'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
+            'No. Authors (email)': number_of_migration_authors_emails,
+            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2)
         }
         return data
 
@@ -202,14 +205,16 @@ class MainClassifier:
 
         data = {
             'CATEGORY': 'ongoing',
-            'NOC_UNITTEST': self.amount_total_commits - idx_first_unittest_commit,
-            'NOC_PYTEST': self.amount_total_commits - idx_first_pytest_commit,
-            'NOC_BOTH': self.amount_total_commits - idx_first_pytest_commit,
-            'NOD': timedelta.days,
-            'NOMA (name)': number_of_migration_authors_names,
-            "NOMAP (name)": round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
-            'NOMA (email)': number_of_migration_authors_emails,
-            "NOMAP (email)": round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2)
+
+            "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
+            "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
+            "No. Commits between 1st unittest and last pytest commit": self.amount_total_commits - idx_first_pytest_commit,
+
+            'No. Days': timedelta.days,
+            'No. Migration Authors (name)': number_of_migration_authors_names,
+            'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
+            'No. Authors (email)': number_of_migration_authors_emails,
+            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2)
         }
         return data
 
@@ -219,9 +224,9 @@ class MainClassifier:
 
         data = {
             'CATEGORY': 'unittest',
-            'NOC_UNITTEST': self.amount_total_commits - idx_first_unittest_commit,
-            'NOC_PYTEST': idx_last_pytest_commit - idx_first_pytest_commit,
-            'NOC_BOTH': idx_last_pytest_commit - idx_first_pytest_commit,
+            "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
+            "No. Commits from 1st pytest occurrence": idx_last_pytest_commit - idx_first_pytest_commit,
+            "No. Commits between 1st unittest and last pytest commit": idx_last_pytest_commit - idx_first_pytest_commit,
         }
         return data
 
@@ -229,9 +234,9 @@ class MainClassifier:
         pytest_before_unittest = idx_first_unittest_commit > idx_first_pytest_commit
         data = {
             'CATEGORY': 'unknown',
-            'PBU': pytest_before_unittest,
-            'NOC_UNITTEST': self.amount_total_commits - idx_first_unittest_commit,
-            'NOC_PYTEST': self.amount_total_commits - idx_first_pytest_commit,
-            'NOC_BOTH': self.amount_total_commits - idx_first_unittest_commit if pytest_before_unittest else 0,
+            'Pytest before Unittest?': pytest_before_unittest,
+            "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit
+            "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
+            "No. Commits between 1st unittest and last pytest commit": self.amount_total_commits - idx_first_unittest_commit if pytest_before_unittest else 0,
         }
         return data

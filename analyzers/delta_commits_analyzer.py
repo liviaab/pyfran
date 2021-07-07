@@ -217,8 +217,8 @@ class DeltaCommits:
                 "parametrize": commit_memo["pytest_matches_in_added_lines"]["parametrize"] + apis_in_added_lines["matches_parametrize"],
                 "genericMark": commit_memo["pytest_matches_in_added_lines"]["genericMark"] + apis_in_added_lines["matches_genericMark"],
                 "genericPytest": commit_memo["pytest_matches_in_added_lines"]["genericPytest"] + apis_in_added_lines["matches_genericPytest"],
-                "monkeypatch": commit_memo["pytest_matches_in_added_lines"]["monkeypatch"] + apis_in_added_lines["matches_monkeypatch"]
-                "pytestmock": commit_memo["pytest_matches_in_added_lines"]["pytestmock"] + apis_in_added_lines["matches_pytestmock"]
+                "monkeypatch": commit_memo["pytest_matches_in_added_lines"]["monkeypatch"] + apis_in_added_lines["matches_monkeypatch"],
+                "pytestmock": commit_memo["pytest_matches_in_added_lines"]["pytestmock"] + apis_in_added_lines["matches_pytestmock"],
             },
 
             "p_count_removed_native_assert": commit_memo["p_count_removed_native_assert"] + apis_in_removed_lines["count_native_assert"],

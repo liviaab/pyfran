@@ -268,6 +268,9 @@ class DeltaCommits:
         if self.__adds_parametrized_test(commit_memo):
             commit_memo["tags"].append("adds_parametrized_test")
 
+        if self.__migrates_skips(commit_memo):
+            commit_memo["tags"].append("skip_migration")
+
 
         if (commit_memo["tags"] != []):
             commit_memo["are_we_interested"] = True
@@ -288,9 +291,9 @@ class DeltaCommits:
     def __migrates_fixtures(self, commit_memo):
         return self.unittest_occurrences.has_first_occurrence() and \
                 self.pytest_occurrences.has_first_occurrence() and \
-                (commit_memo["u_count_removed_setUp"] > 0 or commit_memo["u_count_removed_setUpClass"] > 0 ) and \
+                (commit_memo["u_count_removed_setUp"] > 0 or commit_memo["u_count_removed_setUpClass"] > 0 or \
+                 commit_memo["u_count_removed_tearDown"] > 0 or commit_memo["u_count_removed_tearDownClass"] ) and \
                 (commit_memo["p_count_added_fixture"] > 0 or commit_memo["p_count_added_usefixture"])
-                # precisa incluir o teardown?
 
     def __migrates_frameworks(self, commit_memo):
         return commit_memo["unittest_in_removed_diffs"] and \
@@ -300,6 +303,12 @@ class DeltaCommits:
         return self.unittest_occurrences.has_first_occurrence() and \
                 self.pytest_occurrences.has_first_occurrence() and \
                 commit_memo["p_count_added_parametrize"] > 0
+
+    def __migrates_skips(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                (commit_memo["u_count_removed_unittestSkipTest"] > 0 or commit_memo["u_count_removed_selfSkipTest"] > 0 ) and \
+                (commit_memo["p_count_added_simpleSkip"] > 0 or commit_memo["p_count_added_markSkip"])
 
 
     def __initial_state_commit_memo(self, hash):

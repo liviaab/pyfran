@@ -271,6 +271,8 @@ class DeltaCommits:
         if self.__migrates_skips(commit_memo):
             commit_memo["tags"].append("skip_migration")
 
+        if self.__migrates_expected_failure(commit_memo):
+            commit_memo["tags"].append("expected_failure_migration")
 
         if (commit_memo["tags"] != []):
             commit_memo["are_we_interested"] = True
@@ -309,6 +311,12 @@ class DeltaCommits:
                 self.pytest_occurrences.has_first_occurrence() and \
                 (commit_memo["u_count_removed_unittestSkipTest"] > 0 or commit_memo["u_count_removed_selfSkipTest"] > 0 ) and \
                 (commit_memo["p_count_added_simpleSkip"] > 0 or commit_memo["p_count_added_markSkip"])
+
+    def __migrates_expected_failure(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                (commit_memo["u_count_removed_expectedFailure"] > 0) and \
+                (commit_memo["p_count_added_expectedFailure"] > 0)
 
 
     def __initial_state_commit_memo(self, hash):

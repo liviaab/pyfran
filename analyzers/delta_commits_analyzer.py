@@ -253,8 +253,6 @@ class DeltaCommits:
         return commit_memo
 
     def __set_interest_and_tags(self, commit_memo):
-        if self.__migrates_testcase(commit_memo):
-            commit_memo["tags"].append("testcase_migration")
 
         if self.__migrates_asserts(commit_memo):
             commit_memo["tags"].append("assert_migration")
@@ -265,17 +263,22 @@ class DeltaCommits:
         if self.__migrates_frameworks(commit_memo):
             commit_memo["tags"].append("framework_migration")
 
-        if self.__adds_parametrized_test(commit_memo):
-            commit_memo["tags"].append("adds_parametrized_test")
-
         if self.__migrates_skips(commit_memo):
             commit_memo["tags"].append("skip_migration")
 
         if self.__migrates_expected_failure(commit_memo):
             commit_memo["tags"].append("expected_failure_migration")
 
+
         if (commit_memo["tags"] != []):
             commit_memo["are_we_interested"] = True
+
+            # "extra" tags
+            if self.__adds_parametrized_test(commit_memo):
+                commit_memo["tags"].append("adds_parametrized_test")
+
+            if self.__migrates_testcase(commit_memo):
+                commit_memo["tags"].append("testcase_migration")
 
 
     def __migrates_testcase(self, commit_memo):

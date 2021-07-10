@@ -97,6 +97,7 @@ class CheckoutsAnalyzer:
 
             apis_in_commit = {
                 "commit_index": commit["commit_index"],
+                "commit_link": self.repo_url + '/commit/' + commit["commit_hash"],
                 "author_email": commit["author_email"],
                 "date": commit["date"],
                 "commit_hash": commit["commit_hash"],

@@ -13,6 +13,7 @@ def commit_columns():
         "author_email",
         "date",
         "commit_hash",
+        "commit_link",
         "files_changed",
         "are_we_interested",
         "pytest_in_added_diffs",
@@ -85,6 +86,7 @@ def api_columns():
         "author_email",
         "date",
         "commit_hash",
+        "commit_link",
 
         "test_files",
         "test_methods",

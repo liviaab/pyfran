@@ -325,6 +325,7 @@ class DeltaCommits:
     def __initial_state_commit_memo(self, hash):
         return {
                 "commit_hash": hash,
+                "commit_link": self.repo_url + '/commit/' + hash,
                 "unittest_in_code": False,
                 "unittest_in_removed_diffs": False,
                 "pytest_in_code": False,

@@ -66,7 +66,7 @@ class DeltaCommits:
                     commit_memo = self.__update_memo_unittest_apis(commit_memo, removed_lines, added_lines)
                     commit_memo = self.__update_memo_pytest_apis(commit_memo, removed_lines, added_lines)
 
-                self.__update_occurrences(index, commit)
+                self.__update_occurrences(index, commit, commit_memo)
 
             self.__set_interest_and_tags(commit_memo)
             custom = CustomCommit(index, commit, commit_memo)
@@ -92,7 +92,7 @@ class DeltaCommits:
 
         return
 
-    def __update_occurrences(self, index, commit):
+    def __update_occurrences(self, index, commit, commit_memo):
         if self.__can_update_unittest_first_occurrence():
             self.unittest_occurrences.set_first_occurrence(index, commit)
 
@@ -105,10 +105,10 @@ class DeltaCommits:
         if self.__can_update_pytest_last_occurrence():
             self.pytest_occurrences.set_last_occurrence(index, commit)
 
-        if self.__can_update_first_migration_commit_occurrence():
+        if self.__can_update_first_migration_commit_occurrence(commit_memo):
             self.migration_occurrences.set_first_occurrence(index, commit)
 
-        if self.__can_update_last_migration_commit_occurrence():
+        if self.__can_update_last_migration_commit_occurrence(commit_memo):
             self.migration_occurrences.set_last_occurrence(index, commit)
 
         return
@@ -129,11 +129,11 @@ class DeltaCommits:
         return self.pytest_occurrences.has_first_occurrence() \
             and self.tmp_memo["pytest_in_removed_diffs"]
 
-    def __can_update_first_migration_commit_occurrence(self):
+    def __can_update_first_migration_commit_occurrence(self, commit_memo):
         return (not self.migration_occurrences.has_first_occurrence()) \
                 and commit_memo["are_we_interested"]
 
-    def __can_update_last_migration_commit_occurrence(self):
+    def __can_update_last_migration_commit_occurrence(self, commit_memo):
         return (self.migration_occurrences.has_first_occurrence()) \
                 and commit_memo["are_we_interested"]
 

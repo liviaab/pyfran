@@ -125,8 +125,6 @@ class MainClassifier:
 
         }
 
-[{'quero': True},{'quero': False},{'quero': True},{'quero': False}, {'quero': True}]
-
     def __is_pytest_repository(self):
         return (not self.unittest_occurrences.has_first_occurrence()
                 and self.pytest_occurrences.has_first_occurrence())
@@ -202,9 +200,9 @@ class MainClassifier:
 
             'No. Days (between frameworks occurrence)': timedelta.days,
             'No. Migration Authors (name)': number_of_migration_authors_names,
-            'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
+            'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["No. Authors (name)"] * 100, 2),
             'No. Authors (email)': number_of_migration_authors_emails,
-            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2),
+            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
 
             'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
 
@@ -227,9 +225,9 @@ class MainClassifier:
 
             'No. Days': timedelta.days,
             'No. Migration Authors (name)': number_of_migration_authors_names,
-            'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
+            'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["No. Authors (name)"] * 100, 2),
             'No. Authors (email)': number_of_migration_authors_emails,
-            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2),
+            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
 
             'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
 
@@ -254,7 +252,7 @@ class MainClassifier:
         data = {
             'CATEGORY': 'unknown',
             'Pytest before Unittest?': pytest_before_unittest,
-            "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit
+            "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
             "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
             "No. Commits between 1st unittest and last pytest commit": self.amount_total_commits - idx_first_unittest_commit if pytest_before_unittest else 0,
         }

@@ -32,7 +32,7 @@ class Analyzer:
         # the current repo state to determine whether if it is "migrated" or "ongoing"
         print("Time marker #4 - classify", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         # data = self.__classify_and_process_metrics()
-        classifier = MainClassifier(self.repo_url, allcommits, unittest_occurrences, pytest_occurrences)
+        classifier = MainClassifier(self.repo_url, allcommits, unittest_occurrences, pytest_occurrences, migration_occurrences)
         (data, author_infos) = classifier.classify_and_process_metrics()
 
         # Output the retrieved information in CSVs

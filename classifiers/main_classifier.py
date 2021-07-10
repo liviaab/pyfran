@@ -1,3 +1,4 @@
+import functools
 from datetime import datetime, timezone
 
 from analyzers.repository_analyzer import RepositoryAnalyzer
@@ -5,7 +6,7 @@ from analyzers.custom_commit import CustomCommit
 
 
 class MainClassifier:
-    def __init__(self, repo_url, allCommits, unittest_occurrences, pytest_occurrences):
+    def __init__(self, repo_url, allCommits, unittest_occurrences, pytest_occurrences, migration_occurrences):
         self.repo_url = repo_url
         self.project_name = repo_url.split('/')[-1]
         self.allCommits = allCommits
@@ -13,6 +14,7 @@ class MainClassifier:
         self.currentDefaultBranch = RepositoryAnalyzer(self.repo_url)
         self.unittest_occurrences = unittest_occurrences
         self.pytest_occurrences = pytest_occurrences
+        self.migration_occurrences = migration_occurrences
         pass
 
     def classify_and_process_metrics(self):
@@ -103,6 +105,7 @@ class MainClassifier:
             'No. Files with pytest': self.currentDefaultBranch.nof_pytest,
             'No. Files with both': self.currentDefaultBranch.nof_both,
 
+
             '1st commit UNITTEST': self.unittest_occurrences.first.commit['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
             '1st commit PYTEST': self.pytest_occurrences.first.commit['commit_hash'] if self.pytest_occurrences.has_first_occurrence() else None,
             '1st commit UNITTEST_LINK': commit_base_url + self.unittest_occurrences.first.commit['commit_hash'] if self.unittest_occurrences.has_first_occurrence() else None,
@@ -112,7 +115,17 @@ class MainClassifier:
             'Last commit PYTEST': self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
             'Last commit UNITTEST_LINK': commit_base_url + self.unittest_occurrences.last.commit['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
             'Last commit PYTEST_LINK': commit_base_url + self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
+
+            'No. Days (between migration commits)': self.__commit_migration_delta_days() if self.migration_occurrences.has_first_occurrence() else 0,
+            'No. Migration commits': functools.reduce(lambda acc, commit: acc + 1 if commit['are_we_interested'] else acc, self.allCommits, 0),
+            '1st migration commit': self.migration_occurrences.first.commit['commit_hash'] if self.migration_occurrences.has_first_occurrence() else None,
+            '1st migration commit link': commit_base_url + self.migration_occurrences.first.commit['commit_hash'] if self.migration_occurrences.has_first_occurrence() else None,
+            'Last migration commit': self.migration_occurrences.last.commit['commit_hash'] if self.migration_occurrences.has_last_occurrence() else None,
+            'Last migration commit link': commit_base_url + self.migration_occurrences.last.commit['commit_hash'] if self.migration_occurrences.has_last_occurrence() else None,
+
         }
+
+[{'quero': True},{'quero': False},{'quero': True},{'quero': False}, {'quero': True}]
 
     def __is_pytest_repository(self):
         return (not self.unittest_occurrences.has_first_occurrence()
@@ -187,12 +200,14 @@ class MainClassifier:
             "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
             "No. Commits between 1st unittest and last pytest commit": idx_last_unittest_commit - idx_first_pytest_commit,
 
-            'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
-            'No. Days': timedelta.days,
+            'No. Days (between frameworks occurrence)': timedelta.days,
             'No. Migration Authors (name)': number_of_migration_authors_names,
             'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
             'No. Authors (email)': number_of_migration_authors_emails,
-            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2)
+            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2),
+
+            'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
+
         }
         return data
 
@@ -214,7 +229,10 @@ class MainClassifier:
             'No. Migration Authors (name)': number_of_migration_authors_names,
             'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["NOA (name)"] * 100, 2),
             'No. Authors (email)': number_of_migration_authors_emails,
-            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2)
+            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["NOA (email)"] * 100, 2),
+
+            'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
+
         }
         return data
 
@@ -227,6 +245,7 @@ class MainClassifier:
             "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
             "No. Commits from 1st pytest occurrence": idx_last_pytest_commit - idx_first_pytest_commit,
             "No. Commits between 1st unittest and last pytest commit": idx_last_pytest_commit - idx_first_pytest_commit,
+            'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
         }
         return data
 
@@ -240,3 +259,7 @@ class MainClassifier:
             "No. Commits between 1st unittest and last pytest commit": self.amount_total_commits - idx_first_unittest_commit if pytest_before_unittest else 0,
         }
         return data
+
+    def __commit_migration_delta_days():
+        timedelta = self.migration_occurrences.last.commit["date"] - self.migration_occurrences.first.commit["date"]
+        return timedelta.days

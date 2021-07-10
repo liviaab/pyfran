@@ -121,7 +121,8 @@ def repository_columns():
         "No. Commits from 1st unittest occurrence",
         "No. Commits from 1st pytest occurrence",
         "No. Commits between 1st unittest and last pytest commit",
-        'One Commit Migration?',
+        'No. Days (between frameworks occurrence)',
+
         'No. Authors (name)',
         'No. Migration Authors (name)',
         'Percentage of Migration Authors (name)',
@@ -129,7 +130,11 @@ def repository_columns():
         'No. Migration Authors (email)',
         'Percentage of Migration Authors (email)',
         'No. Migration Authors (email - name)',
-        'No. Days',
+
+        'No. Days (between migration commits)'
+        'No. Migration commits'
+        'One Commit Migration?',
+
         'No. Files (current state)',
         'No. Files with unittest',
         'No. Files with pytest',
@@ -142,5 +147,11 @@ def repository_columns():
         'Last commit UNITTEST',
         'Last commit PYTEST',
         'Last commit UNITTEST_LINK',
-        'Last commit PYTEST_LINK'
+        'Last commit PYTEST_LINK',
+
+        '1st migration commit',
+        '1st migration commit link',
+        'Last migration commit',
+        'Last migration commit link',
+
     ]

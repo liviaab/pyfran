@@ -21,7 +21,7 @@ class Analyzer:
         # commits of interest
         # self.__process_commits()
         dc_analyzer = DeltaCommits(self.repo_url)
-        (allcommits, unittest_occurrences, pytest_occurrences) = dc_analyzer.process_delta_commits()
+        (allcommits, unittest_occurrences, pytest_occurrences, migration_occurrences) = dc_analyzer.process_delta_commits()
 
         print("Time marker #3 - process files from each checkout", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         # Step 2: Clone the repo and visit each checkout to get information

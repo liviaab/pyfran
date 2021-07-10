@@ -16,6 +16,7 @@ class DeltaCommits:
         self.project_name = repo_url.split('/')[-1]
         self.unittest_occurrences = Occurrences()
         self.pytest_occurrences = Occurrences()
+        self.migration_occurrences = Occurrences()
         self.tmp_memo = {
             "unittest_in_code": False,
             "unittest_in_removed_diffs": False,
@@ -56,7 +57,6 @@ class DeltaCommits:
                     continue
 
                 self.__match_patterns(source_code, removed_lines, added_lines, path)
-                self.__update_occurrences(index, commit)
 
                 # check if a reference to pytest/unittest was added or removed
                 commit_memo = self.__update_base_commit_memo(commit_memo)
@@ -66,6 +66,8 @@ class DeltaCommits:
                     commit_memo = self.__update_memo_unittest_apis(commit_memo, removed_lines, added_lines)
                     commit_memo = self.__update_memo_pytest_apis(commit_memo, removed_lines, added_lines)
 
+                self.__update_occurrences(index, commit)
+
             self.__set_interest_and_tags(commit_memo)
             custom = CustomCommit(index, commit, commit_memo)
             self.allcommits.append(custom.commit)
@@ -73,7 +75,7 @@ class DeltaCommits:
         
         print("Analyzed {} commits.".format(len(self.allcommits)))
         
-        return (self.allcommits, self.unittest_occurrences, self.pytest_occurrences)
+        return (self.allcommits, self.unittest_occurrences, self.pytest_occurrences, self.migration_occurrences)
 
     def __get_lines_from_diff(self, parsed_modifications):
         return [ removed_line for line_number, removed_line in parsed_modifications ]
@@ -103,6 +105,12 @@ class DeltaCommits:
         if self.__can_update_pytest_last_occurrence():
             self.pytest_occurrences.set_last_occurrence(index, commit)
 
+        if self.__can_update_first_migration_commit_occurrence():
+            self.migration_occurrences.set_first_occurrence(index, commit)
+
+        if self.__can_update_last_migration_commit_occurrence():
+            self.migration_occurrences.set_last_occurrence(index, commit)
+
         return
 
     def __can_update_unittest_first_occurrence(self):
@@ -120,6 +128,15 @@ class DeltaCommits:
     def __can_update_pytest_last_occurrence(self):
         return self.pytest_occurrences.has_first_occurrence() \
             and self.tmp_memo["pytest_in_removed_diffs"]
+
+    def __can_update_first_migration_commit_occurrence(self):
+        return (not self.migration_occurrences.has_first_occurrence()) \
+                and commit_memo["are_we_interested"]
+
+    def __can_update_last_migration_commit_occurrence(self):
+        return (self.migration_occurrences.has_first_occurrence()) \
+                and commit_memo["are_we_interested"]
+
 
     def __update_base_commit_memo(self, commit_memo):
         updated_memo = {

@@ -66,9 +66,10 @@ class DeltaCommits:
                     commit_memo = self.__update_memo_unittest_apis(commit_memo, removed_lines, added_lines)
                     commit_memo = self.__update_memo_pytest_apis(commit_memo, removed_lines, added_lines)
 
-                self.__update_occurrences(index, commit, commit_memo)
 
             self.__set_interest_and_tags(commit_memo)
+            self.__update_occurrences(index, commit, commit_memo)
+
             custom = CustomCommit(index, commit, commit_memo)
             self.allcommits.append(custom.commit)
             index += 1

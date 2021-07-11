@@ -89,7 +89,7 @@ class MainClassifier:
 
             'No. Total Commits': self.amount_total_commits,
 
-            'No. Days': 0,
+            'No. Days (between frameworks occurrence)': 0,
             'One Commit Migration?': False,
             'No. Authors (name)': number_of_authors_names,
             'No. Migration Authors (name)': 0,
@@ -223,13 +223,11 @@ class MainClassifier:
             "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
             "No. Commits between 1st unittest and last pytest commit": self.amount_total_commits - idx_first_pytest_commit,
 
-            'No. Days': timedelta.days,
+            'No. Days (between frameworks occurrence)': timedelta.days,
             'No. Migration Authors (name)': number_of_migration_authors_names,
             'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["No. Authors (name)"] * 100, 2),
             'No. Authors (email)': number_of_migration_authors_emails,
             'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
-
-            'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
 
         }
         return data
@@ -243,7 +241,6 @@ class MainClassifier:
             "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
             "No. Commits from 1st pytest occurrence": idx_last_pytest_commit - idx_first_pytest_commit,
             "No. Commits between 1st unittest and last pytest commit": idx_last_pytest_commit - idx_first_pytest_commit,
-            'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
         }
         return data
 
@@ -258,6 +255,6 @@ class MainClassifier:
         }
         return data
 
-    def __commit_migration_delta_days():
+    def __commit_migration_delta_days(self):
         timedelta = self.migration_occurrences.last.commit["date"] - self.migration_occurrences.first.commit["date"]
         return timedelta.days

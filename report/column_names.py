@@ -131,8 +131,8 @@ def repository_columns():
         'Percentage of Migration Authors (email)',
         'No. Migration Authors (email - name)',
 
-        'No. Days (between migration commits)'
-        'No. Migration commits'
+        'No. Days (between migration commits)',
+        'No. Migration commits',
         'One Commit Migration?',
 
         'No. Files (current state)',

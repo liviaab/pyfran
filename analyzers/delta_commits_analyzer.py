@@ -56,7 +56,7 @@ class DeltaCommits:
                 else:
                     continue
 
-                self.__match_patterns(source_code, removed_lines, added_lines, path)
+                self.__match_framework_patterns(source_code, removed_lines, added_lines, path)
 
                 # check if a reference to pytest/unittest was added or removed
                 commit_memo = self.__update_base_commit_memo(commit_memo)
@@ -65,10 +65,11 @@ class DeltaCommits:
                 if self.tmp_memo["is_test_file"]:
                     commit_memo = self.__update_memo_unittest_apis(commit_memo, removed_lines, added_lines)
                     commit_memo = self.__update_memo_pytest_apis(commit_memo, removed_lines, added_lines)
+                self.__update_framework_occurrences(index, commit)
 
 
             self.__set_interest_and_tags(commit_memo)
-            self.__update_occurrences(index, commit, commit_memo)
+            self.__update_migration_occurrences(index, commit, commit_memo)
 
             custom = CustomCommit(index, commit, commit_memo)
             self.allcommits.append(custom.commit)
@@ -81,7 +82,7 @@ class DeltaCommits:
     def __get_lines_from_diff(self, parsed_modifications):
         return [ removed_line for line_number, removed_line in parsed_modifications ]
 
-    def __match_patterns(self, source_code, removed_lines, added_lines, path):
+    def __match_framework_patterns(self, source_code, removed_lines, added_lines, path):
         self.tmp_memo = {
             "unittest_in_code": uh.matches_a(source_code),
             "unittest_in_removed_diffs": uh.matches_any(removed_lines, ignoreComments=False),
@@ -93,7 +94,7 @@ class DeltaCommits:
 
         return
 
-    def __update_occurrences(self, index, commit, commit_memo):
+    def __update_framework_occurrences(self, index, commit):
         if self.__can_update_unittest_first_occurrence():
             self.unittest_occurrences.set_first_occurrence(index, commit)
 
@@ -105,13 +106,6 @@ class DeltaCommits:
 
         if self.__can_update_pytest_last_occurrence():
             self.pytest_occurrences.set_last_occurrence(index, commit)
-
-        if self.__can_update_first_migration_commit_occurrence(commit_memo):
-            self.migration_occurrences.set_first_occurrence(index, commit)
-
-        if self.__can_update_last_migration_commit_occurrence(commit_memo):
-            self.migration_occurrences.set_last_occurrence(index, commit)
-
         return
 
     def __can_update_unittest_first_occurrence(self):
@@ -129,6 +123,16 @@ class DeltaCommits:
     def __can_update_pytest_last_occurrence(self):
         return self.pytest_occurrences.has_first_occurrence() \
             and self.tmp_memo["pytest_in_removed_diffs"]
+
+
+    def __update_migration_occurrences(self, index, commit, commit_memo):
+        if self.__can_update_first_migration_commit_occurrence(commit_memo):
+            self.migration_occurrences.set_first_occurrence(index, commit)
+
+        if self.__can_update_last_migration_commit_occurrence(commit_memo):
+            self.migration_occurrences.set_last_occurrence(index, commit)
+
+        return
 
     def __can_update_first_migration_commit_occurrence(self, commit_memo):
         return (not self.migration_occurrences.has_first_occurrence()) \
@@ -167,6 +171,7 @@ class DeltaCommits:
             "u_count_added_selfSkipTest": commit_memo["u_count_added_selfSkipTest"] + apis_in_added_lines["count_selfSkipTest"],
             "u_count_added_expectedFailure": commit_memo["u_count_added_expectedFailure"] + apis_in_added_lines["count_expectedFailure"],
             "u_count_added_unittestMock": commit_memo["u_count_added_unittestMock"] + apis_in_added_lines["count_unittestMock"],
+            "u_count_added_unittestImport": commit_memo["u_count_added_unittestImport"] + apis_in_added_lines["count_unittestImport"],
             "unittest_matches_in_added_lines": {
                 "testCaseSubclass": commit_memo["unittest_matches_in_added_lines"]["testCaseSubclass"] + apis_in_added_lines["matches_testCaseSubclass"],
                 "assert": commit_memo["unittest_matches_in_added_lines"]["assert"] + apis_in_added_lines["matches_assert"],
@@ -177,7 +182,8 @@ class DeltaCommits:
                 "unittestSkipTest": commit_memo["unittest_matches_in_added_lines"]["unittestSkipTest"] + apis_in_added_lines["matches_unittestSkipTest"],
                 "selfSkipTest": commit_memo["unittest_matches_in_added_lines"]["selfSkipTest"] + apis_in_added_lines["matches_selfSkipTest"],
                 "expectedFailure": commit_memo["unittest_matches_in_added_lines"]["expectedFailure"] + apis_in_added_lines["matches_expectedFailure"],
-                "unittestMock": commit_memo["unittest_matches_in_added_lines"]["unittestMock"] + apis_in_added_lines["matches_unittestMock"]
+                "unittestMock": commit_memo["unittest_matches_in_added_lines"]["unittestMock"] + apis_in_added_lines["matches_unittestMock"],
+                "unittestImport": commit_memo["unittest_matches_in_added_lines"]["unittestImport"] + apis_in_added_lines["matches_unittestImport"],
             },
 
             "u_count_removed_testCaseSubclass": commit_memo["u_count_removed_testCaseSubclass"] + apis_in_removed_lines["count_testCaseSubclass"],
@@ -190,6 +196,7 @@ class DeltaCommits:
             "u_count_removed_selfSkipTest": commit_memo["u_count_removed_selfSkipTest"] + apis_in_removed_lines["count_selfSkipTest"],
             "u_count_removed_expectedFailure": commit_memo["u_count_removed_expectedFailure"] + apis_in_removed_lines["count_expectedFailure"],
             "u_count_removed_unittestMock": commit_memo["u_count_removed_unittestMock"] + apis_in_removed_lines["count_unittestMock"],
+            "u_count_removed_unittestImport": commit_memo["u_count_removed_unittestImport"] + apis_in_removed_lines["count_unittestImport"],
             "unittest_matches_in_removed_lines": {
                 "testCaseSubclass": commit_memo["unittest_matches_in_removed_lines"]["testCaseSubclass"] + apis_in_removed_lines["matches_testCaseSubclass"],
                 "assert": commit_memo["unittest_matches_in_removed_lines"]["assert"] + apis_in_removed_lines["matches_assert"],
@@ -200,7 +207,8 @@ class DeltaCommits:
                 "unittestSkipTest": commit_memo["unittest_matches_in_removed_lines"]["unittestSkipTest"] + apis_in_removed_lines["matches_unittestSkipTest"],
                 "selfSkipTest": commit_memo["unittest_matches_in_removed_lines"]["selfSkipTest"] + apis_in_removed_lines["matches_selfSkipTest"],
                 "expectedFailure": commit_memo["unittest_matches_in_removed_lines"]["expectedFailure"] + apis_in_removed_lines["matches_expectedFailure"],
-                "unittestMock": commit_memo["unittest_matches_in_removed_lines"]["unittestMock"] + apis_in_removed_lines["matches_unittestMock"]
+                "unittestMock": commit_memo["unittest_matches_in_removed_lines"]["unittestMock"] + apis_in_removed_lines["matches_unittestMock"],
+                "unittestImport": commit_memo["unittest_matches_in_removed_lines"]["unittestImport"] + apis_in_removed_lines["matches_unittestImport"],
             }
         }
 
@@ -224,6 +232,7 @@ class DeltaCommits:
             "p_count_added_genericPytest": commit_memo["p_count_added_genericPytest"] + apis_in_added_lines["count_genericPytest"],
             "p_count_added_monkeypatch": commit_memo["p_count_added_monkeypatch"] + apis_in_added_lines["count_monkeypatch"],
             "p_count_added_pytestmock": commit_memo["p_count_added_pytestmock"] + apis_in_added_lines["count_pytestmock"],
+            "p_count_added_pytestImport": commit_memo["p_count_added_pytestImport"] + apis_in_added_lines["count_pytestImport"],
             "pytest_matches_in_added_lines": {
                 "native_assert": commit_memo["pytest_matches_in_added_lines"]["native_assert"] + apis_in_added_lines["matches_native_assert"],
                 "pytestRaise": commit_memo["pytest_matches_in_added_lines"]["pytestRaise"] + apis_in_added_lines["matches_pytestRaise"],
@@ -237,6 +246,7 @@ class DeltaCommits:
                 "genericPytest": commit_memo["pytest_matches_in_added_lines"]["genericPytest"] + apis_in_added_lines["matches_genericPytest"],
                 "monkeypatch": commit_memo["pytest_matches_in_added_lines"]["monkeypatch"] + apis_in_added_lines["matches_monkeypatch"],
                 "pytestmock": commit_memo["pytest_matches_in_added_lines"]["pytestmock"] + apis_in_added_lines["matches_pytestmock"],
+                "pytestImport": commit_memo["pytest_matches_in_added_lines"]["pytestImport"] + apis_in_added_lines["matches_pytestImport"],
             },
 
             "p_count_removed_native_assert": commit_memo["p_count_removed_native_assert"] + apis_in_removed_lines["count_native_assert"],
@@ -251,6 +261,7 @@ class DeltaCommits:
             "p_count_removed_genericPytest": commit_memo["p_count_removed_genericPytest"] + apis_in_removed_lines["count_genericPytest"],
             "p_count_removed_monkeypatch": commit_memo["p_count_removed_monkeypatch"] + apis_in_removed_lines["count_monkeypatch"],
             "p_count_removed_pytestmock": commit_memo["p_count_removed_pytestmock"] + apis_in_removed_lines["count_pytestmock"],
+            "p_count_removed_pytestImport": commit_memo["p_count_removed_pytestImport"] + apis_in_removed_lines["count_pytestImport"],
             "pytest_matches_in_removed_lines": {
                 "native_assert": commit_memo["pytest_matches_in_removed_lines"]["native_assert"] + apis_in_removed_lines["matches_native_assert"],
                 "pytestRaise": commit_memo["pytest_matches_in_removed_lines"]["pytestRaise"] + apis_in_removed_lines["matches_pytestRaise"],
@@ -264,6 +275,7 @@ class DeltaCommits:
                 "genericPytest": commit_memo["pytest_matches_in_removed_lines"]["genericPytest"] + apis_in_removed_lines["matches_genericPytest"],
                 "monkeypatch": commit_memo["pytest_matches_in_removed_lines"]["monkeypatch"] + apis_in_removed_lines["matches_monkeypatch"],
                 "pytestmock": commit_memo["pytest_matches_in_removed_lines"]["pytestmock"] + apis_in_removed_lines["matches_pytestmock"],
+                "pytestImport": commit_memo["pytest_matches_in_removed_lines"]["pytestImport"] + apis_in_removed_lines["matches_pytestImport"],
             }
         }
 
@@ -274,18 +286,23 @@ class DeltaCommits:
 
         if self.__migrates_asserts(commit_memo):
             commit_memo["tags"].append("assert_migration")
+            commit_memo["MT assert"] = True
 
         if self.__migrates_fixtures(commit_memo):
             commit_memo["tags"].append("fixture_migration")
+            commit_memo["MT fixture"] = True
 
         if self.__migrates_frameworks(commit_memo):
             commit_memo["tags"].append("framework_migration")
+            commit_memo["MT import"] = True
 
         if self.__migrates_skips(commit_memo):
             commit_memo["tags"].append("skip_migration")
+            commit_memo["MT skip"] = True
 
         if self.__migrates_expected_failure(commit_memo):
             commit_memo["tags"].append("expected_failure_migration")
+            commit_memo["MT failure"] = True
 
 
         if (commit_memo["tags"] != []):
@@ -294,9 +311,11 @@ class DeltaCommits:
             # "extra" tags
             if self.__adds_parametrized_test(commit_memo):
                 commit_memo["tags"].append("adds_parametrized_test")
+                commit_memo["MT add Param"] = True
 
             if self.__migrates_testcase(commit_memo):
                 commit_memo["tags"].append("testcase_migration")
+                commit_memo["MT testcase"] = True
 
 
     def __migrates_testcase(self, commit_memo):
@@ -319,8 +338,10 @@ class DeltaCommits:
                 (commit_memo["p_count_added_fixture"] > 0 or commit_memo["p_count_added_usefixture"])
 
     def __migrates_frameworks(self, commit_memo):
-        return commit_memo["unittest_in_removed_diffs"] and \
-                commit_memo["pytest_in_added_diffs"]
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                commit_memo["u_count_removed_unittestImport"] > 0 and \
+                commit_memo["p_count_added_pytestImport"] > 0
 
     def __adds_parametrized_test(self, commit_memo):
         return self.unittest_occurrences.has_first_occurrence() and \
@@ -362,6 +383,7 @@ class DeltaCommits:
                 "u_count_added_selfSkipTest": 0,
                 "u_count_added_expectedFailure": 0,
                 "u_count_added_unittestMock": 0,
+                "u_count_added_unittestImport": 0,
                 "unittest_matches_in_added_lines": {
                     "testCaseSubclass": [],
                     "assert": [],
@@ -372,7 +394,8 @@ class DeltaCommits:
                     "unittestSkipTest": [],
                     "selfSkipTest": [],
                     "expectedFailure": [],
-                    "unittestMock": []
+                    "unittestMock": [],
+                    "unittestImport": [],
                 },
 
                 "u_count_removed_testCaseSubclass": 0,
@@ -385,6 +408,7 @@ class DeltaCommits:
                 "u_count_removed_selfSkipTest": 0,
                 "u_count_removed_expectedFailure": 0,
                 "u_count_removed_unittestMock": 0,
+                "u_count_removed_unittestImport": 0,
                 "unittest_matches_in_removed_lines": {
                     "testCaseSubclass": [],
                     "assert": [],
@@ -395,7 +419,8 @@ class DeltaCommits:
                     "unittestSkipTest": [],
                     "selfSkipTest": [],
                     "expectedFailure": [],
-                    "unittestMock": []
+                    "unittestMock": [],
+                    "unittestImport": [],
                 },
 
                 "p_count_added_native_assert": 0,
@@ -410,6 +435,7 @@ class DeltaCommits:
                 "p_count_added_genericPytest": 0,
                 "p_count_added_monkeypatch": 0,
                 "p_count_added_pytestmock": 0,
+                "p_count_added_pytestImport": 0,
                 "pytest_matches_in_added_lines": {
                     "native_assert": [],
                     "pytestRaise": [],
@@ -422,7 +448,8 @@ class DeltaCommits:
                     "genericMark": [],
                     "genericPytest": [],
                     "monkeypatch":[],
-                    "pytestmock": []
+                    "pytestmock": [],
+                    "pytestImport": [],
                 },
 
                 "p_count_removed_native_assert": 0,
@@ -437,6 +464,7 @@ class DeltaCommits:
                 "p_count_removed_genericPytest": 0,
                 "p_count_removed_monkeypatch": 0,
                 "p_count_removed_pytestmock": 0,
+                "p_count_removed_pytestImport": 0,
                 "pytest_matches_in_removed_lines": {
                     "native_assert": [],
                     "pytestRaise": [],
@@ -449,7 +477,16 @@ class DeltaCommits:
                     "genericMark": [],
                     "genericPytest": [],
                     "monkeypatch":[],
-                    "pytestmock": []
+                    "pytestmock": [],
+                    "pytestImport": [],
                 },
-                "tags": []
+                "tags": [],
+                "MT assert": False,
+                "MT fixture": False,
+                "MT import": False,
+                "MT skip": False,
+                "MT failure": False,
+                "MT testcase": False,
+                "MT add Param": False,
+
             }

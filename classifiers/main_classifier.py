@@ -46,12 +46,12 @@ class MainClassifier:
             base.update(data)
             return (base, author_infos)
 
-        idx_first_unittest_commit = CustomCommit.indexOf(self.allCommits, self.unittest_occurrences.first.commit["commit_hash"])
+        idx_first_unittest_commit = self.unittest_occurrences.first.commit["commit_index"]
 
-        idx_first_pytest_commit = CustomCommit.indexOf(self.allCommits, self.pytest_occurrences.first.commit["commit_hash"])
+        idx_first_pytest_commit = self.pytest_occurrences.first.commit["commit_index"]
 
         if self.__is_migrated_repository(idx_first_unittest_commit, idx_first_pytest_commit):
-            idx_last_unittest_commit = CustomCommit.indexOf(self.allCommits, self.unittest_occurrences.last.commit["commit_hash"])
+            idx_last_unittest_commit = self.unittest_occurrences.last.commit["commit_index"]
             author_infos = CustomCommit.characterize_authors(self.allCommits, idx_first_pytest_commit, idx_last_unittest_commit)
             data = self.__build_migrated_repository_data(
                 base,
@@ -118,6 +118,7 @@ class MainClassifier:
 
             'No. Days (between migration commits)': self.__commit_migration_delta_days() if self.migration_occurrences.has_first_occurrence() else 0,
             'No. Migration commits': functools.reduce(lambda acc, commit: acc + 1 if commit['are_we_interested'] else acc, self.allCommits, 0),
+            'No. Commits (between migration period)': 0,
             '1st migration commit': self.migration_occurrences.first.commit['commit_hash'] if self.migration_occurrences.has_first_occurrence() else None,
             '1st migration commit link': commit_base_url + self.migration_occurrences.first.commit['commit_hash'] if self.migration_occurrences.has_first_occurrence() else None,
             'Last migration commit': self.migration_occurrences.last.commit['commit_hash'] if self.migration_occurrences.has_last_occurrence() else None,
@@ -127,41 +128,47 @@ class MainClassifier:
 
     def __is_pytest_repository(self):
         return (not self.unittest_occurrences.has_first_occurrence()
-                and self.pytest_occurrences.has_first_occurrence())
+                and self.pytest_occurrences.has_first_occurrence()
+                and not self.migration_occurrences.has_first_occurrence())
 
     def __is_unittest_repository(self):
         return (not self.pytest_occurrences.has_first_occurrence()
-                and self.unittest_occurrences.has_first_occurrence())
+                and self.unittest_occurrences.has_first_occurrence()
+                and not self.migration_occurrences.has_first_occurrence())
 
     def __is_not_pytest_neither_unittest(self):
         return (not self.pytest_occurrences.has_first_occurrence()
-                and not self.unittest_occurrences.has_first_occurrence())
+                and not self.unittest_occurrences.has_first_occurrence()
+                and not self.migration_occurrences.has_first_occurrence())
 
     def __is_migrated_repository(self, idx_first_unittest_commit, idx_first_pytest_commit):
         return (self.unittest_occurrences.has_first_occurrence()
                 and self.pytest_occurrences.has_first_occurrence()
                 and (idx_first_unittest_commit <= idx_first_pytest_commit)
-                and (self.currentDefaultBranch.usesPytest and not self.currentDefaultBranch.usesUnittest))
+                and (self.currentDefaultBranch.usesPytest and not self.currentDefaultBranch.usesUnittest)
+                and self.migration_occurrences.has_first_occurrence())
 
     def __is_ongoing_repository(self, idx_first_unittest_commit, idx_first_pytest_commit):
         return (self.unittest_occurrences.has_first_occurrence()
                 and self.pytest_occurrences.has_first_occurrence()
                 and (idx_first_unittest_commit <= idx_first_pytest_commit)
-                and (self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest))
+                and (self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest)
+                and self.migration_occurrences.has_first_occurrence())
 
     def __gave_up_migration(self, idx_first_unittest_commit, idx_first_pytest_commit):
         # started with unittest, added reference to pytest and then removed it.
         return (self.unittest_occurrences.has_first_occurrence()
                 and self.pytest_occurrences.has_first_occurrence()
                 and (idx_first_unittest_commit <= idx_first_pytest_commit)
-                and (not self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest))
+                and (not self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest)
+                and self.migration_occurrences.has_first_occurrence())
 
     def __build_pytest_repository_data(self):
         data = {
             'CATEGORY': 'pytest',
             "No. Commits from 1st unittest occurrence": 0,
             "No. Commits from 1st pytest occurrence": self.amount_total_commits,
-            "No. Commits between 1st unittest and last pytest commit": 0
+            "No. Commits between 1st unittest and last pytest commit": 0,
 
         }
         return data
@@ -171,7 +178,7 @@ class MainClassifier:
             'CATEGORY': 'unittest',
             "No. Commits from 1st unittest occurrence": self.amount_total_commits,
             "No. Commits from 1st pytest occurrence": 0,
-            "No. Commits between 1st unittest and last pytest commit": 0
+            "No. Commits between 1st unittest and last pytest commit": 0,
         }
         return data
 
@@ -180,7 +187,7 @@ class MainClassifier:
             'CATEGORY': 'unknown',
             "No. Commits from 1st unittest occurrence": 0,
             "No. Commits from 1st pytest occurrence": 0,
-            "No. Commits between 1st unittest and last pytest commit": 0
+            "No. Commits between 1st unittest and last pytest commit": 0,
         }
         return data
 
@@ -190,6 +197,9 @@ class MainClassifier:
 
         timedelta = self.unittest_occurrences.last.commit["date"] - \
             self.pytest_occurrences.first.commit["date"]
+
+        idx_first_migration_commit = self.migration_occurrences.first.commit["commit_index"]
+        idx_last_migration_commit = self.migration_occurrences.last.commit["commit_index"]
 
         data = {
             'CATEGORY': 'migrated',
@@ -201,11 +211,11 @@ class MainClassifier:
             'No. Days (between frameworks occurrence)': timedelta.days,
             'No. Migration Authors (name)': number_of_migration_authors_names,
             'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["No. Authors (name)"] * 100, 2),
-            'No. Authors (email)': number_of_migration_authors_emails,
-            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
+            'No. Migration Authors (email)': number_of_migration_authors_emails,
+            'Percentage of Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
 
             'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
-
+            'No. Commits (between migration period)': idx_last_migration_commit - idx_first_migration_commit + 1,
         }
         return data
 
@@ -216,6 +226,7 @@ class MainClassifier:
         timedelta = datetime.now(timezone.utc) - \
             self.pytest_occurrences.first.commit["date"]
 
+        idx_first_migration_commit = self.migration_occurrences.first.commit["commit_index"]
         data = {
             'CATEGORY': 'ongoing',
 
@@ -226,21 +237,25 @@ class MainClassifier:
             'No. Days (between frameworks occurrence)': timedelta.days,
             'No. Migration Authors (name)': number_of_migration_authors_names,
             'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["No. Authors (name)"] * 100, 2),
-            'No. Authors (email)': number_of_migration_authors_emails,
-            'No. Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
-
+            'No. Migration Authors (email)': number_of_migration_authors_emails,
+            'Percentage of Migration Authors  (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
+            'No. Commits (between migration period)': self.amount_total_commits - idx_first_migration_commit,
         }
         return data
 
     def __build_failed_to_migrate_repository_data(self, idx_first_unittest_commit, idx_first_pytest_commit):
-        idx_last_pytest_commit = CustomCommit.indexOf(
-            self.allCommits, self.pytest_occurrences.last.commit["commit_hash"])
+        idx_last_pytest_commit = self.pytest_occurrences.last.commit["commit_index"]
+
+        idx_first_migration_commit = self.migration_occurrences.first.commit["commit_index"]
+        idx_last_migration_commit = self.migration_occurrences.last.commit["commit_index"]
 
         data = {
             'CATEGORY': 'unittest',
             "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
             "No. Commits from 1st pytest occurrence": idx_last_pytest_commit - idx_first_pytest_commit,
             "No. Commits between 1st unittest and last pytest commit": idx_last_pytest_commit - idx_first_pytest_commit,
+            'No. Commits (between migration period)': idx_last_migration_commit - idx_first_migration_commit + 1,
+
         }
         return data
 

@@ -22,6 +22,13 @@ def commit_columns():
         "unittest_in_code",
         "unittest_in_removed_diffs",
         "pytest_in_code",
+        "MT assert",
+        "MT fixture",
+        "MT import",
+        "MT skip",
+        "MT failure",
+        "MT testcase",
+        "MT add Param",
         "tags",
 
         "u_count_added_testCaseSubclass",
@@ -34,6 +41,7 @@ def commit_columns():
         "u_count_added_selfSkipTest",
         "u_count_added_expectedFailure",
         "u_count_added_unittestMock",
+        'u_count_added_unittestImport',
 
         "u_count_removed_testCaseSubclass",
         "u_count_removed_assert",
@@ -45,6 +53,7 @@ def commit_columns():
         "u_count_removed_selfSkipTest",
         "u_count_removed_expectedFailure",
         "u_count_removed_unittestMock",
+        'u_count_removed_unittestImport',
 
         "p_count_added_native_assert",
         "p_count_added_pytestRaise",
@@ -58,6 +67,7 @@ def commit_columns():
         "p_count_added_genericPytest",
         "p_count_added_monkeypatch",
         "p_count_added_pytestmock",
+        'p_count_added_pytestImport',
 
         "p_count_removed_native_assert",
         "p_count_removed_pytestRaise",
@@ -71,6 +81,7 @@ def commit_columns():
         "p_count_removed_genericPytest",
         "p_count_removed_monkeypatch",
         "p_count_removed_pytestmock",
+        'p_count_removed_pytestImport',
 
         "unittest_matches_in_added_lines",
         "unittest_matches_in_removed_lines",
@@ -133,6 +144,7 @@ def repository_columns():
 
         'No. Days (between migration commits)',
         'No. Migration commits',
+        'No. Commits (between migration period)',
         'One Commit Migration?',
 
         'No. Files (current state)',
@@ -141,12 +153,13 @@ def repository_columns():
         'No. Files with both',
         'Pytest before Unittest?',
         '1st commit UNITTEST',
-        '1st commit PYTEST',
         '1st commit UNITTEST_LINK',
+        '1st commit PYTEST',
         '1st commit PYTEST_LINK',
+
         'Last commit UNITTEST',
-        'Last commit PYTEST',
         'Last commit UNITTEST_LINK',
+        'Last commit PYTEST',
         'Last commit PYTEST_LINK',
 
         '1st migration commit',

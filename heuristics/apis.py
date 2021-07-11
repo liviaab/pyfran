@@ -11,6 +11,7 @@ class UnittestAPIHeuristics:
     selfSkipTest_pattern = "self.skipTest(\(.*\))"
     expectedFailure_pattern = "@unittest.expectedFailure"
     unittestMock_pattern = "(\s+unittest.mock\s+)"
+    unittestImport_pattern = "(\s*import\s+unittest\s+)"
 
     @classmethod
     def check_apis(cls, content):
@@ -24,6 +25,7 @@ class UnittestAPIHeuristics:
         matches_selfSkipTest = re.findall(cls.selfSkipTest_pattern, content)
         matches_expectedFailure = re.findall(cls.expectedFailure_pattern, content)
         matches_unittestMock = re.findall(cls.unittestMock_pattern, content)
+        matches_unittestImport = re.findall(cls.unittestImport_pattern, content)
 
         quantity_by_api = {
             "count_testCaseSubclass": len(matches_testCaseSubclass),
@@ -36,6 +38,7 @@ class UnittestAPIHeuristics:
             "count_selfSkipTest": len(matches_selfSkipTest),
             "count_expectedFailure": len(matches_expectedFailure),
             "count_unittestMock": len(matches_unittestMock),
+            "count_unittestImport": len(matches_unittestImport),
 
             "matches_testCaseSubclass": matches_testCaseSubclass,
             "matches_assert": matches_assert,
@@ -46,7 +49,8 @@ class UnittestAPIHeuristics:
             "matches_unittestSkipTest": matches_unittestSkipTest,
             "matches_selfSkipTest": matches_selfSkipTest,
             "matches_expectedFailure": matches_expectedFailure,
-            "matches_unittestMock": matches_unittestMock
+            "matches_unittestMock": matches_unittestMock,
+            "matches_unittestImport": matches_unittestImport,
         }
 
         return quantity_by_api
@@ -64,6 +68,7 @@ class UnittestAPIHeuristics:
             "count_selfSkipTest": 0,
             "count_expectedFailure": 0,
             "count_unittestMock": 0,
+            "count_unittestImport": 0,
 
             "matches_testCaseSubclass": [],
             "matches_assert": [],
@@ -74,7 +79,8 @@ class UnittestAPIHeuristics:
             "matches_unittestSkipTest": [],
             "matches_selfSkipTest": [],
             "matches_expectedFailure": [],
-            "matches_unittestMock": []
+            "matches_unittestMock": [],
+            "matches_unittestImport": [],
         }
 
         for content in contents:
@@ -93,6 +99,7 @@ class UnittestAPIHeuristics:
                 "count_selfSkipTest": quantity_by_api["count_selfSkipTest"] + tmp["count_selfSkipTest"],
                 "count_expectedFailure": quantity_by_api["count_expectedFailure"] + tmp["count_expectedFailure"],
                 "count_unittestMock": quantity_by_api["count_unittestMock"] + tmp["count_unittestMock"],
+                "count_unittestImport": quantity_by_api["count_unittestImport"] + tmp["count_unittestImport"],
 
                 "matches_testCaseSubclass": quantity_by_api["matches_testCaseSubclass"] + tmp["matches_testCaseSubclass"],
                 "matches_assert": quantity_by_api["matches_assert"] + tmp["matches_assert"],
@@ -103,7 +110,8 @@ class UnittestAPIHeuristics:
                 "matches_unittestSkipTest": quantity_by_api["matches_unittestSkipTest"] + tmp["matches_unittestSkipTest"],
                 "matches_selfSkipTest": quantity_by_api["matches_selfSkipTest"] + tmp["matches_selfSkipTest"],
                 "matches_expectedFailure": quantity_by_api["matches_expectedFailure"] + tmp["matches_expectedFailure"],
-                "matches_unittestMock": quantity_by_api["matches_unittestMock"] + tmp["matches_unittestMock"]
+                "matches_unittestMock": quantity_by_api["matches_unittestMock"] + tmp["matches_unittestMock"],
+                "matches_unittestImport": quantity_by_api["matches_unittestImport"] + tmp["matches_unittestImport"],
             }
 
         return quantity_by_api
@@ -122,6 +130,7 @@ class PytestAPIHeuristics:
     genericPytest_pattern = "@pytest\.(.*)"
     monkeypatch_pattern = "\s*monkeypatch\.(.*)"
     pytestmock_pattern = "(pytest-mock)"
+    pytesImport_patter = "(\s*import\s+pytest\s+)"
 
     @classmethod
     def check_apis(cls, content):
@@ -137,6 +146,7 @@ class PytestAPIHeuristics:
         matches_genericPytest = re.findall(cls.genericPytest_pattern, content)
         matches_monkeypatch = re.findall(cls.monkeypatch_pattern, content)
         matches_pytestmock = re.findall(cls.pytestmock_pattern, content)
+        matches_pytestImport = re.findall(cls.pytesImport_patter, content)
 
         quantity_by_api = {
             "count_native_assert": len(matches_native_assert),
@@ -151,6 +161,7 @@ class PytestAPIHeuristics:
             "count_genericPytest": len(matches_genericPytest),
             "count_monkeypatch": len(matches_genericPytest),
             "count_pytestmock": len(matches_pytestmock),
+            "count_pytestImport": len(matches_pytestImport),
 
             "matches_native_assert": matches_native_assert,
             "matches_pytestRaise": matches_pytestRaise,
@@ -163,7 +174,8 @@ class PytestAPIHeuristics:
             "matches_genericMark": matches_genericMark,
             "matches_genericPytest": matches_genericPytest,
             "matches_monkeypatch": matches_monkeypatch,
-            "matches_pytestmock": matches_pytestmock
+            "matches_pytestmock": matches_pytestmock,
+            "matches_pytestImport": matches_pytestImport,
         }
 
         return quantity_by_api
@@ -183,6 +195,7 @@ class PytestAPIHeuristics:
             "count_genericPytest": 0,
             "count_monkeypatch": 0,
             "count_pytestmock": 0,
+            "count_pytestImport": 0,
 
             "matches_native_assert": [],
             "matches_pytestRaise": [],
@@ -195,7 +208,8 @@ class PytestAPIHeuristics:
             "matches_genericMark": [],
             "matches_genericPytest": [],
             "matches_monkeypatch": [],
-            "matches_pytestmock": []
+            "matches_pytestmock": [],
+            "matches_pytestImport": [],
         }
 
         for content in contents:
@@ -216,6 +230,7 @@ class PytestAPIHeuristics:
                 "count_genericPytest": quantity_by_api["count_genericPytest"] + tmp["count_genericPytest"],
                 "count_monkeypatch": quantity_by_api["count_monkeypatch"] + tmp["count_monkeypatch"],
                 "count_pytestmock": quantity_by_api["count_pytestmock"] + tmp["count_pytestmock"],
+                "count_pytestImport": quantity_by_api["count_pytestImport"] + tmp["count_pytestImport"],
 
                 "matches_native_assert": quantity_by_api["matches_native_assert"] + tmp["matches_native_assert"],
                 "matches_pytestRaise": quantity_by_api["matches_pytestRaise"] + tmp["matches_pytestRaise"],
@@ -229,6 +244,7 @@ class PytestAPIHeuristics:
                 "matches_genericPytest": quantity_by_api["matches_genericPytest"] + tmp["matches_genericPytest"],
                 "matches_monkeypatch": quantity_by_api["matches_monkeypatch"] + tmp["matches_monkeypatch"],
                 "matches_pytestmock": quantity_by_api["matches_pytestmock"] + tmp["matches_pytestmock"],
+                "matches_pytestImport": quantity_by_api["matches_pytestImport"] + tmp["matches_pytestImport"],
             }
 
         return quantity_by_api

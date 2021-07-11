@@ -93,11 +93,3 @@ class CustomCommit:
             })
 
         return result
-
-    @classmethod
-    def indexOf(cls, customCommitList, commit_hash):
-        for commit in customCommitList:
-            if commit["commit_hash"] == commit_hash:
-                return commit["commit_index"]
-        
-        raise IndexError

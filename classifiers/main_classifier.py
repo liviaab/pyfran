@@ -238,7 +238,7 @@ class MainClassifier:
             'No. Migration Authors (name)': number_of_migration_authors_names,
             'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["No. Authors (name)"] * 100, 2),
             'No. Migration Authors (email)': number_of_migration_authors_emails,
-            'Percentage of Migration Authors  (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
+            'Percentage of Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
             'No. Commits (between migration period)': self.amount_total_commits - idx_first_migration_commit,
         }
         return data

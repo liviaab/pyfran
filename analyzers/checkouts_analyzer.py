@@ -67,33 +67,38 @@ class CheckoutsAnalyzer:
                         test_files += 1
 
                         with open(os.path.join(path, filename), 'r') as src:
-                            content = src.read()
+                            try:
+                                content = src.read()
 
-                            content = (cppStyleComment|pythonStyleComment|quotedString|docString).suppress().transformString(content)
+                                content = (cppStyleComment|pythonStyleComment|quotedString|docString).suppress().transformString(content)
 
-                            test_methods += mh.count_test_methods(content)
-                            
-                            quantity_by_api = uAPIh.check_apis(content)
-                            u_api_testCaseSubclasses += quantity_by_api["count_testCaseSubclass"]
-                            u_api_asserts += quantity_by_api["count_assert"]
-                            u_api_setUps += quantity_by_api["count_setUp"]
-                            u_api_setUpClasses += quantity_by_api["count_setUpClass"]
-                            u_api_tearDown += quantity_by_api["count_tearDown"]
-                            u_api_tearDownClasses += quantity_by_api["count_tearDownClass"]
-                            u_api_unittestSkiptests += quantity_by_api["count_unittestSkipTest"]
-                            u_api_selfSkiptests += quantity_by_api["count_selfSkipTest"]
-                            u_api_expectedFailures += quantity_by_api["count_expectedFailure"]
+                                test_methods += mh.count_test_methods(content)
+                                
+                                quantity_by_api = uAPIh.check_apis(content)
+                                u_api_testCaseSubclasses += quantity_by_api["count_testCaseSubclass"]
+                                u_api_asserts += quantity_by_api["count_assert"]
+                                u_api_setUps += quantity_by_api["count_setUp"]
+                                u_api_setUpClasses += quantity_by_api["count_setUpClass"]
+                                u_api_tearDown += quantity_by_api["count_tearDown"]
+                                u_api_tearDownClasses += quantity_by_api["count_tearDownClass"]
+                                u_api_unittestSkiptests += quantity_by_api["count_unittestSkipTest"]
+                                u_api_selfSkiptests += quantity_by_api["count_selfSkipTest"]
+                                u_api_expectedFailures += quantity_by_api["count_expectedFailure"]
 
-                            quantity_by_api = pAPIh.check_apis(content)
-                            native_asserts += quantity_by_api["count_native_assert"]
-                            p_api_pytestRaises += quantity_by_api["count_pytestRaise"]
-                            p_api_simpleSkips += quantity_by_api["count_simpleSkip"]
-                            p_api_markSkips += quantity_by_api["count_markSkip"]
-                            p_api_expectedFailures += quantity_by_api["count_expectedFailure"]
-                            p_api_fixtures += quantity_by_api["count_fixture"]
-                            p_api_useFixtures += quantity_by_api["count_usefixture"]
-                            p_api_genericMark += quantity_by_api["count_genericMark"]
-                            p_api_genericPytest += quantity_by_api["count_genericPytest"]
+                                quantity_by_api = pAPIh.check_apis(content)
+                                native_asserts += quantity_by_api["count_native_assert"]
+                                p_api_pytestRaises += quantity_by_api["count_pytestRaise"]
+                                p_api_simpleSkips += quantity_by_api["count_simpleSkip"]
+                                p_api_markSkips += quantity_by_api["count_markSkip"]
+                                p_api_expectedFailures += quantity_by_api["count_expectedFailure"]
+                                p_api_fixtures += quantity_by_api["count_fixture"]
+                                p_api_useFixtures += quantity_by_api["count_usefixture"]
+                                p_api_genericMark += quantity_by_api["count_genericMark"]
+                                p_api_genericPytest += quantity_by_api["count_genericPytest"]
+                            except Exception as e:
+                                print("Reading Error - Skipping file", path+filename)
+                                print(e)
+                                continue
 
             apis_in_commit = {
                 "commit_index": commit["commit_index"],

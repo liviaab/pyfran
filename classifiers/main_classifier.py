@@ -116,7 +116,7 @@ class MainClassifier:
             'Last commit UNITTEST_LINK': commit_base_url + self.unittest_occurrences.last.commit['commit_hash'] if self.unittest_occurrences.has_last_occurrence() else None,
             'Last commit PYTEST_LINK': commit_base_url + self.pytest_occurrences.last.commit['commit_hash'] if self.pytest_occurrences.has_last_occurrence() else None,
 
-            'No. Days (between migration commits)': self.__commit_migration_delta_days() if self.migration_occurrences.has_first_occurrence() else 0,
+            'No. Days (between migration commits)': 0,
             'No. Migration commits': functools.reduce(lambda acc, commit: acc + 1 if commit['are_we_interested'] else acc, self.allCommits, 0),
             'No. Commits (between migration period)': 0,
             '1st migration commit': self.migration_occurrences.first.commit['commit_hash'] if self.migration_occurrences.has_first_occurrence() else None,
@@ -192,6 +192,7 @@ class MainClassifier:
         return data
 
     def __build_migrated_repository_data(self, base, idx_first_unittest_commit, idx_first_pytest_commit, idx_last_unittest_commit):
+
         number_of_migration_authors_names, number_of_migration_authors_emails = \
             CustomCommit.get_migration_authors_count_between(self.allCommits, idx_first_pytest_commit, idx_last_unittest_commit)
 
@@ -216,6 +217,7 @@ class MainClassifier:
 
             'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
             'No. Commits (between migration period)': idx_last_migration_commit - idx_first_migration_commit + 1,
+            'No. Days (between migration commits)': self.__commit_migration_delta_days(),
         }
         return data
 
@@ -227,6 +229,10 @@ class MainClassifier:
             self.pytest_occurrences.first.commit["date"]
 
         idx_first_migration_commit = self.migration_occurrences.first.commit["commit_index"]
+
+        timedelta_migration = datetime.now(timezone.utc) - \
+            self.migration_occurrences.first.commit["date"]
+
         data = {
             'CATEGORY': 'ongoing',
 
@@ -240,6 +246,8 @@ class MainClassifier:
             'No. Migration Authors (email)': number_of_migration_authors_emails,
             'Percentage of Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
             'No. Commits (between migration period)': self.amount_total_commits - idx_first_migration_commit,
+            'No. Days (between migration commits)': timedelta_migration.days,
+
         }
         return data
 
@@ -255,7 +263,7 @@ class MainClassifier:
             "No. Commits from 1st pytest occurrence": idx_last_pytest_commit - idx_first_pytest_commit,
             "No. Commits between 1st unittest and last pytest commit": idx_last_pytest_commit - idx_first_pytest_commit,
             'No. Commits (between migration period)': idx_last_migration_commit - idx_first_migration_commit + 1,
-
+            'No. Days (between migration commits)': self.__commit_migration_delta_days(),
         }
         return data
 

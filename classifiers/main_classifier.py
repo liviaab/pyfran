@@ -128,40 +128,39 @@ class MainClassifier:
 
     def __is_pytest_repository(self):
         return (not self.unittest_occurrences.has_first_occurrence()
-                and self.pytest_occurrences.has_first_occurrence()
-                and not self.migration_occurrences.has_first_occurrence())
+                and self.pytest_occurrences.has_first_occurrence())
 
     def __is_unittest_repository(self):
         return (not self.pytest_occurrences.has_first_occurrence()
-                and self.unittest_occurrences.has_first_occurrence()
-                and not self.migration_occurrences.has_first_occurrence())
+                and self.unittest_occurrences.has_first_occurrence())
 
     def __is_not_pytest_neither_unittest(self):
         return (not self.pytest_occurrences.has_first_occurrence()
-                and not self.unittest_occurrences.has_first_occurrence()
-                and not self.migration_occurrences.has_first_occurrence())
+                and not self.unittest_occurrences.has_first_occurrence())
 
     def __is_migrated_repository(self, idx_first_unittest_commit, idx_first_pytest_commit):
         return (self.unittest_occurrences.has_first_occurrence()
                 and self.pytest_occurrences.has_first_occurrence()
                 and (idx_first_unittest_commit <= idx_first_pytest_commit)
-                and (self.currentDefaultBranch.usesPytest and not self.currentDefaultBranch.usesUnittest)
-                and self.migration_occurrences.has_first_occurrence())
+                and (self.currentDefaultBranch.usesPytest and not self.currentDefaultBranch.usesUnittest))
 
     def __is_ongoing_repository(self, idx_first_unittest_commit, idx_first_pytest_commit):
+        print('unittest_occurrences.has_first_occurrence', self.unittest_occurrences.has_first_occurrence())
+        print('pytest_occurrences.has_first_occurrence', self.pytest_occurrences.has_first_occurrence())
+        print('idx_first_unittest_commit <= idx_first_pytest_commit', idx_first_unittest_commit <= idx_first_pytest_commit)
+        print('uses both frameworks', self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest)
+        print('migration_occurrences.has_first_occurrence', self.migration_occurrences.has_first_occurrence())
         return (self.unittest_occurrences.has_first_occurrence()
                 and self.pytest_occurrences.has_first_occurrence()
                 and (idx_first_unittest_commit <= idx_first_pytest_commit)
-                and (self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest)
-                and self.migration_occurrences.has_first_occurrence())
+                and (self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest))
 
     def __gave_up_migration(self, idx_first_unittest_commit, idx_first_pytest_commit):
         # started with unittest, added reference to pytest and then removed it.
         return (self.unittest_occurrences.has_first_occurrence()
                 and self.pytest_occurrences.has_first_occurrence()
                 and (idx_first_unittest_commit <= idx_first_pytest_commit)
-                and (not self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest)
-                and self.migration_occurrences.has_first_occurrence())
+                and (not self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest))
 
     def __build_pytest_repository_data(self):
         data = {
@@ -183,6 +182,7 @@ class MainClassifier:
         return data
 
     def __build_not_pytest_neither_unittest_data(self):
+        print('__build_not_pytest_neither_unittest_data')
         data = {
             'CATEGORY': 'unknown',
             "No. Commits from 1st unittest occurrence": 0,
@@ -269,6 +269,7 @@ class MainClassifier:
 
     def __build_unknown_repository_data(self, idx_first_unittest_commit, idx_first_pytest_commit):
         pytest_before_unittest = idx_first_unittest_commit > idx_first_pytest_commit
+        print('__build_unknown_repository_data', idx_first_unittest_commit, idx_first_pytest_commit)
         data = {
             'CATEGORY': 'unknown',
             'Pytest before Unittest?': pytest_before_unittest,

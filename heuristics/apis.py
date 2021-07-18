@@ -11,7 +11,7 @@ class UnittestAPIHeuristics:
     selfSkipTest_pattern = "self.skipTest(\(.*\))"
     expectedFailure_pattern = "@unittest.expectedFailure"
     unittestMock_pattern = "(\s+unittest.mock\s+)"
-    unittestImport_pattern = "(\s*import\s+unittest\s+)"
+    unittestImport_pattern = "(import\s+unittest)"
 
     @classmethod
     def check_apis(cls, content):
@@ -130,7 +130,7 @@ class PytestAPIHeuristics:
     genericPytest_pattern = "@pytest\.(.*)"
     monkeypatch_pattern = "\s*monkeypatch\.(.*)"
     pytestmock_pattern = "(pytest-mock)"
-    pytesImport_patter = "(\s*import\s+pytest\s+)"
+    pytesImport_pattern = "(import\s+pytest)"
 
     @classmethod
     def check_apis(cls, content):
@@ -146,7 +146,7 @@ class PytestAPIHeuristics:
         matches_genericPytest = re.findall(cls.genericPytest_pattern, content)
         matches_monkeypatch = re.findall(cls.monkeypatch_pattern, content)
         matches_pytestmock = re.findall(cls.pytestmock_pattern, content)
-        matches_pytestImport = re.findall(cls.pytesImport_patter, content)
+        matches_pytestImport = re.findall(cls.pytesImport_pattern, content)
 
         quantity_by_api = {
             "count_native_assert": len(matches_native_assert),
@@ -159,7 +159,7 @@ class PytestAPIHeuristics:
             "count_parametrize": len(matches_parametrize),
             "count_genericMark": len(matches_genericMark),
             "count_genericPytest": len(matches_genericPytest),
-            "count_monkeypatch": len(matches_genericPytest),
+            "count_monkeypatch": len(matches_monkeypatch),
             "count_pytestmock": len(matches_pytestmock),
             "count_pytestImport": len(matches_pytestImport),
 

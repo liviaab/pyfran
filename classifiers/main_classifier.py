@@ -97,7 +97,7 @@ class MainClassifier:
             'No. Authors (email)': number_of_authors_emails,
             'No. Migration Authors (email)': 0,
             "Percentage of Migration Authors (email)": 0,
-            "No. Migration Authors (email - name)": number_of_authors_emails - number_of_authors_names,
+            "No. Authors (email - name)": number_of_authors_emails - number_of_authors_names,
             "Pytest before Unittest?": False,
 
             'No. Files (current state)': self.currentDefaultBranch.count_files(),

@@ -2,9 +2,7 @@
 from io_utils.output import OutputUtil
 from datetime import datetime
 
-from analyzers.checkouts_analyzer import CheckoutsAnalyzer
 from analyzers.delta_commits_analyzer import DeltaCommits
-
 from classifiers.main_classifier import MainClassifier
 
 from report.column_names import *
@@ -23,25 +21,17 @@ class Analyzer:
         dc_analyzer = DeltaCommits(self.repo_url)
         (allcommits, unittest_occurrences, pytest_occurrences, migration_occurrences) = dc_analyzer.process_delta_commits()
 
-        print("Time marker #3 - process files from each checkout", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-        # Step 2: Clone the repo and visit each checkout to get information
-        # about tests through time
-        apis_info = CheckoutsAnalyzer(self.repo_url).process_checkouts(allcommits)
-
         # Step 3: Even with the past information, we still need to check out
         # the current repo state to determine whether if it is "migrated" or "ongoing"
-        print("Time marker #4 - classify", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        print("Time marker #3 - classify", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         # data = self.__classify_and_process_metrics()
         classifier = MainClassifier(self.repo_url, allcommits, unittest_occurrences, pytest_occurrences, migration_occurrences)
         (data, author_infos) = classifier.classify_and_process_metrics()
 
         # Output the retrieved information in CSVs
-        print("Time marker #5 - create csv with commits, authors and APIs information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        print("Time marker #4 - create csv with commits and authors information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
         columns = commit_columns()
         OutputUtil.output_list_as_csv(self.project_name+"_commit", allcommits, columns, self.out_dir)
-
-        columns = api_columns()
-        OutputUtil.output_list_as_csv(self.project_name+"_api", apis_info, columns, self.out_dir)
 
         columns = author_columns()
         OutputUtil.output_list_as_csv(self.project_name+"_authors", author_infos, columns, self.out_dir)

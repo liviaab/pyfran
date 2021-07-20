@@ -1,6 +1,7 @@
 import os
 import shutil
 from git import Repo
+from datetime import datetime
 from pyparsing import pythonStyleComment, cppStyleComment, quotedString
 
 from common.common import VALID_EXTENSIONS, docString
@@ -15,14 +16,15 @@ class CheckoutsAnalyzer:
         self.local_path_to_repo = repo_url.split('/')[-1]
 
     def process_checkouts(self, commits):
+        print(datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "Cloning repo...")
         repo = Repo.clone_from(self.repo_url, self.local_path_to_repo)
-
+        print(datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "OK")
         apis_info = []
 
         for commit in commits:
             # if not commit["are_we_interested"]:
             #     continue
-            if commit["commit_index"] % 5 != 0:
+            if int(commit["commit_index"]) % 5 != 0:
                 continue
 
             repo.git.checkout(commit["commit_hash"])

@@ -131,7 +131,6 @@ def repository_columns():
         'No. Total Commits',
         "No. Commits from 1st unittest occurrence",
         "No. Commits from 1st pytest occurrence",
-        "No. Commits between 1st unittest and last pytest commit",
         'No. Days (between frameworks occurrence)',
 
         'No. Authors (name)',

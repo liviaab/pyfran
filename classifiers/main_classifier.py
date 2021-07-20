@@ -145,11 +145,6 @@ class MainClassifier:
                 and (self.currentDefaultBranch.usesPytest and not self.currentDefaultBranch.usesUnittest))
 
     def __is_ongoing_repository(self, idx_first_unittest_commit, idx_first_pytest_commit):
-        print('unittest_occurrences.has_first_occurrence', self.unittest_occurrences.has_first_occurrence())
-        print('pytest_occurrences.has_first_occurrence', self.pytest_occurrences.has_first_occurrence())
-        print('idx_first_unittest_commit <= idx_first_pytest_commit', idx_first_unittest_commit <= idx_first_pytest_commit)
-        print('uses both frameworks', self.currentDefaultBranch.usesPytest and self.currentDefaultBranch.usesUnittest)
-        print('migration_occurrences.has_first_occurrence', self.migration_occurrences.has_first_occurrence())
         return (self.unittest_occurrences.has_first_occurrence()
                 and self.pytest_occurrences.has_first_occurrence()
                 and (idx_first_unittest_commit <= idx_first_pytest_commit)
@@ -167,7 +162,6 @@ class MainClassifier:
             'CATEGORY': 'pytest',
             "No. Commits from 1st unittest occurrence": 0,
             "No. Commits from 1st pytest occurrence": self.amount_total_commits,
-            "No. Commits between 1st unittest and last pytest commit": 0,
 
         }
         return data
@@ -177,17 +171,14 @@ class MainClassifier:
             'CATEGORY': 'unittest',
             "No. Commits from 1st unittest occurrence": self.amount_total_commits,
             "No. Commits from 1st pytest occurrence": 0,
-            "No. Commits between 1st unittest and last pytest commit": 0,
         }
         return data
 
     def __build_not_pytest_neither_unittest_data(self):
-        print('__build_not_pytest_neither_unittest_data')
         data = {
             'CATEGORY': 'unknown',
             "No. Commits from 1st unittest occurrence": 0,
             "No. Commits from 1st pytest occurrence": 0,
-            "No. Commits between 1st unittest and last pytest commit": 0,
         }
         return data
 
@@ -207,7 +198,6 @@ class MainClassifier:
 
             "No. Commits from 1st unittest occurrence": idx_last_unittest_commit - idx_first_unittest_commit,
             "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
-            "No. Commits between 1st unittest and last pytest commit": idx_last_unittest_commit - idx_first_pytest_commit,
 
             'No. Days (between frameworks occurrence)': timedelta.days,
             'No. Migration Authors (name)': number_of_migration_authors_names,
@@ -238,7 +228,6 @@ class MainClassifier:
 
             "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
             "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
-            "No. Commits between 1st unittest and last pytest commit": self.amount_total_commits - idx_first_pytest_commit,
 
             'No. Days (between frameworks occurrence)': timedelta.days,
             'No. Migration Authors (name)': number_of_migration_authors_names,
@@ -254,28 +243,30 @@ class MainClassifier:
     def __build_failed_to_migrate_repository_data(self, idx_first_unittest_commit, idx_first_pytest_commit):
         idx_last_pytest_commit = self.pytest_occurrences.last.commit["commit_index"]
 
-        idx_first_migration_commit = self.migration_occurrences.first.commit["commit_index"]
-        idx_last_migration_commit = self.migration_occurrences.last.commit["commit_index"]
+        commits_between_migration = \
+            (self.migration_occurrences.last.commit["commit_index"] - self.migration_occurrences.first.commit["commit_index"] + 1) \
+            if self.migration_occurrences.has_first_occurrence() else 0
+
+        commit_migration_delta_days = \
+            self.__commit_migration_delta_days() if self.migration_occurrences.has_first_occurrence() else 0
 
         data = {
             'CATEGORY': 'unittest',
             "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
             "No. Commits from 1st pytest occurrence": idx_last_pytest_commit - idx_first_pytest_commit,
-            "No. Commits between 1st unittest and last pytest commit": idx_last_pytest_commit - idx_first_pytest_commit,
-            'No. Commits (between migration period)': idx_last_migration_commit - idx_first_migration_commit + 1,
-            'No. Days (between migration commits)': self.__commit_migration_delta_days(),
+            'No. Commits (between migration period)': commits_between_migration,
+            'No. Days (between migration commits)': commit_migration_delta_days,
         }
         return data
 
     def __build_unknown_repository_data(self, idx_first_unittest_commit, idx_first_pytest_commit):
         pytest_before_unittest = idx_first_unittest_commit > idx_first_pytest_commit
-        print('__build_unknown_repository_data', idx_first_unittest_commit, idx_first_pytest_commit)
+
         data = {
             'CATEGORY': 'unknown',
             'Pytest before Unittest?': pytest_before_unittest,
             "No. Commits from 1st unittest occurrence": self.amount_total_commits - idx_first_unittest_commit,
             "No. Commits from 1st pytest occurrence": self.amount_total_commits - idx_first_pytest_commit,
-            "No. Commits between 1st unittest and last pytest commit": self.amount_total_commits - idx_first_unittest_commit if pytest_before_unittest else 0,
         }
         return data
 

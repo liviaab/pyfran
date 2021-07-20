@@ -1,6 +1,7 @@
 # from https://www.tutorialspoint.com/python3/python_command_line_arguments.htm
 import sys
 import getopt
+import os
 
 class InputUtil:
 	@classmethod
@@ -31,6 +32,34 @@ class InputUtil:
 		print('Input file is ', inputfile)
 
 		return (inputfile)
+
+	@classmethod
+	def parse_checkout_commant_line_arguments(cls, argv):
+		inputfolder = ''
+		try:
+			opts, _args = getopt.getopt(argv, "hi:", ["ifile="])
+		except getopt.GetoptError:
+			print('releases_analysis.py -i <inputfolder>')
+			sys.exit(2)
+
+		for opt, arg in opts:
+			if opt == '-h':
+				print('releases_analysis.py -i <inputfolder>')
+				sys.exit()
+			elif opt in ("-i", "--idir"):
+				inputfolder = arg
+
+		if not inputfolder:
+			print('usage: releases_analysis.py -i <inputfolder>')
+			sys.exit()
+		if not os.path.isdir(inputfolder):
+			print('usage: releases_analysis.py -i <inputfolder>')
+			print('\tThe input folder must exist')
+			sys.exit()
+
+		print('Input folder is ', inputfolder)
+
+		return (inputfolder)
 
 	@classmethod
 	def not_blank(cls, word):

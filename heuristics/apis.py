@@ -7,8 +7,8 @@ class UnittestAPIHeuristics:
     setUpClass_pattern = "def\s+setUp(\w+)(\(.*\)):" # setUpClass | setUpModule
     tearDown_pattern = "def\s+tearDown\(.*\):"
     tearDownClass_pattern = "def\s+tearDown(\w+)(\(.*\)):" # tearDownClass | tearDownModule
-    unittestSkipTest_pattern = "[@]{0,1}unittest.skip.*?\((.*\))"
-    selfSkipTest_pattern = "self.skipTest(\(.*\))"
+    unittestSkipTest_pattern = "[@]{0,1}unittest.skip.*?\((.*)" # @unittest.skip | @unittest.skipIf | @unittest.skipUnless
+    selfSkipTest_pattern = "[self.s|unittest.S]kipTest(\(.*)" # self.skipTest() | unittest.SkipTest()
     expectedFailure_pattern = "@unittest.expectedFailure"
     unittestMock_pattern = "(\s+unittest.mock\s+)"
     unittestImport_pattern = "(import\s+unittest)"

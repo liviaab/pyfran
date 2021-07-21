@@ -15,6 +15,7 @@ class UnittestAPIHeuristics:
 
     @classmethod
     def check_apis(cls, content):
+        content = re.sub("[\"|\'](.*)[\"|\']", "", content)
         matches_testCaseSubclass = re.findall(cls.testCaseSubclass_pattern, content)
         matches_assert = re.findall(cls.assert_pattern, content)
         matches_setUp = re.findall(cls.setUp_pattern, content)
@@ -134,6 +135,7 @@ class PytestAPIHeuristics:
 
     @classmethod
     def check_apis(cls, content):
+        content = re.sub("[\"|\'](.*)[\"|\']", "", content)
         matches_native_assert = re.findall(cls.native_assert_pattern, content)
         matches_pytestRaise = re.findall(cls.pytestRaise_pattern, content)
         matches_simpleSkip = re.findall(cls.simpleSkip_pattern, content)

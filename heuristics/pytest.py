@@ -2,7 +2,7 @@ from pyparsing import Regex, pythonStyleComment, quotedString
 from common.common import docString
 
 class PytestHeuristics:
-    regex = "(\s*pytest\Z|\s*pytest\s+)"
+    regex = "(\s+pytest\Z|\s+pytest\s+)"
 
     @classmethod
     def matches_a(cls, text, ignoreComments=True):

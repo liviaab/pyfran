@@ -321,6 +321,47 @@ class DeltaCommits:
                 commit_memo["tags"].append("testcase_migration")
                 commit_memo["MT testcase"] = True
 
+    def __migrates_asserts(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                commit_memo["u_count_added_assert"] == 0 and \
+                commit_memo["u_count_removed_assert"] > 0 and \
+                commit_memo["p_count_added_native_assert"] > 0 and \
+                commit_memo["p_count_removed_native_assert"] == 0
+
+    def __migrates_skips(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                (commit_memo["u_count_added_unittestSkipTest"] == 0 or commit_memo["u_count_added_selfSkipTest"] == 0 ) and \
+                (commit_memo["u_count_removed_unittestSkipTest"] > 0 or commit_memo["u_count_removed_selfSkipTest"] > 0 ) and \
+                (commit_memo["p_count_removed_simpleSkip"] == 0 or commit_memo["p_count_removed_markSkip"] == 0) and \
+                (commit_memo["p_count_added_simpleSkip"] > 0 or commit_memo["p_count_added_markSkip"] > 0)
+
+    def __migrates_expected_failure(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                (commit_memo["u_count_added_expectedFailure"] == 0) and \
+                (commit_memo["u_count_removed_expectedFailure"] > 0) and \
+                (commit_memo["p_count_added_expectedFailure"] > 0) and \
+                (commit_memo["p_count_removed_expectedFailure"] == 0)
+
+    def __migrates_fixtures(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                (commit_memo["u_count_added_setUp"] == 0 or commit_memo["u_count_added_setUpClass"] == 0 or \
+                 commit_memo["u_count_added_tearDown"] == 0 or commit_memo["u_count_added_tearDownClass"] == 0) and \
+                (commit_memo["u_count_removed_setUp"] > 0 or commit_memo["u_count_removed_setUpClass"] > 0 or \
+                 commit_memo["u_count_removed_tearDown"] > 0 or commit_memo["u_count_removed_tearDownClass"] > 0) and \
+                (commit_memo["p_count_added_fixture"] > 0 or commit_memo["p_count_added_usefixture"] > 0) and \
+                (commit_memo["p_count_removed_fixture"] == 0 or commit_memo["p_count_removed_usefixture"] == 0)
+
+    def __migrates_frameworks(self, commit_memo):
+        return self.unittest_occurrences.has_first_occurrence() and \
+                self.pytest_occurrences.has_first_occurrence() and \
+                commit_memo["u_count_added_unittestImport"] == 0 and \
+                commit_memo["u_count_removed_unittestImport"] > 0 and \
+                commit_memo["p_count_removed_pytestImport"] == 0 and \
+                commit_memo["p_count_added_pytestImport"] > 0
 
     def __migrates_testcase(self, commit_memo):
         return self.unittest_occurrences.has_first_occurrence() and \
@@ -328,42 +369,10 @@ class DeltaCommits:
                 commit_memo["u_count_removed_testCaseSubclass"] > 0
                 # tem mais algum correspondente no pytest?
 
-    def __migrates_asserts(self, commit_memo):
-        return self.unittest_occurrences.has_first_occurrence() and \
-                self.pytest_occurrences.has_first_occurrence() and \
-                commit_memo["u_count_removed_assert"] > 0 and \
-                commit_memo["p_count_added_native_assert"] > 0
-
-    def __migrates_fixtures(self, commit_memo):
-        return self.unittest_occurrences.has_first_occurrence() and \
-                self.pytest_occurrences.has_first_occurrence() and \
-                (commit_memo["u_count_removed_setUp"] > 0 or commit_memo["u_count_removed_setUpClass"] > 0 or \
-                 commit_memo["u_count_removed_tearDown"] > 0 or commit_memo["u_count_removed_tearDownClass"] ) and \
-                (commit_memo["p_count_added_fixture"] > 0 or commit_memo["p_count_added_usefixture"])
-
-    def __migrates_frameworks(self, commit_memo):
-        return self.unittest_occurrences.has_first_occurrence() and \
-                self.pytest_occurrences.has_first_occurrence() and \
-                commit_memo["u_count_removed_unittestImport"] > 0 and \
-                commit_memo["p_count_added_pytestImport"] > 0
-
     def __adds_parametrized_test(self, commit_memo):
         return self.unittest_occurrences.has_first_occurrence() and \
                 self.pytest_occurrences.has_first_occurrence() and \
                 commit_memo["p_count_added_parametrize"] > 0
-
-    def __migrates_skips(self, commit_memo):
-        return self.unittest_occurrences.has_first_occurrence() and \
-                self.pytest_occurrences.has_first_occurrence() and \
-                (commit_memo["u_count_removed_unittestSkipTest"] > 0 or commit_memo["u_count_removed_selfSkipTest"] > 0 ) and \
-                (commit_memo["p_count_added_simpleSkip"] > 0 or commit_memo["p_count_added_markSkip"])
-
-    def __migrates_expected_failure(self, commit_memo):
-        return self.unittest_occurrences.has_first_occurrence() and \
-                self.pytest_occurrences.has_first_occurrence() and \
-                (commit_memo["u_count_removed_expectedFailure"] > 0) and \
-                (commit_memo["p_count_added_expectedFailure"] > 0)
-
 
     def __initial_state_commit_memo(self, hash):
         return {

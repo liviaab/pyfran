@@ -123,7 +123,7 @@ class PytestAPIHeuristics:
     pytestRaise_pattern = "pytest.raises(\(.*\))"
     simpleSkip_pattern = "pytest.skip(\(.*\))"
     markSkip_pattern = "[@]?pytest.mark.skip(.*\(.*\))?"
-    expectedFailure_pattern = "[@]?pytest.mark.xfail(\(.*\))?"
+    expectedFailure_pattern = "[@]?pytest[.mark]*?.[x]*?fail(\(.*\))?" # pytest.xfail | pytest.fail | @pytest.mark.xfail
     fixture_pattern = "@pytest.fixture(.*)"
     usefixture_pattern = "@pytest.mark.usefixtures(\(.*\))?"
     parametrize_pattern = "@pytest.mark.parametrize(\(.*\))?"

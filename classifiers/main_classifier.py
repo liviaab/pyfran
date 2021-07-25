@@ -190,9 +190,6 @@ class MainClassifier:
         timedelta = self.unittest_occurrences.last.commit["date"] - \
             self.pytest_occurrences.first.commit["date"]
 
-        idx_first_migration_commit = self.migration_occurrences.first.commit["commit_index"]
-        idx_last_migration_commit = self.migration_occurrences.last.commit["commit_index"]
-
         data = {
             'CATEGORY': 'migrated',
 
@@ -206,7 +203,9 @@ class MainClassifier:
             'Percentage of Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
 
             'One Commit Migration?': True if idx_last_unittest_commit == idx_first_pytest_commit else False,
-            'No. Commits (between migration period)': idx_last_migration_commit - idx_first_migration_commit + 1,
+            'No. Commits (between migration period)': \
+                self.migration_occurrences.last.commit["commit_index"] - self.migration_occurrences.first.commit["commit_index"] + 1 \
+                if self.migration_occurrences.has_first_occurrence() else None,
             'No. Days (between migration commits)': self.__commit_migration_delta_days(),
         }
         return data
@@ -218,10 +217,9 @@ class MainClassifier:
         timedelta = datetime.now(timezone.utc) - \
             self.pytest_occurrences.first.commit["date"]
 
-        idx_first_migration_commit = self.migration_occurrences.first.commit["commit_index"]
-
-        timedelta_migration = datetime.now(timezone.utc) - \
-            self.migration_occurrences.first.commit["date"]
+        timedelta_migration = \
+            datetime.now(timezone.utc) - self.migration_occurrences.first.commit["date"] \
+            if self.migration_occurrences.has_first_occurrence() else None 
 
         data = {
             'CATEGORY': 'ongoing',
@@ -234,8 +232,10 @@ class MainClassifier:
             'Percentage of Migration Authors (name)': round(number_of_migration_authors_names / base["No. Authors (name)"] * 100, 2),
             'No. Migration Authors (email)': number_of_migration_authors_emails,
             'Percentage of Migration Authors (email)': round(number_of_migration_authors_emails / base["No. Authors (email)"] * 100, 2),
-            'No. Commits (between migration period)': self.amount_total_commits - idx_first_migration_commit,
-            'No. Days (between migration commits)': timedelta_migration.days,
+            'No. Commits (between migration period)': \
+                self.amount_total_commits - self.migration_occurrences.first.commit["commit_index"] \
+                if self.migration_occurrences.has_first_occurrence() else None,
+            'No. Days (between migration commits)': timedelta_migration.days if timedelta_migration else None,
 
         }
         return data
@@ -271,5 +271,9 @@ class MainClassifier:
         return data
 
     def __commit_migration_delta_days(self):
-        timedelta = self.migration_occurrences.last.commit["date"] - self.migration_occurrences.first.commit["date"]
-        return timedelta.days
+
+        timedelta = \
+            self.migration_occurrences.last.commit["date"] - self.migration_occurrences.first.commit["date"] \
+            if self.migration_occurrences.has_first_occurrence() else None 
+
+        return timedelta.days if timedelta else None

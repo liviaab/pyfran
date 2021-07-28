@@ -45,6 +45,9 @@ class DeltaCommits:
                 added_lines = []
                 path = None
 
+                if commit.hash == '057460425f7b937037ffa517174852f5df83ebc3':
+                    print("\nModification type", modification.change_type)
+
                 if modification.change_type == ModificationType.DELETE:
                     removed_lines = modification.source_code_before.splitlines()
                     path = modification.old_path
@@ -71,7 +74,11 @@ class DeltaCommits:
             self.__set_interest_and_tags(commit_memo)
             self.__update_migration_occurrences(index, commit, commit_memo)
 
-            custom = CustomCommit(index, commit, commit_memo)
+            # custom = CustomCommit(index, commit, commit_memo)
+            # if commit.hash == '057460425f7b937037ffa517174852f5df83ebc3':
+            #     print("modification type", )
+            #     print("should have 11 removed self.assert.")
+
             self.allcommits.append(custom.commit)
             index += 1
         

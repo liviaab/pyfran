@@ -1,0 +1,19 @@
+- da pra amarrar a parametrizacao no unittest?
+	- adicao parametrizacao e (acontece uma das cinco migracoes) OK
+	- remocao testCase e (acontece uma das cinco migracoes) OK
+
+
+- adicionar links nas tabelas para os commits (onde nao tiver ainda) OK
+- procurar 10 sistemas pequenos - mas nao ser trabalhos de disciplina, etc
+	- tabela 1 - 
+	- tabela 2 - ongoing e migrated pequenos
+		- precisao: dos 10000 commits, verifica se uns 350 acertaram 
+		- recall pegar o menor sistema dos migrated/ongoing, olha todos os commits e ve senao perdeu nenhum.
+
+- Conferir os calculos de numero de dias e de commits CONSIDERANDO OS COMMITS DE MIGRAÇÃO
+- Quantos commits de migracao por repositório - Ajustar contagens
+- Add colunas pra tags OK
+- Add porcentagem migration commit/commits
+- numero de commits entre o periodo de migracao (incluindo os q nao sao de migracao)
+
+- ja comecar a rodar na base real 

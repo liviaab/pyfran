@@ -45,14 +45,12 @@ class DeltaCommits:
                 added_lines = []
                 path = None
 
-                if commit.hash == '057460425f7b937037ffa517174852f5df83ebc3':
-                    print("\nModification type", modification.change_type)
-
                 if modification.change_type == ModificationType.DELETE:
                     removed_lines = modification.source_code_before.splitlines()
                     path = modification.old_path
                 elif modification.change_type == ModificationType.ADD or \
-                    modification.change_type == ModificationType.MODIFY:
+                    modification.change_type == ModificationType.MODIFY or \
+                    modification.change_type == ModificationType.RENAME:
                     removed_lines = self.__get_lines_from_diff(modification.diff_parsed['deleted'])
                     added_lines = self.__get_lines_from_diff(modification.diff_parsed['added'])
                     path = modification.new_path
@@ -74,11 +72,7 @@ class DeltaCommits:
             self.__set_interest_and_tags(commit_memo)
             self.__update_migration_occurrences(index, commit, commit_memo)
 
-            # custom = CustomCommit(index, commit, commit_memo)
-            # if commit.hash == '057460425f7b937037ffa517174852f5df83ebc3':
-            #     print("modification type", )
-            #     print("should have 11 removed self.assert.")
-
+            custom = CustomCommit(index, commit, commit_memo)
             self.allcommits.append(custom.commit)
             index += 1
         
@@ -87,6 +81,9 @@ class DeltaCommits:
         return (self.allcommits, self.unittest_occurrences, self.pytest_occurrences, self.migration_occurrences)
 
     def __get_lines_from_diff(self, parsed_modifications):
+        if parsed_modifications == None:
+            return []
+
         return [ removed_line for line_number, removed_line in parsed_modifications ]
 
     def __match_framework_patterns(self, source_code, removed_lines, added_lines, path):

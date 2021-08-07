@@ -366,13 +366,15 @@ class DeltaCommits:
     def __migrates_testcase(self, commit_memo):
         return self.unittest_occurrences.has_first_occurrence() and \
                 self.pytest_occurrences.has_first_occurrence() and \
-                commit_memo["u_count_removed_testCaseSubclass"] > 0
+                commit_memo["u_count_removed_testCaseSubclass"] > 0 and \
+                commit_memo["u_count_added_testCaseSubclass"] == 0
                 # tem mais algum correspondente no pytest?
 
     def __adds_parametrized_test(self, commit_memo):
         return self.unittest_occurrences.has_first_occurrence() and \
                 self.pytest_occurrences.has_first_occurrence() and \
-                commit_memo["p_count_added_parametrize"] > 0
+                commit_memo["p_count_added_parametrize"] > 0 and \
+                commit_memo["p_count_removed_parametrize"] == 0
 
     def __initial_state_commit_memo(self, hash):
         return {

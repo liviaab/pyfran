@@ -206,7 +206,8 @@ class MainClassifier:
             'No. Commits (between migration period)': \
                 self.migration_occurrences.last.commit["commit_index"] - self.migration_occurrences.first.commit["commit_index"] + 1 \
                 if self.migration_occurrences.has_first_occurrence() else None,
-            'No. Days (between migration commits)': self.__commit_migration_delta_days(),
+            'No. Days (between migration commits)': self.__commit_migration_delta_days() \
+                if self.migration_occurrences.has_first_occurrence() else 0,
         }
         return data
 

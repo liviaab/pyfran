@@ -89,6 +89,7 @@ class MainClassifier:
 
             'No. Total Commits': self.amount_total_commits,
 
+            'Lifetime in days': self.calculate_lifetime(),
             'No. Days (between frameworks occurrence)': 0,
             'One Commit Migration?': False,
             'No. Authors (name)': number_of_authors_names,
@@ -125,6 +126,14 @@ class MainClassifier:
             'Last migration commit link': commit_base_url + self.migration_occurrences.last.commit['commit_hash'] if self.migration_occurrences.has_last_occurrence() else None,
 
         }
+
+    def calculate_lifetime(self):
+        commit = self.allCommits[0]
+        if commit['commit_index'] != 0:
+            raise RuntimeError('Error when calculating lifetime in days')
+
+        timedelta = datetime.now(timezone.utc) - commit['date']
+        return timedelta.days
 
     def __is_pytest_repository(self):
         return (not self.unittest_occurrences.has_first_occurrence()

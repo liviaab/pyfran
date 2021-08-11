@@ -129,6 +129,7 @@ def repository_columns():
         'Repository Name',
         'Repository Link',
         'No. Total Commits',
+        'Lifetime in days',
         "No. Commits from 1st unittest occurrence",
         "No. Commits from 1st pytest occurrence",
         'No. Days (between frameworks occurrence)',

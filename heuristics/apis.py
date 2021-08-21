@@ -10,7 +10,7 @@ class UnittestAPIHeuristics:
     unittestSkipTest_pattern = "[@]{0,1}unittest.skip.*?\((.*)" # @unittest.skip | @unittest.skipIf | @unittest.skipUnless
     selfSkipTest_pattern = "[self.s|unittest.S]kipTest(\(.*)" # self.skipTest() | unittest.SkipTest()
     expectedFailure_pattern = "@unittest.expectedFailure"
-    unittestMock_pattern = "(\s+unittest.mock\s+)"
+    unittestMock_pattern = "(\s+unittest.mock\s+|from\s+unittest\s+import\s+mock)"
     unittestImport_pattern = "(import\s+unittest)"
 
     @classmethod
@@ -131,7 +131,7 @@ class PytestAPIHeuristics:
     genericPytest_pattern = "@pytest\.(.*)"
     monkeypatch_pattern = "\s*monkeypatch\.(.*)"
     pytestmock_pattern = "(pytest-mock)"
-    pytesImport_pattern = "(import\s+pytest)"
+    pytesImport_pattern = "(import\s+pytest(?!-mock))"
 
     @classmethod
     def check_apis(cls, content):

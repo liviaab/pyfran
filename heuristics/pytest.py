@@ -3,7 +3,7 @@ from pyparsing import Regex, pythonStyleComment, dblQuotedString, sglQuotedStrin
 from common.common import docString
 
 class PytestHeuristics:
-    regex = "(\s+pytest\Z|\s+pytest\s+)"
+    regex = "pytest(?!-mock)"
 
     @classmethod
     def matches_a(cls, text, ignoreComments=True):

@@ -3,7 +3,7 @@ from pyparsing import Regex, pythonStyleComment, dblQuotedString, sglQuotedStrin
 from common.common import docString
 
 class UnittestHeuristics:
-    regex = "unittest(?!.*mock)"
+    regex = "unittest\s+(?!.*mock)"
 
     @classmethod
     def matches_a(cls, text, ignoreComments=True):

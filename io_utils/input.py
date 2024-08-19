@@ -9,7 +9,7 @@ class InputUtil:
 		inputfile = ''
 
 		try:
-			opts, _args = getopt.getopt(argv, "hi:o:", ["ifile="])
+			opts, _args = getopt.getopt(argv, "hi:", ["ifile="])
 		except getopt.GetoptError:
 			print('main.py -i <inputfile>.csv')
 			sys.exit(2)

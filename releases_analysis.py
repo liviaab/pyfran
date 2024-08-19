@@ -10,8 +10,6 @@ from report.column_names import *
 
 
 def main(argv):
-  # /home/livia/Documents/pyfran/out07-18-2021_143908/
-
   input_folder = inUtil.parse_checkout_commant_line_arguments(argv)
 
   for root, dirs, files in os.walk(input_folder):
@@ -20,6 +18,7 @@ def main(argv):
         filepath = os.path.join(root, file)
 
         with open(filepath, newline='') as csvfile:
+          print("Time marker 0 - repo {}".format(file))
           allcommits = list(csv.DictReader(csvfile))
 
           repo_url = allcommits[1]["commit_link"].split('/commit')[0]
@@ -32,6 +31,8 @@ def main(argv):
           print("Time marker #2 - create csv with APIs information", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
           columns = api_columns()
           outUtil.output_list_as_csv(project_name+"_api", apis_info, columns, input_folder)
+          print("Time marker #3 - done", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+
 
 
   print("Done!")

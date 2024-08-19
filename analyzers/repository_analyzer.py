@@ -86,7 +86,6 @@ class LocalRepositoryAnalyzer:
         nof = count_local_files(self.path)
         return nof
 
-
 class RemoteRepositoryAnalyzer:
     def __init__(self, url):
         self.url = url
